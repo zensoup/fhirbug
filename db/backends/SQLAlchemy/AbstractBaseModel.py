@@ -1,8 +1,15 @@
+from sqlalchemy.ext.declarative import declarative_base
 
 
-class BaseModel():
+Base = declarative_base()
+
+
+class ResourceMapping(Base):
   '''
   The base class to provide functionality to
   our models.
   '''
-  pass
+  __abstract__ = True
+  
+  def bla(self):
+    print('blu')
