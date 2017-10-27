@@ -1,9 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
 from db.backends.SQLAlchemy.AbstractBaseModel import ResourceMapping
-from Fhir.Resources import identifier, humanname, patient, requestgroup, reference, annotation
 from Fhir.Resources import identifier, humanname, patient, requestgroup, reference, annotation, procedurerequest, codeableconcept
+from main import Base, engine
 
 class AMKA(identifier.Identifier):
   def __init__(self, value):
@@ -18,19 +17,31 @@ class AMKA(identifier.Identifier):
 
 # class Patient():
 class Patient(ResourceMapping):
-  __tablename__ = 'CS_PATIENTS_TABLE'
+  #
+  # Use autoload to automaticaly populate the mapping's fields
+  # TODO: This seems slower should we use a tool to autogenerate definitions?
+  #
 
-  patient_id = Column('opat_id', Integer, primary_key=True)
-  patient_given_name = Column('opat_first_name', String(256))
-  patient_family_name = Column('opat_last_name', String(256))
-  patient_ssn = Column('opat_amka', String(20))
+  # __tablename__ = 'CS_PATIENTS_TABLE'
+  #
+  # patient_id = Column('opat_id', Integer, primary_key=True)
+  # patient_given_name = Column('opat_first_name', String(256))
+  # patient_family_name = Column('opat_last_name', String(256))
+  # patient_ssn = Column('opat_amka', String(20))
+  #
+  #
+  # def to_resource(self):
+  #   ident  = AMKA(self.patient_ssn).as_json()
+  #   name = humanname.HumanName({'family': self.patient_family_name, 'given': [self.patient_given_name]}).as_json()
+  #   return patient.Patient({'id': str(self.patient_id), 'name': [name], 'identifier': [ident]})
 
+  table = Table('CS_PATIENTS_TABLE', Base.metadata, autoload=True, autoload_with=engine)
+  __table__ = table
 
   def to_resource(self):
-    ident  = AMKA(self.patient_ssn).as_json()
-    name = humanname.HumanName({'family': self.patient_family_name, 'given': [self.patient_given_name]}).as_json()
-    return patient.Patient({'id': str(self.patient_id), 'name': [name], 'identifier': [ident]})
-
+    ident  = AMKA(self.opat_amka).as_json()
+    name = humanname.HumanName({'family': self.opat_last_name, 'given': [self.opat_first_name]}).as_json()
+    return patient.Patient({'id': str(self.opat_id), 'name': [name], 'identifier': [ident]})
 
   '''
     opat_id = models.FloatField(primary_key=True)
