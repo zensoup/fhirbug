@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Date
 
 from db.backends.SQLAlchemy.AbstractBaseModel import ResourceMapping
-from Fhir.Resources import identifier, humanname, patient, requestgroup
+from Fhir.Resources import identifier, humanname, patient, requestgroup, reference, annotation
 
 class AMKA(identifier.Identifier):
   def __init__(self, value):
@@ -113,18 +113,33 @@ class RequestGroup(ResourceMapping):
   order_id = Column('lisor_id', Integer, primary_key=True)
   _status = Column('lisor_status', Integer)
   intent = 'order'
+  date_create = Column('date_create', Date)
   subject = Column('opat_id', ForeignKey('CS_PATIENTS_TABLE.opat_id'))
+  comments = Column('lisor_comments', String(256))
 
-  def to_resource(self):
-    return requestgroup.RequestGroup({
+  def to_resource(self, *args, **kwargs):
+    result = requestgroup.RequestGroup({
       'status': self.status,
       'intent': self.intent,
-      'subject': Patient.query.get(self.subject).to_resource().as_json()
+      'subject': reference.Reference({'reference': f'Patient/{self.subject}'}).as_json(),
+      'authoredOn': self.date_create.strftime('%Y-%m-%d'),
+      'action': self.tests
       })
+    if self.comments:
+      result['note'] = annotation.Annotation({'text': self.comments}).as_json()
+    return result
 
   @property
   def status(self):
     return ['active', 'unknown', 'cancelled', 'completed'][self._status]
 
-class ProcedureRequest(ResourceMapping):
-  __tablename__  = 'LIS_ORDERS'
+  @property
+  def tests(self, contained=False):
+    tests = Observation.query.filter(Observation.lisor_id==self.order_id)
+    return [test.id for test in tests]
+
+class Observation(ResourceMapping):
+  __tablename__  = 'LIS_TESTS'
+
+  id = Column('listest_id', Integer, primary_key=True)
+  lisor_id = Column('lisor_id', ForeignKey('LIS_ORDERS.lisor_id'))
