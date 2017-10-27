@@ -152,7 +152,7 @@ class ProcedureRequest(domainresource.DomainResource):
             ("basedOn", "basedOn", fhirreference.FHIRReference, True, None, False),
             ("bodySite", "bodySite", codeableconcept.CodeableConcept, True, None, False),
             ("category", "category", codeableconcept.CodeableConcept, True, None, False),
-            ("code", "code", codeableconcept.CodeableConcept, False, None, True),
+            ("code", "code", codeableconcept.CodeableConcept, False, None, False),  # CSL - EDITED
             ("context", "context", fhirreference.FHIRReference, False, None, False),
             ("definition", "definition", fhirreference.FHIRReference, True, None, False),
             ("doNotPerform", "doNotPerform", bool, False, None, False),
