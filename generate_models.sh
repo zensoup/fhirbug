@@ -3,7 +3,10 @@
 if [ ! -e fhir-parser ]; then
 	git submodule update --init --recursive
 fi
-cp Fhir/base/settings.py tools/fhir-parser/settings.py
-cd tools/fhir-parser
+
+source tools/fhir_parser/.venv/bin/activate
+
+cp Fhir/base/settings.py tools/fhir_parser/settings.py
+cd tools/fhir_parser
 ./generate.py $1
 cd ..
