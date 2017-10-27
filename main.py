@@ -25,7 +25,7 @@ def main():
 
   print(pat.to_resource().as_json())
 
-  o = models.RequestGroup.query.first()
+  o = models.ProcedureRequest.query.first()
   print(o.to_resource().as_json())
   pat.bla()
 

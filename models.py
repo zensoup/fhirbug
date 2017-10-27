@@ -1,7 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
 from db.backends.SQLAlchemy.AbstractBaseModel import ResourceMapping
 from Fhir.Resources import identifier, humanname, patient, requestgroup, reference, annotation
+from Fhir.Resources import identifier, humanname, patient, requestgroup, reference, annotation, procedurerequest, codeableconcept
 
 class AMKA(identifier.Identifier):
   def __init__(self, value):
@@ -108,7 +110,8 @@ class Patient(ResourceMapping):
     opat_liable_amka = models.CharField(max_length=11, blank=True, null=True)
     '''
 
-class RequestGroup(ResourceMapping):
+# class RequestGroup(ResourceMapping):
+class ProcedureRequest(ResourceMapping):
   __tablename__ = 'LIS_ORDERS'
   order_id = Column('lisor_id', Integer, primary_key=True)
   _status = Column('lisor_status', Integer)
@@ -118,13 +121,15 @@ class RequestGroup(ResourceMapping):
   comments = Column('lisor_comments', String(256))
 
   def to_resource(self, *args, **kwargs):
-    result = requestgroup.RequestGroup({
+    # import ipdb; ipdb.set_trace()
+    result = procedurerequest.ProcedureRequest({
       'status': self.status,
       'intent': self.intent,
       'subject': reference.Reference({'reference': f'Patient/{self.subject}'}).as_json(),
       'authoredOn': self.date_create.strftime('%Y-%m-%d'),
-      'action': self.tests
-      })
+      # 'action': self.tests
+    })
+    result.action = self.tests
     if self.comments:
       result['note'] = annotation.Annotation({'text': self.comments}).as_json()
     return result
@@ -143,3 +148,6 @@ class Observation(ResourceMapping):
 
   id = Column('listest_id', Integer, primary_key=True)
   lisor_id = Column('lisor_id', ForeignKey('LIS_ORDERS.lisor_id'))
+
+  def to_resource(self):
+    return observation.Observation()
