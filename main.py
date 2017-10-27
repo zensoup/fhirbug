@@ -1,15 +1,27 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.ext.declarative import declarative_base
+
 import settings
-from models import Patient
 
-engine = create_engine(settings.SQLALCHEMY_DATABASE_URI)
+# Create the db connection
+engine = create_engine(settings.SQLALCHEMY_CONFIG['URI'])
+session = scoped_session(sessionmaker(bind=engine))
 
-Session = sessionmaker(bind=engine)
+# Provide the base class for AbstractBaseClass to inherit
+# You must do this BEFORE importing any models
+Base = declarative_base()
+Base.query = session.query_property()
 
-session = Session()
+import models  # Don't do from models import bla, stuff will break
 
-pat = session.query(Patient).first()
 
-print(pat.patient_id)
-pat.bla()
+def main():
+  # pat = session.query(models.Patient).first()
+  pat = models.Patient.query.first()
+
+  print(pat.patient_id)
+  pat.bla()
+
+if __name__ == '__main__':
+  main()

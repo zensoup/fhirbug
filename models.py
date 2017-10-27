@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String
 from db.backends.SQLAlchemy.AbstractBaseModel import ResourceMapping
 
 
+# class Patient():
 class Patient(ResourceMapping):
   __tablename__ = 'CS_PATIENTS_TABLE'
 
@@ -88,4 +89,4 @@ class Patient(ResourceMapping):
     opat_old_indirect_cd = models.CharField(max_length=1, blank=True, null=True)
     opat_old_insc_date_to = models.DateField(blank=True, null=True)
     opat_liable_amka = models.CharField(max_length=11, blank=True, null=True)
-'''
+    '''
