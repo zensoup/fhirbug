@@ -1,3 +1,5 @@
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
@@ -5,6 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 import settings
 
 # Create the db connection
+os.environ["NLS_LANG"] = "GREEK_GREECE.AL32UTF8"
 engine = create_engine(settings.SQLALCHEMY_CONFIG['URI'])
 session = scoped_session(sessionmaker(bind=engine))
 
@@ -20,7 +23,10 @@ def main():
   # pat = session.query(models.Patient).first()
   pat = models.Patient.query.first()
 
-  print(pat.patient_id)
+  print(pat.to_resource().as_json())
+
+  o = models.RequestGroup.query.first()
+  print(o.to_resource().as_json())
   pat.bla()
 
 if __name__ == '__main__':

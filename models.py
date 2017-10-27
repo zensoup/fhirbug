@@ -1,6 +1,17 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 
 from db.backends.SQLAlchemy.AbstractBaseModel import ResourceMapping
+from Fhir.Resources import identifier, humanname, patient, requestgroup
+
+class AMKA(identifier.Identifier):
+  def __init__(self, value):
+    super(AMKA, self).__init__()
+    self.value = value
+    self.system = 'AMKA'
+    self.use = 'official'
+
+  # def as_json(self():
+  #   return {'system': 'AMKA', 'use': 'official', 'value': self.value}
 
 
 # class Patient():
@@ -10,7 +21,13 @@ class Patient(ResourceMapping):
   patient_id = Column('opat_id', Integer, primary_key=True)
   patient_given_name = Column('opat_first_name', String(256))
   patient_family_name = Column('opat_last_name', String(256))
-  patient_ssn =Column('opat_amka', String(20))
+  patient_ssn = Column('opat_amka', String(20))
+
+
+  def to_resource(self):
+    ident  = AMKA(self.patient_ssn).as_json()
+    name = humanname.HumanName({'family': self.patient_family_name, 'given': [self.patient_given_name]}).as_json()
+    return patient.Patient({'id': str(self.patient_id), 'name': [name], 'identifier': [ident]})
 
 
   '''
@@ -90,3 +107,24 @@ class Patient(ResourceMapping):
     opat_old_insc_date_to = models.DateField(blank=True, null=True)
     opat_liable_amka = models.CharField(max_length=11, blank=True, null=True)
     '''
+
+class RequestGroup(ResourceMapping):
+  __tablename__ = 'LIS_ORDERS'
+  order_id = Column('lisor_id', Integer, primary_key=True)
+  _status = Column('lisor_status', Integer)
+  intent = 'order'
+  subject = Column('opat_id', ForeignKey('CS_PATIENTS_TABLE.opat_id'))
+
+  def to_resource(self):
+    return requestgroup.RequestGroup({
+      'status': self.status,
+      'intent': self.intent,
+      'subject': Patient.query.get(self.subject).to_resource().as_json()
+      })
+
+  @property
+  def status(self):
+    return ['active', 'unknown', 'cancelled', 'completed'][self._status]
+
+class ProcedureRequest(ResourceMapping):
+  __tablename__  = 'LIS_ORDERS'
