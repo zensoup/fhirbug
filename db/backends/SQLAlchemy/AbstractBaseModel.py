@@ -2,6 +2,7 @@ import importlib
 
 from sqlalchemy.ext.declarative import declarative_base
 from settings import SQLALCHEMY_CONFIG
+from . import TEST
 
 def importStuff():
   module_path, _, class_name = SQLALCHEMY_CONFIG['BASE_CLASS'].rpartition('.')
@@ -20,4 +21,4 @@ class ResourceMapping(Base):
   __abstract__ = True
 
   def bla(self):
-    print('blu')
+    print(TEST)
