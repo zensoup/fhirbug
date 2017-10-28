@@ -16,4 +16,9 @@ for module_file in os.listdir('Fhir/Resources'):
         clsmembers = inspect.getmembers(module, inspect.isclass)
         resource_classes.update({cls_name: cls for cls_name, cls in clsmembers})
 
+# Import extensions
+ext_module = importlib.import_module('Fhir.Resources.extensions')
+clsmembers = inspect.getmembers(ext_module, inspect.isclass)
+resource_classes.update({cls_name: cls for cls_name, cls in clsmembers})
+
 resources = SimpleNamespace(**resource_classes)
