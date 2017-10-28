@@ -139,7 +139,7 @@ class ProcedureRequest(ResourceMapping):
       'subject': reference.Reference({'reference': f'Patient/{self.subject}'}).as_json(),
       'authoredOn': self.date_create.strftime('%Y-%m-%d'),
       # 'action': self.tests
-    })
+    }, False)
     result.action = self.tests
     if self.comments:
       result['note'] = annotation.Annotation({'text': self.comments}).as_json()
