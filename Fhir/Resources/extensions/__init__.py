@@ -2,7 +2,7 @@
 Subclasses of Fhir Resources that provide som functionality shortcuts.
 '''
 
-from Fhir.Resources import identifier
+from Fhir.Resources import identifier, humanname
 class AMKA(identifier.Identifier):
   '''
   Create an Identifier Resource representing the AMKA coding from a string
@@ -23,3 +23,10 @@ class AMKA(identifier.Identifier):
       'system': 'AMKA'
     }
     return super(AMKA, self).__init__(amka_dict, *args, **kwargs)
+
+
+class HumanName(humanname.HumanName):
+  '''
+  This subclass can be instantiated with kwargs instead of
+  '''
+  pass

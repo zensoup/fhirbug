@@ -1,103 +1,104 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Dosage) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Dosage) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import element
 
 class Dosage(element.Element):
     """ How the medication is/was taken or should be taken.
-    
+
     Indicates how the medication is/was taken or should be taken by the
     patient.
     """
-    
+
     resource_type = "Dosage"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.additionalInstruction = None
         """ Supplemental instruction - e.g. "with meals".
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.asNeededBoolean = None
         """ Take "as needed" (for x).
         Type `bool`. """
-        
+
         self.asNeededCodeableConcept = None
         """ Take "as needed" (for x).
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.doseQuantity = None
         """ Amount of medication per dose.
         Type `Quantity` (represented as `dict` in JSON). """
-        
+
         self.doseRange = None
         """ Amount of medication per dose.
         Type `Range` (represented as `dict` in JSON). """
-        
+
         self.maxDosePerAdministration = None
         """ Upper limit on medication per administration.
         Type `Quantity` (represented as `dict` in JSON). """
-        
+
         self.maxDosePerLifetime = None
         """ Upper limit on medication per lifetime of the patient.
         Type `Quantity` (represented as `dict` in JSON). """
-        
+
         self.maxDosePerPeriod = None
         """ Upper limit on medication per unit of time.
         Type `Ratio` (represented as `dict` in JSON). """
-        
+
         self.method = None
         """ Technique for administering medication.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.patientInstruction = None
         """ Patient or consumer oriented instructions.
         Type `str`. """
-        
+
         self.rateQuantity = None
         """ Amount of medication per unit of time.
         Type `Quantity` (represented as `dict` in JSON). """
-        
+
         self.rateRange = None
         """ Amount of medication per unit of time.
         Type `Range` (represented as `dict` in JSON). """
-        
+
         self.rateRatio = None
         """ Amount of medication per unit of time.
         Type `Ratio` (represented as `dict` in JSON). """
-        
+
         self.route = None
         """ How drug should enter body.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.sequence = None
         """ The order of the dosage instructions.
         Type `int`. """
-        
+
         self.site = None
         """ Body site to administer to.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.text = None
         """ Free text dosage instructions e.g. SIG.
         Type `str`. """
-        
+
         self.timing = None
         """ When medication should be administered.
         Type `Timing` (represented as `dict` in JSON). """
-        
-        super(Dosage, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(Dosage, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(Dosage, self).elementProperties()
         js.extend([

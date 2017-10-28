@@ -1,91 +1,92 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/SupplyRequest) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/SupplyRequest) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class SupplyRequest(domainresource.DomainResource):
     """ Request for a medication, substance or device.
-    
+
     A record of a request for a medication, substance or device used in the
     healthcare setting.
     """
-    
+
     resource_type = "SupplyRequest"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.authoredOn = None
         """ When the request was made.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.category = None
         """ The kind of supply (central, non-stock, etc.).
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.deliverFrom = None
         """ The origin of the supply.
         Type `FHIRReference` referencing `Organization, Location` (represented as `dict` in JSON). """
-        
+
         self.deliverTo = None
         """ The destination of the supply.
         Type `FHIRReference` referencing `Organization, Location, Patient` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Unique identifier.
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.occurrenceDateTime = None
         """ When the request should be fulfilled.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.occurrencePeriod = None
         """ When the request should be fulfilled.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.occurrenceTiming = None
         """ When the request should be fulfilled.
         Type `Timing` (represented as `dict` in JSON). """
-        
+
         self.orderedItem = None
         """ The item being requested.
         Type `SupplyRequestOrderedItem` (represented as `dict` in JSON). """
-        
+
         self.priority = None
         """ routine | urgent | asap | stat.
         Type `str`. """
-        
+
         self.reasonCodeableConcept = None
         """ Why the supply item was requested.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.reasonReference = None
         """ Why the supply item was requested.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.requester = None
         """ Who/what is requesting service.
         Type `SupplyRequestRequester` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ draft | active | suspended +.
         Type `str`. """
-        
+
         self.supplier = None
         """ Who is intended to fulfill the request.
         List of `FHIRReference` items referencing `Organization` (represented as `dict` in JSON). """
-        
-        super(SupplyRequest, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(SupplyRequest, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(SupplyRequest, self).elementProperties()
         js.extend([
@@ -113,31 +114,31 @@ from . import backboneelement
 class SupplyRequestOrderedItem(backboneelement.BackboneElement):
     """ The item being requested.
     """
-    
+
     resource_type = "SupplyRequestOrderedItem"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.itemCodeableConcept = None
         """ Medication, Substance, or Device requested to be supplied.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.itemReference = None
         """ Medication, Substance, or Device requested to be supplied.
         Type `FHIRReference` referencing `Medication, Substance, Device` (represented as `dict` in JSON). """
-        
+
         self.quantity = None
         """ The requested amount of the item indicated.
         Type `Quantity` (represented as `dict` in JSON). """
-        
-        super(SupplyRequestOrderedItem, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(SupplyRequestOrderedItem, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(SupplyRequestOrderedItem, self).elementProperties()
         js.extend([
@@ -150,31 +151,31 @@ class SupplyRequestOrderedItem(backboneelement.BackboneElement):
 
 class SupplyRequestRequester(backboneelement.BackboneElement):
     """ Who/what is requesting service.
-    
+
     The individual who initiated the request and has responsibility for its
     activation.
     """
-    
+
     resource_type = "SupplyRequestRequester"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.agent = None
         """ Individual making the request.
         Type `FHIRReference` referencing `Practitioner, Organization, Patient, RelatedPerson, Device` (represented as `dict` in JSON). """
-        
+
         self.onBehalfOf = None
         """ Organization agent is acting for.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
-        super(SupplyRequestRequester, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(SupplyRequestRequester, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(SupplyRequestRequester, self).elementProperties()
         js.extend([

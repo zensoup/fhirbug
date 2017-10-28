@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/ResearchSubject) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/ResearchSubject) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class ResearchSubject(domainresource.DomainResource):
     """ Investigation to increase healthcare-related patient-independent knowledge.
-    
+
     A process where a researcher or organization plans and then executes a
     series of steps intended to increase the field of healthcare-related
     knowledge.  This includes studies of safety, efficacy, comparative
@@ -17,51 +18,51 @@ class ResearchSubject(domainresource.DomainResource):
     and other interventional and investigative techniques.  A ResearchStudy
     involves the gathering of information about human or animal subjects.
     """
-    
+
     resource_type = "ResearchSubject"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.actualArm = None
         """ What path was followed.
         Type `str`. """
-        
+
         self.assignedArm = None
         """ What path should be followed.
         Type `str`. """
-        
+
         self.consent = None
         """ Agreement to participate in study.
         Type `FHIRReference` referencing `Consent` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Business Identifier for research subject.
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.individual = None
         """ Who is part of study.
         Type `FHIRReference` referencing `Patient` (represented as `dict` in JSON). """
-        
+
         self.period = None
         """ Start and end of participation.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ candidate | enrolled | active | suspended | withdrawn | completed.
         Type `str`. """
-        
+
         self.study = None
         """ Study subject is part of.
         Type `FHIRReference` referencing `ResearchStudy` (represented as `dict` in JSON). """
-        
-        super(ResearchSubject, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ResearchSubject, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ResearchSubject, self).elementProperties()
         js.extend([

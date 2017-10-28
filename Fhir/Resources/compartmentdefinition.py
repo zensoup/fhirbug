@@ -1,92 +1,93 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/CompartmentDefinition) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/CompartmentDefinition) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class CompartmentDefinition(domainresource.DomainResource):
     """ Compartment Definition for a resource.
-    
+
     A compartment definition that defines how resources are accessed on a
     server.
     """
-    
+
     resource_type = "CompartmentDefinition"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Patient | Encounter | RelatedPerson | Practitioner | Device.
         Type `str`. """
-        
+
         self.contact = None
         """ Contact details for the publisher.
         List of `ContactDetail` items (represented as `dict` in JSON). """
-        
+
         self.date = None
         """ Date this was last changed.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.description = None
         """ Natural language description of the compartment definition.
         Type `str`. """
-        
+
         self.experimental = None
         """ For testing purposes, not real usage.
         Type `bool`. """
-        
+
         self.jurisdiction = None
         """ Intended jurisdiction for compartment definition (if applicable).
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.name = None
         """ Name for this compartment definition (computer friendly).
         Type `str`. """
-        
+
         self.publisher = None
         """ Name of the publisher (organization or individual).
         Type `str`. """
-        
+
         self.purpose = None
         """ Why this compartment definition is defined.
         Type `str`. """
-        
+
         self.resource = None
         """ How a resource is related to the compartment.
         List of `CompartmentDefinitionResource` items (represented as `dict` in JSON). """
-        
+
         self.search = None
         """ Whether the search syntax is supported.
         Type `bool`. """
-        
+
         self.status = None
         """ draft | active | retired | unknown.
         Type `str`. """
-        
+
         self.title = None
         """ Name for this compartment definition (human friendly).
         Type `str`. """
-        
+
         self.url = None
         """ Logical URI to reference this compartment definition (globally
         unique).
         Type `str`. """
-        
+
         self.useContext = None
         """ Context the content is intended to support.
         List of `UsageContext` items (represented as `dict` in JSON). """
-        
-        super(CompartmentDefinition, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CompartmentDefinition, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CompartmentDefinition, self).elementProperties()
         js.extend([
@@ -113,34 +114,34 @@ from . import backboneelement
 
 class CompartmentDefinitionResource(backboneelement.BackboneElement):
     """ How a resource is related to the compartment.
-    
+
     Information about how a resource is related to the compartment.
     """
-    
+
     resource_type = "CompartmentDefinitionResource"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Name of resource type.
         Type `str`. """
-        
+
         self.documentation = None
         """ Additional documentation about the resource and compartment.
         Type `str`. """
-        
+
         self.param = None
         """ Search Parameter Name, or chained parameters.
         List of `str` items. """
-        
-        super(CompartmentDefinitionResource, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CompartmentDefinitionResource, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CompartmentDefinitionResource, self).elementProperties()
         js.extend([

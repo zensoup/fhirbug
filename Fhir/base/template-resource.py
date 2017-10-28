@@ -3,6 +3,7 @@
 #
 #  Generated from FHIR {{ info.version }} ({{ profile.url }}) on {{ info.date }}.
 #  {{ info.year }}, SMART Health IT.
+##
 
 {%- set imported = {} %}
 {%- for klass in classes %}
@@ -17,35 +18,35 @@ class {{ klass.name }}({% if klass.superclass in imports %}{{ klass.superclass.m
     {{ klass.superclass.name|default('object')}}):
     """ {{ klass.short|wordwrap(width=75, wrapstring="\n    ") }}.
 {%- if klass.formal %}
-    
+
     {{ klass.formal|wordwrap(width=75, wrapstring="\n    ") }}
 {%- endif %}
     """
 {%- if klass.resource_type %}
-    
+
     resource_type = "{{ klass.resource_type }}"
 {%- endif %}
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
     {%- for prop in klass.properties %}
-        
+
         self.{{ prop.name }} = None
         """ {{ prop.short|wordwrap(67, wrapstring="\n        ") }}.
         {% if prop.is_array %}List of{% else %}Type{% endif %} `{{ prop.class_name }}`{% if prop.is_array %} items{% endif %}
         {%- if prop.reference_to_names|length > 0 %} referencing `{{ prop.reference_to_names|join(', ') }}`{% endif %}
         {%- if prop.json_class != prop.class_name %} (represented as `{{ prop.json_class }}` in JSON){% endif %}. """
     {%- endfor %}
-        
-        super({{ klass.name }}, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super({{ klass.name }}, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
 {%- if klass.properties %}
-    
+
     def elementProperties(self):
         js = super({{ klass.name }}, self).elementProperties()
         {%- if 'element' == klass.module and 'Element' == klass.name %}
@@ -64,7 +65,7 @@ class {{ klass.name }}({% if klass.superclass in imports %}{{ klass.superclass.m
         {%- endfor %}
         ])
         return js
-    
+
 {%- endif %}
 {%- endfor %}
 
@@ -77,4 +78,3 @@ try:
 except ImportError:
     {{ imp.module }} = sys.modules[__package__ + '.{{ imp.module }}']
 {%- endif %}{% endfor %}
-

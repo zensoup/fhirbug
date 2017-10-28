@@ -1,79 +1,80 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/DocumentManifest) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/DocumentManifest) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class DocumentManifest(domainresource.DomainResource):
     """ A list that defines a set of documents.
-    
+
     A collection of documents compiled for a purpose together with metadata
     that applies to the collection.
     """
-    
+
     resource_type = "DocumentManifest"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.author = None
         """ Who and/or what authored the manifest.
         List of `FHIRReference` items referencing `Practitioner, Organization, Device, Patient, RelatedPerson` (represented as `dict` in JSON). """
-        
+
         self.content = None
         """ The items included.
         List of `DocumentManifestContent` items (represented as `dict` in JSON). """
-        
+
         self.created = None
         """ When this document manifest created.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.description = None
         """ Human-readable description (title).
         Type `str`. """
-        
+
         self.identifier = None
         """ Other identifiers for the manifest.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.masterIdentifier = None
         """ Unique Identifier for the set of documents.
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.recipient = None
         """ Intended to get notified about this set of documents.
         List of `FHIRReference` items referencing `Patient, Practitioner, RelatedPerson, Organization` (represented as `dict` in JSON). """
-        
+
         self.related = None
         """ Related things.
         List of `DocumentManifestRelated` items (represented as `dict` in JSON). """
-        
+
         self.source = None
         """ The source system/application/software.
         Type `str`. """
-        
+
         self.status = None
         """ current | superseded | entered-in-error.
         Type `str`. """
-        
+
         self.subject = None
         """ The subject of the set of documents.
         Type `FHIRReference` referencing `Patient, Practitioner, Group, Device` (represented as `dict` in JSON). """
-        
+
         self.type = None
         """ Kind of document set.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
-        super(DocumentManifest, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(DocumentManifest, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(DocumentManifest, self).elementProperties()
         js.extend([
@@ -97,30 +98,30 @@ from . import backboneelement
 
 class DocumentManifestContent(backboneelement.BackboneElement):
     """ The items included.
-    
+
     The list of Documents included in the manifest.
     """
-    
+
     resource_type = "DocumentManifestContent"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.pAttachment = None
         """ Contents of this set of documents.
         Type `Attachment` (represented as `dict` in JSON). """
-        
+
         self.pReference = None
         """ Contents of this set of documents.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
-        super(DocumentManifestContent, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(DocumentManifestContent, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(DocumentManifestContent, self).elementProperties()
         js.extend([
@@ -132,30 +133,30 @@ class DocumentManifestContent(backboneelement.BackboneElement):
 
 class DocumentManifestRelated(backboneelement.BackboneElement):
     """ Related things.
-    
+
     Related identifiers or resources associated with the DocumentManifest.
     """
-    
+
     resource_type = "DocumentManifestRelated"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.identifier = None
         """ Identifiers of things that are related.
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.ref = None
         """ Related Resource.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
-        super(DocumentManifestRelated, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(DocumentManifestRelated, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(DocumentManifestRelated, self).elementProperties()
         js.extend([

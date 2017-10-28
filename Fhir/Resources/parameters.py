@@ -1,36 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Parameters) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Parameters) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import resource
 
 class Parameters(resource.Resource):
     """ Operation Request or Response.
-    
+
     This special resource type is used to represent an operation request and
     response (operations.html). It has no other use, and there is no RESTful
     endpoint associated with it.
     """
-    
+
     resource_type = "Parameters"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.parameter = None
         """ Operation Parameter.
         List of `ParametersParameter` items (represented as `dict` in JSON). """
-        
-        super(Parameters, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(Parameters, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(Parameters, self).elementProperties()
         js.extend([
@@ -43,186 +44,186 @@ from . import backboneelement
 
 class ParametersParameter(backboneelement.BackboneElement):
     """ Operation Parameter.
-    
+
     A parameter passed to or received from the operation.
     """
-    
+
     resource_type = "ParametersParameter"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.name = None
         """ Name from the definition.
         Type `str`. """
-        
+
         self.part = None
         """ Named part of a multi-part parameter.
         List of `ParametersParameter` items (represented as `dict` in JSON). """
-        
+
         self.resource = None
         """ If parameter is a whole resource.
         Type `Resource` (represented as `dict` in JSON). """
-        
+
         self.valueAddress = None
         """ If parameter is a data type.
         Type `Address` (represented as `dict` in JSON). """
-        
+
         self.valueAge = None
         """ If parameter is a data type.
         Type `Age` (represented as `dict` in JSON). """
-        
+
         self.valueAnnotation = None
         """ If parameter is a data type.
         Type `Annotation` (represented as `dict` in JSON). """
-        
+
         self.valueAttachment = None
         """ If parameter is a data type.
         Type `Attachment` (represented as `dict` in JSON). """
-        
+
         self.valueBase64Binary = None
         """ If parameter is a data type.
         Type `str`. """
-        
+
         self.valueBoolean = None
         """ If parameter is a data type.
         Type `bool`. """
-        
+
         self.valueCode = None
         """ If parameter is a data type.
         Type `str`. """
-        
+
         self.valueCodeableConcept = None
         """ If parameter is a data type.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.valueCoding = None
         """ If parameter is a data type.
         Type `Coding` (represented as `dict` in JSON). """
-        
+
         self.valueContactPoint = None
         """ If parameter is a data type.
         Type `ContactPoint` (represented as `dict` in JSON). """
-        
+
         self.valueCount = None
         """ If parameter is a data type.
         Type `Count` (represented as `dict` in JSON). """
-        
+
         self.valueDate = None
         """ If parameter is a data type.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.valueDateTime = None
         """ If parameter is a data type.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.valueDecimal = None
         """ If parameter is a data type.
         Type `float`. """
-        
+
         self.valueDistance = None
         """ If parameter is a data type.
         Type `Distance` (represented as `dict` in JSON). """
-        
+
         self.valueDuration = None
         """ If parameter is a data type.
         Type `Duration` (represented as `dict` in JSON). """
-        
+
         self.valueHumanName = None
         """ If parameter is a data type.
         Type `HumanName` (represented as `dict` in JSON). """
-        
+
         self.valueId = None
         """ If parameter is a data type.
         Type `str`. """
-        
+
         self.valueIdentifier = None
         """ If parameter is a data type.
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.valueInstant = None
         """ If parameter is a data type.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.valueInteger = None
         """ If parameter is a data type.
         Type `int`. """
-        
+
         self.valueMarkdown = None
         """ If parameter is a data type.
         Type `str`. """
-        
+
         self.valueMeta = None
         """ If parameter is a data type.
         Type `Meta` (represented as `dict` in JSON). """
-        
+
         self.valueMoney = None
         """ If parameter is a data type.
         Type `Money` (represented as `dict` in JSON). """
-        
+
         self.valueOid = None
         """ If parameter is a data type.
         Type `str`. """
-        
+
         self.valuePeriod = None
         """ If parameter is a data type.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.valuePositiveInt = None
         """ If parameter is a data type.
         Type `int`. """
-        
+
         self.valueQuantity = None
         """ If parameter is a data type.
         Type `Quantity` (represented as `dict` in JSON). """
-        
+
         self.valueRange = None
         """ If parameter is a data type.
         Type `Range` (represented as `dict` in JSON). """
-        
+
         self.valueRatio = None
         """ If parameter is a data type.
         Type `Ratio` (represented as `dict` in JSON). """
-        
+
         self.valueReference = None
         """ If parameter is a data type.
         Type `FHIRReference` (represented as `dict` in JSON). """
-        
+
         self.valueSampledData = None
         """ If parameter is a data type.
         Type `SampledData` (represented as `dict` in JSON). """
-        
+
         self.valueSignature = None
         """ If parameter is a data type.
         Type `Signature` (represented as `dict` in JSON). """
-        
+
         self.valueString = None
         """ If parameter is a data type.
         Type `str`. """
-        
+
         self.valueTime = None
         """ If parameter is a data type.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.valueTiming = None
         """ If parameter is a data type.
         Type `Timing` (represented as `dict` in JSON). """
-        
+
         self.valueUnsignedInt = None
         """ If parameter is a data type.
         Type `int`. """
-        
+
         self.valueUri = None
         """ If parameter is a data type.
         Type `str`. """
-        
-        super(ParametersParameter, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ParametersParameter, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ParametersParameter, self).elementProperties()
         js.extend([

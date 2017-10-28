@@ -1,82 +1,83 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/List) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/List) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class List(domainresource.DomainResource):
     """ Information summarized from a list of other resources.
-    
+
     A set of information summarized from a list of other resources.
     """
-    
+
     resource_type = "List"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ What the purpose of this list is.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.date = None
         """ When the list was prepared.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.emptyReason = None
         """ Why list is empty.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.encounter = None
         """ Context in which list created.
         Type `FHIRReference` referencing `Encounter` (represented as `dict` in JSON). """
-        
+
         self.entry = None
         """ Entries in the list.
         List of `ListEntry` items (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Business identifier.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.mode = None
         """ working | snapshot | changes.
         Type `str`. """
-        
+
         self.note = None
         """ Comments about the list.
         List of `Annotation` items (represented as `dict` in JSON). """
-        
+
         self.orderedBy = None
         """ What order the list has.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.source = None
         """ Who and/or what defined the list contents (aka Author).
         Type `FHIRReference` referencing `Practitioner, Patient, Device` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ current | retired | entered-in-error.
         Type `str`. """
-        
+
         self.subject = None
         """ If all resources have the same subject.
         Type `FHIRReference` referencing `Patient, Group, Device, Location` (represented as `dict` in JSON). """
-        
+
         self.title = None
         """ Descriptive name for the list.
         Type `str`. """
-        
-        super(List, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(List, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(List, self).elementProperties()
         js.extend([
@@ -101,38 +102,38 @@ from . import backboneelement
 
 class ListEntry(backboneelement.BackboneElement):
     """ Entries in the list.
-    
+
     Entries in this list.
     """
-    
+
     resource_type = "ListEntry"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.date = None
         """ When item added to list.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.deleted = None
         """ If this item is actually marked as deleted.
         Type `bool`. """
-        
+
         self.flag = None
         """ Status/Workflow information about this item.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.item = None
         """ Actual entry.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
-        super(ListEntry, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ListEntry, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ListEntry, self).elementProperties()
         js.extend([

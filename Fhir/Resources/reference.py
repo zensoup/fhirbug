@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Reference) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Reference) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import element
@@ -10,31 +11,31 @@ from . import element
 class Reference(element.Element):
     """ A reference from one resource to another.
     """
-    
+
     resource_type = "Reference"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.display = None
         """ Text alternative for the resource.
         Type `str`. """
-        
+
         self.identifier = None
         """ Logical reference, when literal reference is not known.
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.reference = None
         """ Literal reference, Relative, internal or absolute URL.
         Type `str`. """
-        
-        super(Reference, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(Reference, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(Reference, self).elementProperties()
         js.extend([

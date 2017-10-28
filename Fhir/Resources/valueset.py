@@ -1,107 +1,108 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/ValueSet) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/ValueSet) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class ValueSet(domainresource.DomainResource):
     """ A set of codes drawn from one or more code systems.
-    
+
     A value set specifies a set of codes drawn from one or more code systems.
     """
-    
+
     resource_type = "ValueSet"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.compose = None
         """ Definition of the content of the value set (CLD).
         Type `ValueSetCompose` (represented as `dict` in JSON). """
-        
+
         self.contact = None
         """ Contact details for the publisher.
         List of `ContactDetail` items (represented as `dict` in JSON). """
-        
+
         self.copyright = None
         """ Use and/or publishing restrictions.
         Type `str`. """
-        
+
         self.date = None
         """ Date this was last changed.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.description = None
         """ Natural language description of the value set.
         Type `str`. """
-        
+
         self.expansion = None
         """ Used when the value set is "expanded".
         Type `ValueSetExpansion` (represented as `dict` in JSON). """
-        
+
         self.experimental = None
         """ For testing purposes, not real usage.
         Type `bool`. """
-        
+
         self.extensible = None
         """ Whether this is intended to be used with an extensible binding.
         Type `bool`. """
-        
+
         self.identifier = None
         """ Additional identifier for the value set.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.immutable = None
         """ Indicates whether or not any change to the content logical
         definition may occur.
         Type `bool`. """
-        
+
         self.jurisdiction = None
         """ Intended jurisdiction for value set (if applicable).
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.name = None
         """ Name for this value set (computer friendly).
         Type `str`. """
-        
+
         self.publisher = None
         """ Name of the publisher (organization or individual).
         Type `str`. """
-        
+
         self.purpose = None
         """ Why this value set is defined.
         Type `str`. """
-        
+
         self.status = None
         """ draft | active | retired | unknown.
         Type `str`. """
-        
+
         self.title = None
         """ Name for this value set (human friendly).
         Type `str`. """
-        
+
         self.url = None
         """ Logical URI to reference this value set (globally unique).
         Type `str`. """
-        
+
         self.useContext = None
         """ Context the content is intended to support.
         List of `UsageContext` items (represented as `dict` in JSON). """
-        
+
         self.version = None
         """ Business version of the value set.
         Type `str`. """
-        
-        super(ValueSet, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ValueSet, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ValueSet, self).elementProperties()
         js.extend([
@@ -132,40 +133,40 @@ from . import backboneelement
 
 class ValueSetCompose(backboneelement.BackboneElement):
     """ Definition of the content of the value set (CLD).
-    
+
     A set of criteria that define the content logical definition of the value
     set by including or excluding codes from outside this value set. This I
     also known as the "Content Logical Definition" (CLD).
     """
-    
+
     resource_type = "ValueSetCompose"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.exclude = None
         """ Explicitly exclude codes from a code system or other value sets.
         List of `ValueSetComposeInclude` items (represented as `dict` in JSON). """
-        
+
         self.inactive = None
         """ Whether inactive codes are in the value set.
         Type `bool`. """
-        
+
         self.include = None
         """ Include one or more codes from a code system or other value set(s).
         List of `ValueSetComposeInclude` items (represented as `dict` in JSON). """
-        
+
         self.lockedDate = None
         """ Fixed date for version-less references (transitive).
         Type `FHIRDate` (represented as `str` in JSON). """
-        
-        super(ValueSetCompose, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ValueSetCompose, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ValueSetCompose, self).elementProperties()
         js.extend([
@@ -180,39 +181,39 @@ class ValueSetCompose(backboneelement.BackboneElement):
 class ValueSetComposeInclude(backboneelement.BackboneElement):
     """ Include one or more codes from a code system or other value set(s).
     """
-    
+
     resource_type = "ValueSetComposeInclude"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.concept = None
         """ A concept defined in the system.
         List of `ValueSetComposeIncludeConcept` items (represented as `dict` in JSON). """
-        
+
         self.filter = None
         """ Select codes/concepts by their properties (including relationships).
         List of `ValueSetComposeIncludeFilter` items (represented as `dict` in JSON). """
-        
+
         self.system = None
         """ The system the codes come from.
         Type `str`. """
-        
+
         self.valueSet = None
         """ Select only contents included in this value set.
         List of `str` items. """
-        
+
         self.version = None
         """ Specific version of the code system referred to.
         Type `str`. """
-        
-        super(ValueSetComposeInclude, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ValueSetComposeInclude, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ValueSetComposeInclude, self).elementProperties()
         js.extend([
@@ -227,34 +228,34 @@ class ValueSetComposeInclude(backboneelement.BackboneElement):
 
 class ValueSetComposeIncludeConcept(backboneelement.BackboneElement):
     """ A concept defined in the system.
-    
+
     Specifies a concept to be included or excluded.
     """
-    
+
     resource_type = "ValueSetComposeIncludeConcept"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Code or expression from system.
         Type `str`. """
-        
+
         self.designation = None
         """ Additional representations for this concept.
         List of `ValueSetComposeIncludeConceptDesignation` items (represented as `dict` in JSON). """
-        
+
         self.display = None
         """ Text to display for this code for this value set in this valueset.
         Type `str`. """
-        
-        super(ValueSetComposeIncludeConcept, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ValueSetComposeIncludeConcept, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ValueSetComposeIncludeConcept, self).elementProperties()
         js.extend([
@@ -267,36 +268,36 @@ class ValueSetComposeIncludeConcept(backboneelement.BackboneElement):
 
 class ValueSetComposeIncludeConceptDesignation(backboneelement.BackboneElement):
     """ Additional representations for this concept.
-    
+
     Additional representations for this concept when used in this value set -
     other languages, aliases, specialized purposes, used for particular
     purposes, etc.
     """
-    
+
     resource_type = "ValueSetComposeIncludeConceptDesignation"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.language = None
         """ Human language of the designation.
         Type `str`. """
-        
+
         self.use = None
         """ Details how this designation would be used.
         Type `Coding` (represented as `dict` in JSON). """
-        
+
         self.value = None
         """ The text value for this designation.
         Type `str`. """
-        
-        super(ValueSetComposeIncludeConceptDesignation, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ValueSetComposeIncludeConceptDesignation, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ValueSetComposeIncludeConceptDesignation, self).elementProperties()
         js.extend([
@@ -309,38 +310,38 @@ class ValueSetComposeIncludeConceptDesignation(backboneelement.BackboneElement):
 
 class ValueSetComposeIncludeFilter(backboneelement.BackboneElement):
     """ Select codes/concepts by their properties (including relationships).
-    
+
     Select concepts by specify a matching criteria based on the properties
     (including relationships) defined by the system. If multiple filters are
     specified, they SHALL all be true.
     """
-    
+
     resource_type = "ValueSetComposeIncludeFilter"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.op = None
         """ = | is-a | descendent-of | is-not-a | regex | in | not-in |
         generalizes | exists.
         Type `str`. """
-        
+
         self.property = None
         """ A property defined by the code system.
         Type `str`. """
-        
+
         self.value = None
         """ Code from the system, or regex criteria, or boolean value for
         exists.
         Type `str`. """
-        
-        super(ValueSetComposeIncludeFilter, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ValueSetComposeIncludeFilter, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ValueSetComposeIncludeFilter, self).elementProperties()
         js.extend([
@@ -353,48 +354,48 @@ class ValueSetComposeIncludeFilter(backboneelement.BackboneElement):
 
 class ValueSetExpansion(backboneelement.BackboneElement):
     """ Used when the value set is "expanded".
-    
+
     A value set can also be "expanded", where the value set is turned into a
     simple collection of enumerated codes. This element holds the expansion, if
     it has been performed.
     """
-    
+
     resource_type = "ValueSetExpansion"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.contains = None
         """ Codes in the value set.
         List of `ValueSetExpansionContains` items (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Uniquely identifies this expansion.
         Type `str`. """
-        
+
         self.offset = None
         """ Offset at which this resource starts.
         Type `int`. """
-        
+
         self.parameter = None
         """ Parameter that controlled the expansion process.
         List of `ValueSetExpansionParameter` items (represented as `dict` in JSON). """
-        
+
         self.timestamp = None
         """ Time ValueSet expansion happened.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.total = None
         """ Total number of codes in the expansion.
         Type `int`. """
-        
-        super(ValueSetExpansion, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ValueSetExpansion, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ValueSetExpansion, self).elementProperties()
         js.extend([
@@ -410,54 +411,54 @@ class ValueSetExpansion(backboneelement.BackboneElement):
 
 class ValueSetExpansionContains(backboneelement.BackboneElement):
     """ Codes in the value set.
-    
+
     The codes that are contained in the value set expansion.
     """
-    
+
     resource_type = "ValueSetExpansionContains"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.abstract = None
         """ If user cannot select this entry.
         Type `bool`. """
-        
+
         self.code = None
         """ Code - if blank, this is not a selectable code.
         Type `str`. """
-        
+
         self.contains = None
         """ Codes contained under this entry.
         List of `ValueSetExpansionContains` items (represented as `dict` in JSON). """
-        
+
         self.designation = None
         """ Additional representations for this item.
         List of `ValueSetComposeIncludeConceptDesignation` items (represented as `dict` in JSON). """
-        
+
         self.display = None
         """ User display for the concept.
         Type `str`. """
-        
+
         self.inactive = None
         """ If concept is inactive in the code system.
         Type `bool`. """
-        
+
         self.system = None
         """ System value for the code.
         Type `str`. """
-        
+
         self.version = None
         """ Version in which this code/display is defined.
         Type `str`. """
-        
-        super(ValueSetExpansionContains, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ValueSetExpansionContains, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ValueSetExpansionContains, self).elementProperties()
         js.extend([
@@ -475,52 +476,52 @@ class ValueSetExpansionContains(backboneelement.BackboneElement):
 
 class ValueSetExpansionParameter(backboneelement.BackboneElement):
     """ Parameter that controlled the expansion process.
-    
+
     A parameter that controlled the expansion process. These parameters may be
     used by users of expanded value sets to check whether the expansion is
     suitable for a particular purpose, or to pick the correct expansion.
     """
-    
+
     resource_type = "ValueSetExpansionParameter"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.name = None
         """ Name as assigned by the server.
         Type `str`. """
-        
+
         self.valueBoolean = None
         """ Value of the named parameter.
         Type `bool`. """
-        
+
         self.valueCode = None
         """ Value of the named parameter.
         Type `str`. """
-        
+
         self.valueDecimal = None
         """ Value of the named parameter.
         Type `float`. """
-        
+
         self.valueInteger = None
         """ Value of the named parameter.
         Type `int`. """
-        
+
         self.valueString = None
         """ Value of the named parameter.
         Type `str`. """
-        
+
         self.valueUri = None
         """ Value of the named parameter.
         Type `str`. """
-        
-        super(ValueSetExpansionParameter, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ValueSetExpansionParameter, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ValueSetExpansionParameter, self).elementProperties()
         js.extend([

@@ -1,87 +1,88 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/PaymentReconciliation) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/PaymentReconciliation) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class PaymentReconciliation(domainresource.DomainResource):
     """ PaymentReconciliation resource.
-    
+
     This resource provides payment details and claim references supporting a
     bulk payment.
     """
-    
+
     resource_type = "PaymentReconciliation"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.created = None
         """ Creation date.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.detail = None
         """ List of settlements.
         List of `PaymentReconciliationDetail` items (represented as `dict` in JSON). """
-        
+
         self.disposition = None
         """ Disposition Message.
         Type `str`. """
-        
+
         self.form = None
         """ Printed Form Identifier.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Business Identifier.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.organization = None
         """ Insurer.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.outcome = None
         """ complete | error | partial.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.period = None
         """ Period covered.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.processNote = None
         """ Processing comments.
         List of `PaymentReconciliationProcessNote` items (represented as `dict` in JSON). """
-        
+
         self.request = None
         """ Claim reference.
         Type `FHIRReference` referencing `ProcessRequest` (represented as `dict` in JSON). """
-        
+
         self.requestOrganization = None
         """ Responsible organization.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.requestProvider = None
         """ Responsible practitioner.
         Type `FHIRReference` referencing `Practitioner` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ active | cancelled | draft | entered-in-error.
         Type `str`. """
-        
+
         self.total = None
         """ Total amount of Payment.
         Type `Money` (represented as `dict` in JSON). """
-        
-        super(PaymentReconciliation, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(PaymentReconciliation, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(PaymentReconciliation, self).elementProperties()
         js.extend([
@@ -107,50 +108,50 @@ from . import backboneelement
 
 class PaymentReconciliationDetail(backboneelement.BackboneElement):
     """ List of settlements.
-    
+
     List of individual settlement amounts and the corresponding transaction.
     """
-    
+
     resource_type = "PaymentReconciliationDetail"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.amount = None
         """ Amount being paid.
         Type `Money` (represented as `dict` in JSON). """
-        
+
         self.date = None
         """ Invoice date.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.payee = None
         """ Organization which is receiving the payment.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.request = None
         """ Claim.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.response = None
         """ Claim Response.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.submitter = None
         """ Organization which submitted the claim.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.type = None
         """ Type code.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
-        super(PaymentReconciliationDetail, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(PaymentReconciliationDetail, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(PaymentReconciliationDetail, self).elementProperties()
         js.extend([
@@ -167,30 +168,30 @@ class PaymentReconciliationDetail(backboneelement.BackboneElement):
 
 class PaymentReconciliationProcessNote(backboneelement.BackboneElement):
     """ Processing comments.
-    
+
     Suite of notes.
     """
-    
+
     resource_type = "PaymentReconciliationProcessNote"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.text = None
         """ Comment on the processing.
         Type `str`. """
-        
+
         self.type = None
         """ display | print | printoper.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
-        super(PaymentReconciliationProcessNote, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(PaymentReconciliationProcessNote, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(PaymentReconciliationProcessNote, self).elementProperties()
         js.extend([

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Composition) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Composition) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
@@ -10,7 +11,7 @@ from . import domainresource
 class Composition(domainresource.DomainResource):
     """ A set of resources composed into a single coherent clinical statement with
     clinical attestation.
-    
+
     A set of healthcare-related information that is assembled together into a
     single logical document that provides a single coherent statement of
     meaning, establishes its own context and that has clinical attestation with
@@ -19,79 +20,79 @@ class Composition(domainresource.DomainResource):
     content of a document is contained in a Bundle, of which the Composition is
     the first resource contained.
     """
-    
+
     resource_type = "Composition"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.attester = None
         """ Attests to accuracy of composition.
         List of `CompositionAttester` items (represented as `dict` in JSON). """
-        
+
         self.author = None
         """ Who and/or what authored the composition.
         List of `FHIRReference` items referencing `Practitioner, Device, Patient, RelatedPerson` (represented as `dict` in JSON). """
-        
+
         self.class_fhir = None
         """ Categorization of Composition.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.confidentiality = None
         """ As defined by affinity domain.
         Type `str`. """
-        
+
         self.custodian = None
         """ Organization which maintains the composition.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.date = None
         """ Composition editing time.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.encounter = None
         """ Context of the Composition.
         Type `FHIRReference` referencing `Encounter` (represented as `dict` in JSON). """
-        
+
         self.event = None
         """ The clinical service(s) being documented.
         List of `CompositionEvent` items (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Logical identifier of composition (version-independent).
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.relatesTo = None
         """ Relationships to other compositions/documents.
         List of `CompositionRelatesTo` items (represented as `dict` in JSON). """
-        
+
         self.section = None
         """ Composition is broken into sections.
         List of `CompositionSection` items (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ preliminary | final | amended | entered-in-error.
         Type `str`. """
-        
+
         self.subject = None
         """ Who and/or what the composition is about.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.title = None
         """ Human Readable name/title.
         Type `str`. """
-        
+
         self.type = None
         """ Kind of composition (LOINC if possible).
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
-        super(Composition, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(Composition, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(Composition, self).elementProperties()
         js.extend([
@@ -118,34 +119,34 @@ from . import backboneelement
 
 class CompositionAttester(backboneelement.BackboneElement):
     """ Attests to accuracy of composition.
-    
+
     A participant who has attested to the accuracy of the composition/document.
     """
-    
+
     resource_type = "CompositionAttester"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.mode = None
         """ personal | professional | legal | official.
         List of `str` items. """
-        
+
         self.party = None
         """ Who attested the composition.
         Type `FHIRReference` referencing `Patient, Practitioner, Organization` (represented as `dict` in JSON). """
-        
+
         self.time = None
         """ When the composition was attested.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
-        super(CompositionAttester, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CompositionAttester, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CompositionAttester, self).elementProperties()
         js.extend([
@@ -158,35 +159,35 @@ class CompositionAttester(backboneelement.BackboneElement):
 
 class CompositionEvent(backboneelement.BackboneElement):
     """ The clinical service(s) being documented.
-    
+
     The clinical service, such as a colonoscopy or an appendectomy, being
     documented.
     """
-    
+
     resource_type = "CompositionEvent"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Code(s) that apply to the event being documented.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.detail = None
         """ The event(s) being documented.
         List of `FHIRReference` items referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.period = None
         """ The period covered by the documentation.
         Type `Period` (represented as `dict` in JSON). """
-        
-        super(CompositionEvent, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CompositionEvent, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CompositionEvent, self).elementProperties()
         js.extend([
@@ -199,35 +200,35 @@ class CompositionEvent(backboneelement.BackboneElement):
 
 class CompositionRelatesTo(backboneelement.BackboneElement):
     """ Relationships to other compositions/documents.
-    
+
     Relationships that this composition has with other compositions or
     documents that already exist.
     """
-    
+
     resource_type = "CompositionRelatesTo"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ replaces | transforms | signs | appends.
         Type `str`. """
-        
+
         self.targetIdentifier = None
         """ Target of the relationship.
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.targetReference = None
         """ Target of the relationship.
         Type `FHIRReference` referencing `Composition` (represented as `dict` in JSON). """
-        
-        super(CompositionRelatesTo, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CompositionRelatesTo, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CompositionRelatesTo, self).elementProperties()
         js.extend([
@@ -240,54 +241,54 @@ class CompositionRelatesTo(backboneelement.BackboneElement):
 
 class CompositionSection(backboneelement.BackboneElement):
     """ Composition is broken into sections.
-    
+
     The root of the sections that make up the composition.
     """
-    
+
     resource_type = "CompositionSection"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Classification of section (recommended).
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.emptyReason = None
         """ Why the section is empty.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.entry = None
         """ A reference to data that supports this section.
         List of `FHIRReference` items referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.mode = None
         """ working | snapshot | changes.
         Type `str`. """
-        
+
         self.orderedBy = None
         """ Order of section entries.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.section = None
         """ Nested Section.
         List of `CompositionSection` items (represented as `dict` in JSON). """
-        
+
         self.text = None
         """ Text summary of the section, for human interpretation.
         Type `Narrative` (represented as `dict` in JSON). """
-        
+
         self.title = None
         """ Label for section (e.g. for ToC).
         Type `str`. """
-        
-        super(CompositionSection, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CompositionSection, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CompositionSection, self).elementProperties()
         js.extend([

@@ -1,97 +1,98 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/EligibilityRequest) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/EligibilityRequest) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class EligibilityRequest(domainresource.DomainResource):
     """ Determine insurance validity and scope of coverage.
-    
+
     The EligibilityRequest provides patient and insurance coverage information
     to an insurer for them to respond, in the form of an EligibilityResponse,
     with information regarding whether the stated coverage is valid and in-
     force and optionally to provide the insurance details of the policy.
     """
-    
+
     resource_type = "EligibilityRequest"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.benefitCategory = None
         """ Type of services covered.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.benefitSubCategory = None
         """ Detailed services covered within the type.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.businessArrangement = None
         """ Business agreement.
         Type `str`. """
-        
+
         self.coverage = None
         """ Insurance or medical plan.
         Type `FHIRReference` referencing `Coverage` (represented as `dict` in JSON). """
-        
+
         self.created = None
         """ Creation date.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.enterer = None
         """ Author.
         Type `FHIRReference` referencing `Practitioner` (represented as `dict` in JSON). """
-        
+
         self.facility = None
         """ Servicing Facility.
         Type `FHIRReference` referencing `Location` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Business Identifier.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.insurer = None
         """ Target.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.organization = None
         """ Responsible organization.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.patient = None
         """ The subject of the Products and Services.
         Type `FHIRReference` referencing `Patient` (represented as `dict` in JSON). """
-        
+
         self.priority = None
         """ Desired processing priority.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.provider = None
         """ Responsible practitioner.
         Type `FHIRReference` referencing `Practitioner` (represented as `dict` in JSON). """
-        
+
         self.servicedDate = None
         """ Estimated date or dates of Service.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.servicedPeriod = None
         """ Estimated date or dates of Service.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ active | cancelled | draft | entered-in-error.
         Type `str`. """
-        
-        super(EligibilityRequest, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(EligibilityRequest, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(EligibilityRequest, self).elementProperties()
         js.extend([

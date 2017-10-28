@@ -1,52 +1,53 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/DataRequirement) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/DataRequirement) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import element
 
 class DataRequirement(element.Element):
     """ Describes a required data item.
-    
+
     Describes a required data item for evaluation in terms of the type of data,
     and optional code or date-based filters of the data.
     """
-    
+
     resource_type = "DataRequirement"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.codeFilter = None
         """ What codes are expected.
         List of `DataRequirementCodeFilter` items (represented as `dict` in JSON). """
-        
+
         self.dateFilter = None
         """ What dates/date ranges are expected.
         List of `DataRequirementDateFilter` items (represented as `dict` in JSON). """
-        
+
         self.mustSupport = None
         """ Indicates that specific structure elements are referenced by the
         knowledge module.
         List of `str` items. """
-        
+
         self.profile = None
         """ The profile of the required data.
         List of `str` items. """
-        
+
         self.type = None
         """ The type of the required data.
         Type `str`. """
-        
-        super(DataRequirement, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(DataRequirement, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(DataRequirement, self).elementProperties()
         js.extend([
@@ -61,47 +62,47 @@ class DataRequirement(element.Element):
 
 class DataRequirementCodeFilter(element.Element):
     """ What codes are expected.
-    
+
     Code filters specify additional constraints on the data, specifying the
     value set of interest for a particular element of the data.
     """
-    
+
     resource_type = "DataRequirementCodeFilter"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.path = None
         """ The code-valued attribute of the filter.
         Type `str`. """
-        
+
         self.valueCode = None
         """ What code is expected.
         List of `str` items. """
-        
+
         self.valueCodeableConcept = None
         """ What CodeableConcept is expected.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.valueCoding = None
         """ What Coding is expected.
         List of `Coding` items (represented as `dict` in JSON). """
-        
+
         self.valueSetReference = None
         """ Valueset for the filter.
         Type `FHIRReference` referencing `ValueSet` (represented as `dict` in JSON). """
-        
+
         self.valueSetString = None
         """ Valueset for the filter.
         Type `str`. """
-        
-        super(DataRequirementCodeFilter, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(DataRequirementCodeFilter, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(DataRequirementCodeFilter, self).elementProperties()
         js.extend([
@@ -117,39 +118,39 @@ class DataRequirementCodeFilter(element.Element):
 
 class DataRequirementDateFilter(element.Element):
     """ What dates/date ranges are expected.
-    
+
     Date filters specify additional constraints on the data in terms of the
     applicable date range for specific elements.
     """
-    
+
     resource_type = "DataRequirementDateFilter"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.path = None
         """ The date-valued attribute of the filter.
         Type `str`. """
-        
+
         self.valueDateTime = None
         """ The value of the filter, as a Period, DateTime, or Duration value.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.valueDuration = None
         """ The value of the filter, as a Period, DateTime, or Duration value.
         Type `Duration` (represented as `dict` in JSON). """
-        
+
         self.valuePeriod = None
         """ The value of the filter, as a Period, DateTime, or Duration value.
         Type `Period` (represented as `dict` in JSON). """
-        
-        super(DataRequirementDateFilter, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(DataRequirementDateFilter, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(DataRequirementDateFilter, self).elementProperties()
         js.extend([

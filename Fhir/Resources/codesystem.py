@@ -1,132 +1,133 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/CodeSystem) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/CodeSystem) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class CodeSystem(domainresource.DomainResource):
     """ A set of codes drawn from one or more code systems.
-    
+
     A code system resource specifies a set of codes drawn from one or more code
     systems.
     """
-    
+
     resource_type = "CodeSystem"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.caseSensitive = None
         """ If code comparison is case sensitive.
         Type `bool`. """
-        
+
         self.compositional = None
         """ If code system defines a post-composition grammar.
         Type `bool`. """
-        
+
         self.concept = None
         """ Concepts in the code system.
         List of `CodeSystemConcept` items (represented as `dict` in JSON). """
-        
+
         self.contact = None
         """ Contact details for the publisher.
         List of `ContactDetail` items (represented as `dict` in JSON). """
-        
+
         self.content = None
         """ not-present | example | fragment | complete.
         Type `str`. """
-        
+
         self.copyright = None
         """ Use and/or publishing restrictions.
         Type `str`. """
-        
+
         self.count = None
         """ Total concepts in the code system.
         Type `int`. """
-        
+
         self.date = None
         """ Date this was last changed.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.description = None
         """ Natural language description of the code system.
         Type `str`. """
-        
+
         self.experimental = None
         """ For testing purposes, not real usage.
         Type `bool`. """
-        
+
         self.filter = None
         """ Filter that can be used in a value set.
         List of `CodeSystemFilter` items (represented as `dict` in JSON). """
-        
+
         self.hierarchyMeaning = None
         """ grouped-by | is-a | part-of | classified-with.
         Type `str`. """
-        
+
         self.identifier = None
         """ Additional identifier for the code system.
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.jurisdiction = None
         """ Intended jurisdiction for code system (if applicable).
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.name = None
         """ Name for this code system (computer friendly).
         Type `str`. """
-        
+
         self.property = None
         """ Additional information supplied about each concept.
         List of `CodeSystemProperty` items (represented as `dict` in JSON). """
-        
+
         self.publisher = None
         """ Name of the publisher (organization or individual).
         Type `str`. """
-        
+
         self.purpose = None
         """ Why this code system is defined.
         Type `str`. """
-        
+
         self.status = None
         """ draft | active | retired | unknown.
         Type `str`. """
-        
+
         self.title = None
         """ Name for this code system (human friendly).
         Type `str`. """
-        
+
         self.url = None
         """ Logical URI to reference this code system (globally unique)
         (Coding.system).
         Type `str`. """
-        
+
         self.useContext = None
         """ Context the content is intended to support.
         List of `UsageContext` items (represented as `dict` in JSON). """
-        
+
         self.valueSet = None
         """ Canonical URL for value set with entire code system.
         Type `str`. """
-        
+
         self.version = None
         """ Business version of the code system (Coding.version).
         Type `str`. """
-        
+
         self.versionNeeded = None
         """ If definitions are not stable.
         Type `bool`. """
-        
-        super(CodeSystem, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CodeSystem, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CodeSystem, self).elementProperties()
         js.extend([
@@ -163,48 +164,48 @@ from . import backboneelement
 
 class CodeSystemConcept(backboneelement.BackboneElement):
     """ Concepts in the code system.
-    
+
     Concepts that are in the code system. The concept definitions are
     inherently hierarchical, but the definitions must be consulted to determine
     what the meaning of the hierarchical relationships are.
     """
-    
+
     resource_type = "CodeSystemConcept"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Code that identifies concept.
         Type `str`. """
-        
+
         self.concept = None
         """ Child Concepts (is-a/contains/categorizes).
         List of `CodeSystemConcept` items (represented as `dict` in JSON). """
-        
+
         self.definition = None
         """ Formal definition.
         Type `str`. """
-        
+
         self.designation = None
         """ Additional representations for the concept.
         List of `CodeSystemConceptDesignation` items (represented as `dict` in JSON). """
-        
+
         self.display = None
         """ Text to display to the user.
         Type `str`. """
-        
+
         self.property = None
         """ Property value for the concept.
         List of `CodeSystemConceptProperty` items (represented as `dict` in JSON). """
-        
-        super(CodeSystemConcept, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CodeSystemConcept, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CodeSystemConcept, self).elementProperties()
         js.extend([
@@ -220,35 +221,35 @@ class CodeSystemConcept(backboneelement.BackboneElement):
 
 class CodeSystemConceptDesignation(backboneelement.BackboneElement):
     """ Additional representations for the concept.
-    
+
     Additional representations for the concept - other languages, aliases,
     specialized purposes, used for particular purposes, etc.
     """
-    
+
     resource_type = "CodeSystemConceptDesignation"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.language = None
         """ Human language of the designation.
         Type `str`. """
-        
+
         self.use = None
         """ Details how this designation would be used.
         Type `Coding` (represented as `dict` in JSON). """
-        
+
         self.value = None
         """ The text value for this designation.
         Type `str`. """
-        
-        super(CodeSystemConceptDesignation, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CodeSystemConceptDesignation, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CodeSystemConceptDesignation, self).elementProperties()
         js.extend([
@@ -261,50 +262,50 @@ class CodeSystemConceptDesignation(backboneelement.BackboneElement):
 
 class CodeSystemConceptProperty(backboneelement.BackboneElement):
     """ Property value for the concept.
-    
+
     A property value for this concept.
     """
-    
+
     resource_type = "CodeSystemConceptProperty"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Reference to CodeSystem.property.code.
         Type `str`. """
-        
+
         self.valueBoolean = None
         """ Value of the property for this concept.
         Type `bool`. """
-        
+
         self.valueCode = None
         """ Value of the property for this concept.
         Type `str`. """
-        
+
         self.valueCoding = None
         """ Value of the property for this concept.
         Type `Coding` (represented as `dict` in JSON). """
-        
+
         self.valueDateTime = None
         """ Value of the property for this concept.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.valueInteger = None
         """ Value of the property for this concept.
         Type `int`. """
-        
+
         self.valueString = None
         """ Value of the property for this concept.
         Type `str`. """
-        
-        super(CodeSystemConceptProperty, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CodeSystemConceptProperty, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CodeSystemConceptProperty, self).elementProperties()
         js.extend([
@@ -321,39 +322,39 @@ class CodeSystemConceptProperty(backboneelement.BackboneElement):
 
 class CodeSystemFilter(backboneelement.BackboneElement):
     """ Filter that can be used in a value set.
-    
+
     A filter that can be used in a value set compose statement when selecting
     concepts using a filter.
     """
-    
+
     resource_type = "CodeSystemFilter"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Code that identifies the filter.
         Type `str`. """
-        
+
         self.description = None
         """ How or why the filter is used.
         Type `str`. """
-        
+
         self.operator = None
         """ Operators that can be used with filter.
         List of `str` items. """
-        
+
         self.value = None
         """ What to use for the value.
         Type `str`. """
-        
-        super(CodeSystemFilter, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CodeSystemFilter, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CodeSystemFilter, self).elementProperties()
         js.extend([
@@ -367,40 +368,40 @@ class CodeSystemFilter(backboneelement.BackboneElement):
 
 class CodeSystemProperty(backboneelement.BackboneElement):
     """ Additional information supplied about each concept.
-    
+
     A property defines an additional slot through which additional information
     can be provided about a concept.
     """
-    
+
     resource_type = "CodeSystemProperty"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Identifies the property on the concepts, and when referred to in
         operations.
         Type `str`. """
-        
+
         self.description = None
         """ Why the property is defined, and/or what it conveys.
         Type `str`. """
-        
+
         self.type = None
         """ code | Coding | string | integer | boolean | dateTime.
         Type `str`. """
-        
+
         self.uri = None
         """ Formal identifier for the property.
         Type `str`. """
-        
-        super(CodeSystemProperty, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CodeSystemProperty, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CodeSystemProperty, self).elementProperties()
         js.extend([

@@ -1,75 +1,76 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Organization) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Organization) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class Organization(domainresource.DomainResource):
     """ A grouping of people or organizations with a common purpose.
-    
+
     A formally or informally recognized grouping of people or organizations
     formed for the purpose of achieving some form of collective action.
     Includes companies, institutions, corporations, departments, community
     groups, healthcare practice groups, etc.
     """
-    
+
     resource_type = "Organization"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.active = None
         """ Whether the organization's record is still in active use.
         Type `bool`. """
-        
+
         self.address = None
         """ An address for the organization.
         List of `Address` items (represented as `dict` in JSON). """
-        
+
         self.alias = None
         """ A list of alternate names that the organization is known as, or was
         known as in the past.
         List of `str` items. """
-        
+
         self.contact = None
         """ Contact for the organization for a certain purpose.
         List of `OrganizationContact` items (represented as `dict` in JSON). """
-        
+
         self.endpoint = None
         """ Technical endpoints providing access to services operated for the
         organization.
         List of `FHIRReference` items referencing `Endpoint` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Identifies this organization  across multiple systems.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.name = None
         """ Name used for the organization.
         Type `str`. """
-        
+
         self.partOf = None
         """ The organization of which this organization forms a part.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.telecom = None
         """ A contact detail for the organization.
         List of `ContactPoint` items (represented as `dict` in JSON). """
-        
+
         self.type = None
         """ Kind of organization.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
-        super(Organization, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(Organization, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(Organization, self).elementProperties()
         js.extend([
@@ -92,35 +93,35 @@ from . import backboneelement
 class OrganizationContact(backboneelement.BackboneElement):
     """ Contact for the organization for a certain purpose.
     """
-    
+
     resource_type = "OrganizationContact"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.address = None
         """ Visiting or postal addresses for the contact.
         Type `Address` (represented as `dict` in JSON). """
-        
+
         self.name = None
         """ A name associated with the contact.
         Type `HumanName` (represented as `dict` in JSON). """
-        
+
         self.purpose = None
         """ The type of contact.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.telecom = None
         """ Contact details (telephone, email, etc.)  for a contact.
         List of `ContactPoint` items (represented as `dict` in JSON). """
-        
-        super(OrganizationContact, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(OrganizationContact, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(OrganizationContact, self).elementProperties()
         js.extend([

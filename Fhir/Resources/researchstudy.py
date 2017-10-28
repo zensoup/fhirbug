@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/ResearchStudy) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/ResearchStudy) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class ResearchStudy(domainresource.DomainResource):
     """ Investigation to increase healthcare-related patient-independent knowledge.
-    
+
     A process where a researcher or organization plans and then executes a
     series of steps intended to increase the field of healthcare-related
     knowledge.  This includes studies of safety, efficacy, comparative
@@ -17,100 +18,100 @@ class ResearchStudy(domainresource.DomainResource):
     and other interventional and investigative techniques.  A ResearchStudy
     involves the gathering of information about human or animal subjects.
     """
-    
+
     resource_type = "ResearchStudy"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.arm = None
         """ Defined path through the study for a subject.
         List of `ResearchStudyArm` items (represented as `dict` in JSON). """
-        
+
         self.category = None
         """ Classifications for the study.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.contact = None
         """ Contact details for the study.
         List of `ContactDetail` items (represented as `dict` in JSON). """
-        
+
         self.description = None
         """ What this is study doing.
         Type `str`. """
-        
+
         self.enrollment = None
         """ Inclusion & exclusion criteria.
         List of `FHIRReference` items referencing `Group` (represented as `dict` in JSON). """
-        
+
         self.focus = None
         """ Drugs, devices, conditions, etc. under study.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Business Identifier for study.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.jurisdiction = None
         """ Geographic region(s) for study.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.keyword = None
         """ Used to search for the study.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.note = None
         """ Comments made about the event.
         List of `Annotation` items (represented as `dict` in JSON). """
-        
+
         self.partOf = None
         """ Part of larger study.
         List of `FHIRReference` items referencing `ResearchStudy` (represented as `dict` in JSON). """
-        
+
         self.period = None
         """ When the study began and ended.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.principalInvestigator = None
         """ The individual responsible for the study.
         Type `FHIRReference` referencing `Practitioner` (represented as `dict` in JSON). """
-        
+
         self.protocol = None
         """ Steps followed in executing study.
         List of `FHIRReference` items referencing `PlanDefinition` (represented as `dict` in JSON). """
-        
+
         self.reasonStopped = None
         """ Reason for terminating study early.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.relatedArtifact = None
         """ References and dependencies.
         List of `RelatedArtifact` items (represented as `dict` in JSON). """
-        
+
         self.site = None
         """ Location involved in study execution.
         List of `FHIRReference` items referencing `Location` (represented as `dict` in JSON). """
-        
+
         self.sponsor = None
         """ Organization responsible for the study.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ draft | in-progress | suspended | stopped | completed | entered-in-
         error.
         Type `str`. """
-        
+
         self.title = None
         """ Name for this study.
         Type `str`. """
-        
-        super(ResearchStudy, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ResearchStudy, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ResearchStudy, self).elementProperties()
         js.extend([
@@ -142,36 +143,36 @@ from . import backboneelement
 
 class ResearchStudyArm(backboneelement.BackboneElement):
     """ Defined path through the study for a subject.
-    
+
     Describes an expected sequence of events for one of the participants of a
     study.  E.g. Exposure to drug A, wash-out, exposure to drug B, wash-out,
     follow-up.
     """
-    
+
     resource_type = "ResearchStudyArm"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Categorization of study arm.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.description = None
         """ Short explanation of study path.
         Type `str`. """
-        
+
         self.name = None
         """ Label for study arm.
         Type `str`. """
-        
-        super(ResearchStudyArm, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ResearchStudyArm, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ResearchStudyArm, self).elementProperties()
         js.extend([

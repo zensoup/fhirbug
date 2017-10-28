@@ -1,83 +1,84 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/ProcessResponse) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/ProcessResponse) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class ProcessResponse(domainresource.DomainResource):
     """ ProcessResponse resource.
-    
+
     This resource provides processing status, errors and notes from the
     processing of a resource.
     """
-    
+
     resource_type = "ProcessResponse"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.communicationRequest = None
         """ Request for additional information.
         List of `FHIRReference` items referencing `CommunicationRequest` (represented as `dict` in JSON). """
-        
+
         self.created = None
         """ Creation date.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.disposition = None
         """ Disposition Message.
         Type `str`. """
-        
+
         self.error = None
         """ Error code.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.form = None
         """ Printed Form Identifier.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Business Identifier.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.organization = None
         """ Authoring Organization.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.outcome = None
         """ Processing outcome.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.processNote = None
         """ Processing comments or additional requirements.
         List of `ProcessResponseProcessNote` items (represented as `dict` in JSON). """
-        
+
         self.request = None
         """ Request reference.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.requestOrganization = None
         """ Responsible organization.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.requestProvider = None
         """ Responsible Practitioner.
         Type `FHIRReference` referencing `Practitioner` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ active | cancelled | draft | entered-in-error.
         Type `str`. """
-        
-        super(ProcessResponse, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ProcessResponse, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ProcessResponse, self).elementProperties()
         js.extend([
@@ -102,31 +103,31 @@ from . import backboneelement
 
 class ProcessResponseProcessNote(backboneelement.BackboneElement):
     """ Processing comments or additional requirements.
-    
+
     Suite of processing notes or additional requirements if the processing has
     been held.
     """
-    
+
     resource_type = "ProcessResponseProcessNote"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.text = None
         """ Comment on the processing.
         Type `str`. """
-        
+
         self.type = None
         """ display | print | printoper.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
-        super(ProcessResponseProcessNote, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(ProcessResponseProcessNote, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(ProcessResponseProcessNote, self).elementProperties()
         js.extend([

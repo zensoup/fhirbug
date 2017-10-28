@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Practitioner) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Practitioner) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
@@ -10,64 +11,64 @@ from . import domainresource
 class Practitioner(domainresource.DomainResource):
     """ A person with a  formal responsibility in the provisioning of healthcare or
     related services.
-    
+
     A person who is directly or indirectly involved in the provisioning of
     healthcare.
     """
-    
+
     resource_type = "Practitioner"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.active = None
         """ Whether this practitioner's record is in active use.
         Type `bool`. """
-        
+
         self.address = None
         """ Address(es) of the practitioner that are not role specific
         (typically home address).
         List of `Address` items (represented as `dict` in JSON). """
-        
+
         self.birthDate = None
         """ The date  on which the practitioner was born.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.communication = None
         """ A language the practitioner is able to use in patient communication.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.gender = None
         """ male | female | other | unknown.
         Type `str`. """
-        
+
         self.identifier = None
         """ A identifier for the person as this agent.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.name = None
         """ The name(s) associated with the practitioner.
         List of `HumanName` items (represented as `dict` in JSON). """
-        
+
         self.photo = None
         """ Image of the person.
         List of `Attachment` items (represented as `dict` in JSON). """
-        
+
         self.qualification = None
         """ Qualifications obtained by training and certification.
         List of `PractitionerQualification` items (represented as `dict` in JSON). """
-        
+
         self.telecom = None
         """ A contact detail for the practitioner (that apply to all roles).
         List of `ContactPoint` items (represented as `dict` in JSON). """
-        
-        super(Practitioner, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(Practitioner, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(Practitioner, self).elementProperties()
         js.extend([
@@ -90,35 +91,35 @@ from . import backboneelement
 class PractitionerQualification(backboneelement.BackboneElement):
     """ Qualifications obtained by training and certification.
     """
-    
+
     resource_type = "PractitionerQualification"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Coded representation of the qualification.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ An identifier for this qualification for the practitioner.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.issuer = None
         """ Organization that regulates and issues the qualification.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.period = None
         """ Period during which the qualification is valid.
         Type `Period` (represented as `dict` in JSON). """
-        
-        super(PractitionerQualification, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(PractitionerQualification, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(PractitionerQualification, self).elementProperties()
         js.extend([

@@ -1,117 +1,118 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Questionnaire) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Questionnaire) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class Questionnaire(domainresource.DomainResource):
     """ A structured set of questions.
-    
+
     A structured set of questions intended to guide the collection of answers
     from end-users. Questionnaires provide detailed control over order,
     presentation, phraseology and grouping to allow coherent, consistent data
     collection.
     """
-    
+
     resource_type = "Questionnaire"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.approvalDate = None
         """ When the questionnaire was approved by publisher.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.code = None
         """ Concept that represents the overall questionnaire.
         List of `Coding` items (represented as `dict` in JSON). """
-        
+
         self.contact = None
         """ Contact details for the publisher.
         List of `ContactDetail` items (represented as `dict` in JSON). """
-        
+
         self.copyright = None
         """ Use and/or publishing restrictions.
         Type `str`. """
-        
+
         self.date = None
         """ Date this was last changed.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.description = None
         """ Natural language description of the questionnaire.
         Type `str`. """
-        
+
         self.effectivePeriod = None
         """ When the questionnaire is expected to be used.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.experimental = None
         """ For testing purposes, not real usage.
         Type `bool`. """
-        
+
         self.identifier = None
         """ Additional identifier for the questionnaire.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.item = None
         """ Questions and sections within the Questionnaire.
         List of `QuestionnaireItem` items (represented as `dict` in JSON). """
-        
+
         self.jurisdiction = None
         """ Intended jurisdiction for questionnaire (if applicable).
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.lastReviewDate = None
         """ When the questionnaire was last reviewed.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.name = None
         """ Name for this questionnaire (computer friendly).
         Type `str`. """
-        
+
         self.publisher = None
         """ Name of the publisher (organization or individual).
         Type `str`. """
-        
+
         self.purpose = None
         """ Why this questionnaire is defined.
         Type `str`. """
-        
+
         self.status = None
         """ draft | active | retired | unknown.
         Type `str`. """
-        
+
         self.subjectType = None
         """ Resource that can be subject of QuestionnaireResponse.
         List of `str` items. """
-        
+
         self.title = None
         """ Name for this questionnaire (human friendly).
         Type `str`. """
-        
+
         self.url = None
         """ Logical URI to reference this questionnaire (globally unique).
         Type `str`. """
-        
+
         self.useContext = None
         """ Context the content is intended to support.
         List of `UsageContext` items (represented as `dict` in JSON). """
-        
+
         self.version = None
         """ Business version of the questionnaire.
         Type `str`. """
-        
-        super(Questionnaire, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(Questionnaire, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(Questionnaire, self).elementProperties()
         js.extend([
@@ -144,127 +145,127 @@ from . import backboneelement
 
 class QuestionnaireItem(backboneelement.BackboneElement):
     """ Questions and sections within the Questionnaire.
-    
+
     A particular question, question grouping or display text that is part of
     the questionnaire.
     """
-    
+
     resource_type = "QuestionnaireItem"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.code = None
         """ Corresponding concept for this item in a terminology.
         List of `Coding` items (represented as `dict` in JSON). """
-        
+
         self.definition = None
         """ ElementDefinition - details for the item.
         Type `str`. """
-        
+
         self.enableWhen = None
         """ Only allow data when.
         List of `QuestionnaireItemEnableWhen` items (represented as `dict` in JSON). """
-        
+
         self.initialAttachment = None
         """ Default value when item is first rendered.
         Type `Attachment` (represented as `dict` in JSON). """
-        
+
         self.initialBoolean = None
         """ Default value when item is first rendered.
         Type `bool`. """
-        
+
         self.initialCoding = None
         """ Default value when item is first rendered.
         Type `Coding` (represented as `dict` in JSON). """
-        
+
         self.initialDate = None
         """ Default value when item is first rendered.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.initialDateTime = None
         """ Default value when item is first rendered.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.initialDecimal = None
         """ Default value when item is first rendered.
         Type `float`. """
-        
+
         self.initialInteger = None
         """ Default value when item is first rendered.
         Type `int`. """
-        
+
         self.initialQuantity = None
         """ Default value when item is first rendered.
         Type `Quantity` (represented as `dict` in JSON). """
-        
+
         self.initialReference = None
         """ Default value when item is first rendered.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.initialString = None
         """ Default value when item is first rendered.
         Type `str`. """
-        
+
         self.initialTime = None
         """ Default value when item is first rendered.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.initialUri = None
         """ Default value when item is first rendered.
         Type `str`. """
-        
+
         self.item = None
         """ Nested questionnaire items.
         List of `QuestionnaireItem` items (represented as `dict` in JSON). """
-        
+
         self.linkId = None
         """ Unique id for item in questionnaire.
         Type `str`. """
-        
+
         self.maxLength = None
         """ No more than this many characters.
         Type `int`. """
-        
+
         self.option = None
         """ Permitted answer.
         List of `QuestionnaireItemOption` items (represented as `dict` in JSON). """
-        
+
         self.options = None
         """ Valueset containing permitted answers.
         Type `FHIRReference` referencing `ValueSet` (represented as `dict` in JSON). """
-        
+
         self.prefix = None
         """ E.g. "1(a)", "2.5.3".
         Type `str`. """
-        
+
         self.readOnly = None
         """ Don't allow human editing.
         Type `bool`. """
-        
+
         self.repeats = None
         """ Whether the item may repeat.
         Type `bool`. """
-        
+
         self.required = None
         """ Whether the item must be included in data results.
         Type `bool`. """
-        
+
         self.text = None
         """ Primary text for the item.
         Type `str`. """
-        
+
         self.type = None
         """ group | display | boolean | decimal | integer | date | dateTime +.
         Type `str`. """
-        
-        super(QuestionnaireItem, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(QuestionnaireItem, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(QuestionnaireItem, self).elementProperties()
         js.extend([
@@ -300,80 +301,80 @@ class QuestionnaireItem(backboneelement.BackboneElement):
 
 class QuestionnaireItemEnableWhen(backboneelement.BackboneElement):
     """ Only allow data when.
-    
+
     A constraint indicating that this item should only be enabled
     (displayed/allow answers to be captured) when the specified condition is
     true.
     """
-    
+
     resource_type = "QuestionnaireItemEnableWhen"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.answerAttachment = None
         """ Value question must have.
         Type `Attachment` (represented as `dict` in JSON). """
-        
+
         self.answerBoolean = None
         """ Value question must have.
         Type `bool`. """
-        
+
         self.answerCoding = None
         """ Value question must have.
         Type `Coding` (represented as `dict` in JSON). """
-        
+
         self.answerDate = None
         """ Value question must have.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.answerDateTime = None
         """ Value question must have.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.answerDecimal = None
         """ Value question must have.
         Type `float`. """
-        
+
         self.answerInteger = None
         """ Value question must have.
         Type `int`. """
-        
+
         self.answerQuantity = None
         """ Value question must have.
         Type `Quantity` (represented as `dict` in JSON). """
-        
+
         self.answerReference = None
         """ Value question must have.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.answerString = None
         """ Value question must have.
         Type `str`. """
-        
+
         self.answerTime = None
         """ Value question must have.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.answerUri = None
         """ Value question must have.
         Type `str`. """
-        
+
         self.hasAnswer = None
         """ Enable when answered or not.
         Type `bool`. """
-        
+
         self.question = None
         """ Question that determines whether item is enabled.
         Type `str`. """
-        
-        super(QuestionnaireItemEnableWhen, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(QuestionnaireItemEnableWhen, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(QuestionnaireItemEnableWhen, self).elementProperties()
         js.extend([
@@ -397,42 +398,42 @@ class QuestionnaireItemEnableWhen(backboneelement.BackboneElement):
 
 class QuestionnaireItemOption(backboneelement.BackboneElement):
     """ Permitted answer.
-    
+
     One of the permitted answers for a "choice" or "open-choice" question.
     """
-    
+
     resource_type = "QuestionnaireItemOption"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.valueCoding = None
         """ Answer value.
         Type `Coding` (represented as `dict` in JSON). """
-        
+
         self.valueDate = None
         """ Answer value.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.valueInteger = None
         """ Answer value.
         Type `int`. """
-        
+
         self.valueString = None
         """ Answer value.
         Type `str`. """
-        
+
         self.valueTime = None
         """ Answer value.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
-        super(QuestionnaireItemOption, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(QuestionnaireItemOption, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(QuestionnaireItemOption, self).elementProperties()
         js.extend([

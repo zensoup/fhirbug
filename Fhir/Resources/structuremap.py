@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/StructureMap) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/StructureMap) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
@@ -11,91 +12,91 @@ class StructureMap(domainresource.DomainResource):
     """ A Map of relationships between 2 structures that can be used to transform
     data.
     """
-    
+
     resource_type = "StructureMap"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.contact = None
         """ Contact details for the publisher.
         List of `ContactDetail` items (represented as `dict` in JSON). """
-        
+
         self.copyright = None
         """ Use and/or publishing restrictions.
         Type `str`. """
-        
+
         self.date = None
         """ Date this was last changed.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.description = None
         """ Natural language description of the structure map.
         Type `str`. """
-        
+
         self.experimental = None
         """ For testing purposes, not real usage.
         Type `bool`. """
-        
+
         self.group = None
         """ Named sections for reader convenience.
         List of `StructureMapGroup` items (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Additional identifier for the structure map.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.import_fhir = None
         """ Other maps used by this map (canonical URLs).
         List of `str` items. """
-        
+
         self.jurisdiction = None
         """ Intended jurisdiction for structure map (if applicable).
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.name = None
         """ Name for this structure map (computer friendly).
         Type `str`. """
-        
+
         self.publisher = None
         """ Name of the publisher (organization or individual).
         Type `str`. """
-        
+
         self.purpose = None
         """ Why this structure map is defined.
         Type `str`. """
-        
+
         self.status = None
         """ draft | active | retired | unknown.
         Type `str`. """
-        
+
         self.structure = None
         """ Structure Definition used by this map.
         List of `StructureMapStructure` items (represented as `dict` in JSON). """
-        
+
         self.title = None
         """ Name for this structure map (human friendly).
         Type `str`. """
-        
+
         self.url = None
         """ Logical URI to reference this structure map (globally unique).
         Type `str`. """
-        
+
         self.useContext = None
         """ Context the content is intended to support.
         List of `UsageContext` items (represented as `dict` in JSON). """
-        
+
         self.version = None
         """ Business version of the structure map.
         Type `str`. """
-        
-        super(StructureMap, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(StructureMap, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(StructureMap, self).elementProperties()
         js.extend([
@@ -125,47 +126,47 @@ from . import backboneelement
 
 class StructureMapGroup(backboneelement.BackboneElement):
     """ Named sections for reader convenience.
-    
+
     Organizes the mapping into managable chunks for human review/ease of
     maintenance.
     """
-    
+
     resource_type = "StructureMapGroup"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.documentation = None
         """ Additional description/explaination for group.
         Type `str`. """
-        
+
         self.extends = None
         """ Another group that this group adds rules to.
         Type `str`. """
-        
+
         self.input = None
         """ Named instance provided when invoking the map.
         List of `StructureMapGroupInput` items (represented as `dict` in JSON). """
-        
+
         self.name = None
         """ Human-readable label.
         Type `str`. """
-        
+
         self.rule = None
         """ Transform Rule from source to target.
         List of `StructureMapGroupRule` items (represented as `dict` in JSON). """
-        
+
         self.typeMode = None
         """ none | types | type-and-types.
         Type `str`. """
-        
-        super(StructureMapGroup, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(StructureMapGroup, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(StructureMapGroup, self).elementProperties()
         js.extend([
@@ -181,39 +182,39 @@ class StructureMapGroup(backboneelement.BackboneElement):
 
 class StructureMapGroupInput(backboneelement.BackboneElement):
     """ Named instance provided when invoking the map.
-    
+
     A name assigned to an instance of data. The instance must be provided when
     the mapping is invoked.
     """
-    
+
     resource_type = "StructureMapGroupInput"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.documentation = None
         """ Documentation for this instance of data.
         Type `str`. """
-        
+
         self.mode = None
         """ source | target.
         Type `str`. """
-        
+
         self.name = None
         """ Name for this instance of data.
         Type `str`. """
-        
+
         self.type = None
         """ Type for this instance of data.
         Type `str`. """
-        
-        super(StructureMapGroupInput, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(StructureMapGroupInput, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(StructureMapGroupInput, self).elementProperties()
         js.extend([
@@ -228,43 +229,43 @@ class StructureMapGroupInput(backboneelement.BackboneElement):
 class StructureMapGroupRule(backboneelement.BackboneElement):
     """ Transform Rule from source to target.
     """
-    
+
     resource_type = "StructureMapGroupRule"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.dependent = None
         """ Which other rules to apply in the context of this rule.
         List of `StructureMapGroupRuleDependent` items (represented as `dict` in JSON). """
-        
+
         self.documentation = None
         """ Documentation for this instance of data.
         Type `str`. """
-        
+
         self.name = None
         """ Name of the rule for internal references.
         Type `str`. """
-        
+
         self.rule = None
         """ Rules contained in this rule.
         List of `StructureMapGroupRule` items (represented as `dict` in JSON). """
-        
+
         self.source = None
         """ Source inputs to the mapping.
         List of `StructureMapGroupRuleSource` items (represented as `dict` in JSON). """
-        
+
         self.target = None
         """ Content to create because of this mapping rule.
         List of `StructureMapGroupRuleTarget` items (represented as `dict` in JSON). """
-        
-        super(StructureMapGroupRule, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(StructureMapGroupRule, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(StructureMapGroupRule, self).elementProperties()
         js.extend([
@@ -281,27 +282,27 @@ class StructureMapGroupRule(backboneelement.BackboneElement):
 class StructureMapGroupRuleDependent(backboneelement.BackboneElement):
     """ Which other rules to apply in the context of this rule.
     """
-    
+
     resource_type = "StructureMapGroupRuleDependent"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.name = None
         """ Name of a rule or group to apply.
         Type `str`. """
-        
+
         self.variable = None
         """ Variable to pass to the rule or group.
         List of `str` items. """
-        
-        super(StructureMapGroupRuleDependent, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(StructureMapGroupRuleDependent, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(StructureMapGroupRuleDependent, self).elementProperties()
         js.extend([
@@ -314,208 +315,208 @@ class StructureMapGroupRuleDependent(backboneelement.BackboneElement):
 class StructureMapGroupRuleSource(backboneelement.BackboneElement):
     """ Source inputs to the mapping.
     """
-    
+
     resource_type = "StructureMapGroupRuleSource"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.check = None
         """ FHIRPath expression  - must be true or the mapping engine throws an
         error instead of completing.
         Type `str`. """
-        
+
         self.condition = None
         """ FHIRPath expression  - must be true or the rule does not apply.
         Type `str`. """
-        
+
         self.context = None
         """ Type or variable this rule applies to.
         Type `str`. """
-        
+
         self.defaultValueAddress = None
         """ Default value if no value exists.
         Type `Address` (represented as `dict` in JSON). """
-        
+
         self.defaultValueAge = None
         """ Default value if no value exists.
         Type `Age` (represented as `dict` in JSON). """
-        
+
         self.defaultValueAnnotation = None
         """ Default value if no value exists.
         Type `Annotation` (represented as `dict` in JSON). """
-        
+
         self.defaultValueAttachment = None
         """ Default value if no value exists.
         Type `Attachment` (represented as `dict` in JSON). """
-        
+
         self.defaultValueBase64Binary = None
         """ Default value if no value exists.
         Type `str`. """
-        
+
         self.defaultValueBoolean = None
         """ Default value if no value exists.
         Type `bool`. """
-        
+
         self.defaultValueCode = None
         """ Default value if no value exists.
         Type `str`. """
-        
+
         self.defaultValueCodeableConcept = None
         """ Default value if no value exists.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.defaultValueCoding = None
         """ Default value if no value exists.
         Type `Coding` (represented as `dict` in JSON). """
-        
+
         self.defaultValueContactPoint = None
         """ Default value if no value exists.
         Type `ContactPoint` (represented as `dict` in JSON). """
-        
+
         self.defaultValueCount = None
         """ Default value if no value exists.
         Type `Count` (represented as `dict` in JSON). """
-        
+
         self.defaultValueDate = None
         """ Default value if no value exists.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.defaultValueDateTime = None
         """ Default value if no value exists.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.defaultValueDecimal = None
         """ Default value if no value exists.
         Type `float`. """
-        
+
         self.defaultValueDistance = None
         """ Default value if no value exists.
         Type `Distance` (represented as `dict` in JSON). """
-        
+
         self.defaultValueDuration = None
         """ Default value if no value exists.
         Type `Duration` (represented as `dict` in JSON). """
-        
+
         self.defaultValueHumanName = None
         """ Default value if no value exists.
         Type `HumanName` (represented as `dict` in JSON). """
-        
+
         self.defaultValueId = None
         """ Default value if no value exists.
         Type `str`. """
-        
+
         self.defaultValueIdentifier = None
         """ Default value if no value exists.
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.defaultValueInstant = None
         """ Default value if no value exists.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.defaultValueInteger = None
         """ Default value if no value exists.
         Type `int`. """
-        
+
         self.defaultValueMarkdown = None
         """ Default value if no value exists.
         Type `str`. """
-        
+
         self.defaultValueMeta = None
         """ Default value if no value exists.
         Type `Meta` (represented as `dict` in JSON). """
-        
+
         self.defaultValueMoney = None
         """ Default value if no value exists.
         Type `Money` (represented as `dict` in JSON). """
-        
+
         self.defaultValueOid = None
         """ Default value if no value exists.
         Type `str`. """
-        
+
         self.defaultValuePeriod = None
         """ Default value if no value exists.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.defaultValuePositiveInt = None
         """ Default value if no value exists.
         Type `int`. """
-        
+
         self.defaultValueQuantity = None
         """ Default value if no value exists.
         Type `Quantity` (represented as `dict` in JSON). """
-        
+
         self.defaultValueRange = None
         """ Default value if no value exists.
         Type `Range` (represented as `dict` in JSON). """
-        
+
         self.defaultValueRatio = None
         """ Default value if no value exists.
         Type `Ratio` (represented as `dict` in JSON). """
-        
+
         self.defaultValueReference = None
         """ Default value if no value exists.
         Type `FHIRReference` (represented as `dict` in JSON). """
-        
+
         self.defaultValueSampledData = None
         """ Default value if no value exists.
         Type `SampledData` (represented as `dict` in JSON). """
-        
+
         self.defaultValueSignature = None
         """ Default value if no value exists.
         Type `Signature` (represented as `dict` in JSON). """
-        
+
         self.defaultValueString = None
         """ Default value if no value exists.
         Type `str`. """
-        
+
         self.defaultValueTime = None
         """ Default value if no value exists.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.defaultValueTiming = None
         """ Default value if no value exists.
         Type `Timing` (represented as `dict` in JSON). """
-        
+
         self.defaultValueUnsignedInt = None
         """ Default value if no value exists.
         Type `int`. """
-        
+
         self.defaultValueUri = None
         """ Default value if no value exists.
         Type `str`. """
-        
+
         self.element = None
         """ Optional field for this source.
         Type `str`. """
-        
+
         self.listMode = None
         """ first | not_first | last | not_last | only_one.
         Type `str`. """
-        
+
         self.max = None
         """ Specified maximum cardinality (number or *).
         Type `str`. """
-        
+
         self.min = None
         """ Specified minimum cardinality.
         Type `int`. """
-        
+
         self.type = None
         """ Rule only applies if source has this type.
         Type `str`. """
-        
+
         self.variable = None
         """ Named context for field, if a field is specified.
         Type `str`. """
-        
-        super(StructureMapGroupRuleSource, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(StructureMapGroupRuleSource, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(StructureMapGroupRuleSource, self).elementProperties()
         js.extend([
@@ -573,51 +574,51 @@ class StructureMapGroupRuleSource(backboneelement.BackboneElement):
 class StructureMapGroupRuleTarget(backboneelement.BackboneElement):
     """ Content to create because of this mapping rule.
     """
-    
+
     resource_type = "StructureMapGroupRuleTarget"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.context = None
         """ Type or variable this rule applies to.
         Type `str`. """
-        
+
         self.contextType = None
         """ type | variable.
         Type `str`. """
-        
+
         self.element = None
         """ Field to create in the context.
         Type `str`. """
-        
+
         self.listMode = None
         """ first | share | last | collate.
         List of `str` items. """
-        
+
         self.listRuleId = None
         """ Internal rule reference for shared list items.
         Type `str`. """
-        
+
         self.parameter = None
         """ Parameters to the transform.
         List of `StructureMapGroupRuleTargetParameter` items (represented as `dict` in JSON). """
-        
+
         self.transform = None
         """ create | copy +.
         Type `str`. """
-        
+
         self.variable = None
         """ Named context for field, if desired, and a field is specified.
         Type `str`. """
-        
-        super(StructureMapGroupRuleTarget, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(StructureMapGroupRuleTarget, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(StructureMapGroupRuleTarget, self).elementProperties()
         js.extend([
@@ -636,39 +637,39 @@ class StructureMapGroupRuleTarget(backboneelement.BackboneElement):
 class StructureMapGroupRuleTargetParameter(backboneelement.BackboneElement):
     """ Parameters to the transform.
     """
-    
+
     resource_type = "StructureMapGroupRuleTargetParameter"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.valueBoolean = None
         """ Parameter value - variable or literal.
         Type `bool`. """
-        
+
         self.valueDecimal = None
         """ Parameter value - variable or literal.
         Type `float`. """
-        
+
         self.valueId = None
         """ Parameter value - variable or literal.
         Type `str`. """
-        
+
         self.valueInteger = None
         """ Parameter value - variable or literal.
         Type `int`. """
-        
+
         self.valueString = None
         """ Parameter value - variable or literal.
         Type `str`. """
-        
-        super(StructureMapGroupRuleTargetParameter, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(StructureMapGroupRuleTargetParameter, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(StructureMapGroupRuleTargetParameter, self).elementProperties()
         js.extend([
@@ -683,39 +684,39 @@ class StructureMapGroupRuleTargetParameter(backboneelement.BackboneElement):
 
 class StructureMapStructure(backboneelement.BackboneElement):
     """ Structure Definition used by this map.
-    
+
     A structure definition used by this map. The structure definition may
     describe instances that are converted, or the instances that are produced.
     """
-    
+
     resource_type = "StructureMapStructure"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.alias = None
         """ Name for type in this map.
         Type `str`. """
-        
+
         self.documentation = None
         """ Documentation on use of structure.
         Type `str`. """
-        
+
         self.mode = None
         """ source | queried | target | produced.
         Type `str`. """
-        
+
         self.url = None
         """ Canonical URL for structure definition.
         Type `str`. """
-        
-        super(StructureMapStructure, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(StructureMapStructure, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(StructureMapStructure, self).elementProperties()
         js.extend([

@@ -1,140 +1,141 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/MedicationDispense) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/MedicationDispense) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class MedicationDispense(domainresource.DomainResource):
     """ Dispensing a medication to a named patient.
-    
+
     Indicates that a medication product is to be or has been dispensed for a
     named person/patient.  This includes a description of the medication
     product (supply) provided and the instructions for administering the
     medication.  The medication dispense is the result of a pharmacy system
     responding to a medication order.
     """
-    
+
     resource_type = "MedicationDispense"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.authorizingPrescription = None
         """ Medication order that authorizes the dispense.
         List of `FHIRReference` items referencing `MedicationRequest` (represented as `dict` in JSON). """
-        
+
         self.category = None
         """ Type of medication dispense.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.context = None
         """ Encounter / Episode associated with event.
         Type `FHIRReference` referencing `Encounter, EpisodeOfCare` (represented as `dict` in JSON). """
-        
+
         self.daysSupply = None
         """ Amount of medication expressed as a timing amount.
         Type `Quantity` (represented as `dict` in JSON). """
-        
+
         self.destination = None
         """ Where the medication was sent.
         Type `FHIRReference` referencing `Location` (represented as `dict` in JSON). """
-        
+
         self.detectedIssue = None
         """ Clinical issue with action.
         List of `FHIRReference` items referencing `DetectedIssue` (represented as `dict` in JSON). """
-        
+
         self.dosageInstruction = None
         """ How the medication is to be used by the patient or administered by
         the caregiver.
         List of `Dosage` items (represented as `dict` in JSON). """
-        
+
         self.eventHistory = None
         """ A list of releveant lifecycle events.
         List of `FHIRReference` items referencing `Provenance` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ External identifier.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.medicationCodeableConcept = None
         """ What medication was supplied.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.medicationReference = None
         """ What medication was supplied.
         Type `FHIRReference` referencing `Medication` (represented as `dict` in JSON). """
-        
+
         self.notDone = None
         """ Whether the dispense was or was not performed.
         Type `bool`. """
-        
+
         self.notDoneReasonCodeableConcept = None
         """ Why a dispense was not performed.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.notDoneReasonReference = None
         """ Why a dispense was not performed.
         Type `FHIRReference` referencing `DetectedIssue` (represented as `dict` in JSON). """
-        
+
         self.note = None
         """ Information about the dispense.
         List of `Annotation` items (represented as `dict` in JSON). """
-        
+
         self.partOf = None
         """ Event that dispense is part of.
         List of `FHIRReference` items referencing `Procedure` (represented as `dict` in JSON). """
-        
+
         self.performer = None
         """ Who performed event.
         List of `MedicationDispensePerformer` items (represented as `dict` in JSON). """
-        
+
         self.quantity = None
         """ Amount dispensed.
         Type `Quantity` (represented as `dict` in JSON). """
-        
+
         self.receiver = None
         """ Who collected the medication.
         List of `FHIRReference` items referencing `Patient, Practitioner` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ preparation | in-progress | on-hold | completed | entered-in-error
         | stopped.
         Type `str`. """
-        
+
         self.subject = None
         """ Who the dispense is for.
         Type `FHIRReference` referencing `Patient, Group` (represented as `dict` in JSON). """
-        
+
         self.substitution = None
         """ Whether a substitution was performed on the dispense.
         Type `MedicationDispenseSubstitution` (represented as `dict` in JSON). """
-        
+
         self.supportingInformation = None
         """ Information that supports the dispensing of the medication.
         List of `FHIRReference` items referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.type = None
         """ Trial fill, partial fill, emergency fill, etc..
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.whenHandedOver = None
         """ When product was given out.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.whenPrepared = None
         """ When product was packaged and reviewed.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
-        super(MedicationDispense, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(MedicationDispense, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(MedicationDispense, self).elementProperties()
         js.extend([
@@ -172,31 +173,31 @@ from . import backboneelement
 
 class MedicationDispensePerformer(backboneelement.BackboneElement):
     """ Who performed event.
-    
+
     Indicates who or what performed the event.  It should be assumed that the
     performer is the dispenser of the medication.
     """
-    
+
     resource_type = "MedicationDispensePerformer"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.actor = None
         """ Individual who was performing.
         Type `FHIRReference` referencing `Practitioner, Organization, Patient, Device, RelatedPerson` (represented as `dict` in JSON). """
-        
+
         self.onBehalfOf = None
         """ Organization organization was acting for.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
-        super(MedicationDispensePerformer, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(MedicationDispensePerformer, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(MedicationDispensePerformer, self).elementProperties()
         js.extend([
@@ -208,43 +209,43 @@ class MedicationDispensePerformer(backboneelement.BackboneElement):
 
 class MedicationDispenseSubstitution(backboneelement.BackboneElement):
     """ Whether a substitution was performed on the dispense.
-    
+
     Indicates whether or not substitution was made as part of the dispense.  In
     some cases substitution will be expected but does not happen, in other
     cases substitution is not expected but does happen.  This block explains
     what substitution did or did not happen and why.  If nothing is specified,
     substitution was not done.
     """
-    
+
     resource_type = "MedicationDispenseSubstitution"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.reason = None
         """ Why was substitution made.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.responsibleParty = None
         """ Who is responsible for the substitution.
         List of `FHIRReference` items referencing `Practitioner` (represented as `dict` in JSON). """
-        
+
         self.type = None
         """ Code signifying whether a different drug was dispensed from what
         was prescribed.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.wasSubstituted = None
         """ Whether a substitution was or was not performed on the dispense.
         Type `bool`. """
-        
-        super(MedicationDispenseSubstitution, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(MedicationDispenseSubstitution, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(MedicationDispenseSubstitution, self).elementProperties()
         js.extend([

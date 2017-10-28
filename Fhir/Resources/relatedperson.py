@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/RelatedPerson) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/RelatedPerson) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
@@ -10,68 +11,68 @@ from . import domainresource
 class RelatedPerson(domainresource.DomainResource):
     """ An person that is related to a patient, but who is not a direct target of
     care.
-    
+
     Information about a person that is involved in the care for a patient, but
     who is not the target of healthcare, nor has a formal responsibility in the
     care process.
     """
-    
+
     resource_type = "RelatedPerson"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.active = None
         """ Whether this related person's record is in active use.
         Type `bool`. """
-        
+
         self.address = None
         """ Address where the related person can be contacted or visited.
         List of `Address` items (represented as `dict` in JSON). """
-        
+
         self.birthDate = None
         """ The date on which the related person was born.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.gender = None
         """ male | female | other | unknown.
         Type `str`. """
-        
+
         self.identifier = None
         """ A human identifier for this person.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.name = None
         """ A name associated with the person.
         List of `HumanName` items (represented as `dict` in JSON). """
-        
+
         self.patient = None
         """ The patient this person is related to.
         Type `FHIRReference` referencing `Patient` (represented as `dict` in JSON). """
-        
+
         self.period = None
         """ Period of time that this relationship is considered valid.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.photo = None
         """ Image of the person.
         List of `Attachment` items (represented as `dict` in JSON). """
-        
+
         self.relationship = None
         """ The nature of the relationship.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.telecom = None
         """ A contact detail for the person.
         List of `ContactPoint` items (represented as `dict` in JSON). """
-        
-        super(RelatedPerson, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(RelatedPerson, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(RelatedPerson, self).elementProperties()
         js.extend([

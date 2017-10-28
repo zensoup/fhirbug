@@ -1,82 +1,83 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/SupplyDelivery) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/SupplyDelivery) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class SupplyDelivery(domainresource.DomainResource):
     """ Delivery of bulk Supplies.
-    
+
     Record of delivery of what is supplied.
     """
-    
+
     resource_type = "SupplyDelivery"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.basedOn = None
         """ Fulfills plan, proposal or order.
         List of `FHIRReference` items referencing `SupplyRequest` (represented as `dict` in JSON). """
-        
+
         self.destination = None
         """ Where the Supply was sent.
         Type `FHIRReference` referencing `Location` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ External identifier.
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.occurrenceDateTime = None
         """ When event occurred.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.occurrencePeriod = None
         """ When event occurred.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.occurrenceTiming = None
         """ When event occurred.
         Type `Timing` (represented as `dict` in JSON). """
-        
+
         self.partOf = None
         """ Part of referenced event.
         List of `FHIRReference` items referencing `SupplyDelivery, Contract` (represented as `dict` in JSON). """
-        
+
         self.patient = None
         """ Patient for whom the item is supplied.
         Type `FHIRReference` referencing `Patient` (represented as `dict` in JSON). """
-        
+
         self.receiver = None
         """ Who collected the Supply.
         List of `FHIRReference` items referencing `Practitioner` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ in-progress | completed | abandoned | entered-in-error.
         Type `str`. """
-        
+
         self.suppliedItem = None
         """ The item that is delivered or supplied.
         Type `SupplyDeliverySuppliedItem` (represented as `dict` in JSON). """
-        
+
         self.supplier = None
         """ Dispenser.
         Type `FHIRReference` referencing `Practitioner, Organization` (represented as `dict` in JSON). """
-        
+
         self.type = None
         """ Category of dispense event.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
-        super(SupplyDelivery, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(SupplyDelivery, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(SupplyDelivery, self).elementProperties()
         js.extend([
@@ -101,34 +102,34 @@ from . import backboneelement
 
 class SupplyDeliverySuppliedItem(backboneelement.BackboneElement):
     """ The item that is delivered or supplied.
-    
+
     The item that is being delivered or has been supplied.
     """
-    
+
     resource_type = "SupplyDeliverySuppliedItem"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.itemCodeableConcept = None
         """ Medication, Substance, or Device supplied.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.itemReference = None
         """ Medication, Substance, or Device supplied.
         Type `FHIRReference` referencing `Medication, Substance, Device` (represented as `dict` in JSON). """
-        
+
         self.quantity = None
         """ Amount dispensed.
         Type `Quantity` (represented as `dict` in JSON). """
-        
-        super(SupplyDeliverySuppliedItem, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(SupplyDeliverySuppliedItem, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(SupplyDeliverySuppliedItem, self).elementProperties()
         js.extend([

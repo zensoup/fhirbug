@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/CareTeam) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/CareTeam) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
@@ -10,71 +11,71 @@ from . import domainresource
 class CareTeam(domainresource.DomainResource):
     """ Planned participants in the coordination and delivery of care for a patient
     or group.
-    
+
     The Care Team includes all the people and organizations who plan to
     participate in the coordination and delivery of care for a patient.
     """
-    
+
     resource_type = "CareTeam"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.category = None
         """ Type of team.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.context = None
         """ Encounter or episode associated with CareTeam.
         Type `FHIRReference` referencing `Encounter, EpisodeOfCare` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ External Ids for this team.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.managingOrganization = None
         """ Organization responsible for the care team.
         List of `FHIRReference` items referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.name = None
         """ Name of the team, such as crisis assessment team.
         Type `str`. """
-        
+
         self.note = None
         """ Comments made about the CareTeam.
         List of `Annotation` items (represented as `dict` in JSON). """
-        
+
         self.participant = None
         """ Members of the team.
         List of `CareTeamParticipant` items (represented as `dict` in JSON). """
-        
+
         self.period = None
         """ Time period team covers.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.reasonCode = None
         """ Why the care team exists.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.reasonReference = None
         """ Why the care team exists.
         List of `FHIRReference` items referencing `Condition` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ proposed | active | suspended | inactive | entered-in-error.
         Type `str`. """
-        
+
         self.subject = None
         """ Who care team is for.
         Type `FHIRReference` referencing `Patient, Group` (represented as `dict` in JSON). """
-        
-        super(CareTeam, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CareTeam, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CareTeam, self).elementProperties()
         js.extend([
@@ -98,39 +99,39 @@ from . import backboneelement
 
 class CareTeamParticipant(backboneelement.BackboneElement):
     """ Members of the team.
-    
+
     Identifies all people and organizations who are expected to be involved in
     the care team.
     """
-    
+
     resource_type = "CareTeamParticipant"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.member = None
         """ Who is involved.
         Type `FHIRReference` referencing `Practitioner, RelatedPerson, Patient, Organization, CareTeam` (represented as `dict` in JSON). """
-        
+
         self.onBehalfOf = None
         """ Organization of the practitioner.
         Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
-        
+
         self.period = None
         """ Time period of participant.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.role = None
         """ Type of involvement.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
-        super(CareTeamParticipant, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(CareTeamParticipant, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(CareTeamParticipant, self).elementProperties()
         js.extend([

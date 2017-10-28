@@ -1,103 +1,104 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/RiskAssessment) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/RiskAssessment) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class RiskAssessment(domainresource.DomainResource):
     """ Potential outcomes for a subject with likelihood.
-    
+
     An assessment of the likely outcome(s) for a patient or other subject as
     well as the likelihood of each outcome.
     """
-    
+
     resource_type = "RiskAssessment"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.basedOn = None
         """ Request fulfilled by this assessment.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.basis = None
         """ Information used in assessment.
         List of `FHIRReference` items referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.code = None
         """ Type of assessment.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.comment = None
         """ Comments on the risk assessment.
         Type `str`. """
-        
+
         self.condition = None
         """ Condition assessed.
         Type `FHIRReference` referencing `Condition` (represented as `dict` in JSON). """
-        
+
         self.context = None
         """ Where was assessment performed?.
         Type `FHIRReference` referencing `Encounter, EpisodeOfCare` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ Unique identifier for the assessment.
         Type `Identifier` (represented as `dict` in JSON). """
-        
+
         self.method = None
         """ Evaluation mechanism.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.mitigation = None
         """ How to reduce risk.
         Type `str`. """
-        
+
         self.occurrenceDateTime = None
         """ When was assessment made?.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.occurrencePeriod = None
         """ When was assessment made?.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.parent = None
         """ Part of this occurrence.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.performer = None
         """ Who did assessment?.
         Type `FHIRReference` referencing `Practitioner, Device` (represented as `dict` in JSON). """
-        
+
         self.prediction = None
         """ Outcome predicted.
         List of `RiskAssessmentPrediction` items (represented as `dict` in JSON). """
-        
+
         self.reasonCodeableConcept = None
         """ Why the assessment was necessary?.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.reasonReference = None
         """ Why the assessment was necessary?.
         Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ registered | preliminary | final | amended +.
         Type `str`. """
-        
+
         self.subject = None
         """ Who/what does assessment apply to?.
         Type `FHIRReference` referencing `Patient, Group` (represented as `dict` in JSON). """
-        
-        super(RiskAssessment, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(RiskAssessment, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(RiskAssessment, self).elementProperties()
         js.extend([
@@ -127,54 +128,54 @@ from . import backboneelement
 
 class RiskAssessmentPrediction(backboneelement.BackboneElement):
     """ Outcome predicted.
-    
+
     Describes the expected outcome for the subject.
     """
-    
+
     resource_type = "RiskAssessmentPrediction"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.outcome = None
         """ Possible outcome for the subject.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.probabilityDecimal = None
         """ Likelihood of specified outcome.
         Type `float`. """
-        
+
         self.probabilityRange = None
         """ Likelihood of specified outcome.
         Type `Range` (represented as `dict` in JSON). """
-        
+
         self.qualitativeRisk = None
         """ Likelihood of specified outcome as a qualitative value.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.rationale = None
         """ Explanation of prediction.
         Type `str`. """
-        
+
         self.relativeRisk = None
         """ Relative likelihood.
         Type `float`. """
-        
+
         self.whenPeriod = None
         """ Timeframe or age range.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.whenRange = None
         """ Timeframe or age range.
         Type `Range` (represented as `dict` in JSON). """
-        
-        super(RiskAssessmentPrediction, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(RiskAssessmentPrediction, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(RiskAssessmentPrediction, self).elementProperties()
         js.extend([

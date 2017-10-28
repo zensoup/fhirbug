@@ -80,7 +80,7 @@ class FHIRAbstractBase(object):
     -
     """
 
-    def __init__(self, jsondict=None, strict=True):
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initializer. If strict is true, raises on errors, otherwise uses
         `logger.warning()`.
 
@@ -97,6 +97,9 @@ class FHIRAbstractBase(object):
 
         ## Used to enforce strict mode in the rest of the class
         self._strict = strict
+
+        if jsondict is None and kwargs:
+            jsondict = kwargs
 
         if jsondict is not None:
             if strict:

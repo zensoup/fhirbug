@@ -1,83 +1,84 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/DeviceUseStatement) on 2017-10-27.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/DeviceUseStatement) on 2017-10-28.
 #  2017, SMART Health IT.
+##
 
 
 from . import domainresource
 
 class DeviceUseStatement(domainresource.DomainResource):
     """ Record of use of a device.
-    
+
     A record of a device being used by a patient where the record is the result
     of a report from the patient or another clinician.
     """
-    
+
     resource_type = "DeviceUseStatement"
-    
-    def __init__(self, jsondict=None, strict=True):
+
+    def __init__(self, jsondict=None, strict=True, **kwargs):
         """ Initialize all valid properties.
-        
+
         :raises: FHIRValidationError on validation errors, unless strict is False
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+
         self.bodySite = None
         """ Target body site.
         Type `CodeableConcept` (represented as `dict` in JSON). """
-        
+
         self.device = None
         """ Reference to device used.
         Type `FHIRReference` referencing `Device` (represented as `dict` in JSON). """
-        
+
         self.identifier = None
         """ External identifier for this record.
         List of `Identifier` items (represented as `dict` in JSON). """
-        
+
         self.indication = None
         """ Why device was used.
         List of `CodeableConcept` items (represented as `dict` in JSON). """
-        
+
         self.note = None
         """ Addition details (comments, instructions).
         List of `Annotation` items (represented as `dict` in JSON). """
-        
+
         self.recordedOn = None
         """ When statement was recorded.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.source = None
         """ Who made the statement.
         Type `FHIRReference` referencing `Patient, Practitioner, RelatedPerson` (represented as `dict` in JSON). """
-        
+
         self.status = None
         """ active | completed | entered-in-error +.
         Type `str`. """
-        
+
         self.subject = None
         """ Patient using device.
         Type `FHIRReference` referencing `Patient, Group` (represented as `dict` in JSON). """
-        
+
         self.timingDateTime = None
         """ How often  the device was used.
         Type `FHIRDate` (represented as `str` in JSON). """
-        
+
         self.timingPeriod = None
         """ How often  the device was used.
         Type `Period` (represented as `dict` in JSON). """
-        
+
         self.timingTiming = None
         """ How often  the device was used.
         Type `Timing` (represented as `dict` in JSON). """
-        
+
         self.whenUsed = None
         """ Period device was used.
         Type `Period` (represented as `dict` in JSON). """
-        
-        super(DeviceUseStatement, self).__init__(jsondict=jsondict, strict=strict)
-    
+
+        super(DeviceUseStatement, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
+
     def elementProperties(self):
         js = super(DeviceUseStatement, self).elementProperties()
         js.extend([
