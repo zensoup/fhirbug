@@ -110,36 +110,66 @@ class Patient(ResourceMapping):
 
 # class RequestGroup(ResourceMapping):
 class ProcedureRequest(ResourceMapping):
-  __tablename__ = 'LIS_ORDERS'
-  order_id = Column('lisor_id', Integer, primary_key=True)
-  _status = Column('lisor_status', Integer)
-  intent = 'order'
-  date_create = Column('date_create', Date)
-  subject = Column('opat_id', ForeignKey('CS_PATIENTS_TABLE.opat_id'))
-  comments = Column('lisor_comments', String(256))
+  __table__ = Table('LIS_ORDERS', Base.metadata, autoload=True, autoload_with=engine)
 
   def to_fhir(self, *args, **kwargs):
     # import ipdb; ipdb.set_trace()
-    result = R.ProcedureRequest({
+    return R.ProcedureRequest({
+      'id': str(int(self.lisor_id)),
       'status': self.status,
-      'intent': self.intent,
-      'subject': R.Reference({'reference': f'Patient/{self.subject}'}).as_json(),
-      'authoredOn': self.date_create.strftime('%Y-%m-%d'),
+      'intent': 'order',
+      'subject': R.FHIRReference(reference=f'Patient/{self.opat_id}'),
+      'authoredOn': R.FHIRDate(self.date_create),
       # 'action': self.tests
     }, False)
     result.action = self.tests
     if self.comments:
-      result['note'] = R.Annotation({'text': self.comments}).as_json()
+      result['note'] = R.Annotation({'text': self.lisor_comments}).as_json()
     return result
 
   @property
   def status(self):
-    return ['active', 'unknown', 'cancelled', 'completed'][self._status]
+    try:
+      return ['active', 'unknown', 'cancelled', 'completed'][self.lisor_status]
+    except:
+      return ''
 
   @property
   def tests(self, contained=False):
     tests = Observation.query.filter(Observation.lisor_id==self.order_id)
     return [test.id for test in tests]
+'''
+    lisor_id = FloatField(primary_key=True)
+    lisor_dept = ForeignKey(CsDepartments, DO_NOTHING)
+    opat = ForeignKey(CsPatientsTable, DO_NOTHING)
+    opat_code = CharField(max_length=20, blank=True, null=True)
+    opat_last_name = CharField(max_length=30, blank=True, null=True)
+    opat_first_name = CharField(max_length=18, blank=True, null=True)
+    opat_father_name = CharField(max_length=20, blank=True, null=True)
+    opat_sex_cd = CharField(max_length=1, blank=True, null=True)
+    opat_birthday = DateField(blank=True, null=True)
+    opat_tel = CharField(max_length=30, blank=True, null=True)
+    lisor_date = DateField()
+    lab_dept = ForeignKey(CsDepartments, DO_NOTHING)
+    lisor_orderid = FloatField()
+    lisor_sender = BooleanField()
+    lisor_comments = CharField(max_length=256, blank=True, null=True)
+    user_create = CharField(max_length=30, blank=True, null=True)
+    date_create = DateField(blank=True, null=True)
+    user_update = CharField(max_length=30, blank=True, null=True)
+    date_update = DateField(blank=True, null=True)
+    lisor_status = FloatField()
+    lisor_lab = FloatField()
+    opat_insc_code = IntegerField(blank=True, null=True)
+    opat_reg_code = CharField(max_length=20, blank=True, null=True)
+    opat_amka = CharField(max_length=20, blank=True, null=True)
+    oinv_id = FloatField(blank=True, null=True)
+    oinv_data = CharField(max_length=30, blank=True, null=True)
+    lisor_doctor = CharField(max_length=30, blank=True, null=True)
+    old_opat_code = CharField(max_length=20, blank=True, null=True)
+    pnur_date_in = DateField(blank=True, null=True)
+'''
+
 
 class Observation(ResourceMapping):
   __tablename__  = 'LIS_TESTS'

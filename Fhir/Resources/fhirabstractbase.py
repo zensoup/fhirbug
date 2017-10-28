@@ -137,6 +137,7 @@ class FHIRAbstractBase(object):
         ## Needed for accepting single instances instead of lists and wrapping them in one
         if isinstance(jsonobj, cls):
            return jsonobj
+
         if isinstance(jsonobj, dict):
             return cls._with_json_dict(jsonobj)
 
@@ -149,8 +150,8 @@ class FHIRAbstractBase(object):
                     raise e.prefixed(str(len(arr)))
             return arr
 
-        raise TypeError("`with_json()` on {} only takes dict or list of dict, but you provided {}"
-            .format(cls, type(jsonobj)))
+        raise TypeError("`with_json()` on {} only takes dict, list of dict, or {}, but you provided {}"
+            .format(cls, cls.__name__, type(jsonobj)))
 
     @classmethod
     def _with_json_dict(cls, jsondict):
