@@ -43,7 +43,41 @@ class FHIRValidationError(Exception):
 
 
 class FHIRAbstractBase(object):
-    """ Abstract base class for all FHIR elements.
+    """
+    Abstract base class for all FHIR elements.
+
+    An Element can be created using a dict or list in valid Fhir format.
+
+    >>> TARGET = {'identifier': [{'system': 'AMKA', 'value': '123'}], 'resourceType': 'Patient'}
+
+
+    >>> p = Patient({'identifier': [{'system': 'AMKA', 'value': '123'}]})
+    >>> p.as_json() == TARGET
+    True
+
+    However, there are several shortcuts that can be used when instantiating subclasses:
+
+    - Pass an other Resource instead of a dict as the value of an attribute
+
+    >>> amka = Identifier({'system': 'AMKA', 'value': '123'})
+    >>>
+    >>> p = Patient({'identifier': [amka]})
+    >>> p.as_json() == TARGET
+    True
+
+    - Pass a single dict or Resource where a list is expected
+
+    >>> p = Patient({'identifier': {'system': 'AMKA', 'value': '123'}})
+    >>> p.as_json() == TARGET
+    True
+
+    >>> amka = Identifier({'system': 'AMKA', 'value': '123'})
+    >>>
+    >>> p = Patient({'identifier': amka})
+    >>> p.as_json() == TARGET
+    True
+
+    -
     """
 
     def __init__(self, jsondict=None, strict=True):
@@ -90,6 +124,10 @@ class FHIRAbstractBase(object):
         :param jsonobj: A dict or list of dicts to instantiate from
         :returns: An instance or a list of instances created from JSON data
         """
+        ## Accept instances
+        ## Needed for accepting single instances instead of lists and wrapping them in one
+        if isinstance(jsonobj, cls):
+           return jsonobj
         if isinstance(jsonobj, dict):
             return cls._with_json_dict(jsonobj)
 
@@ -190,6 +228,11 @@ class FHIRAbstractBase(object):
             if value is not None:
                 testval = value
                 if is_list:
+                    ## Accept instances instead of lists and make them into one
+                    ## TODO: should this behavior be optional?
+                    if isinstance(value, typ):
+                        value = [value]
+                        # value = [value.as_json()]
                     if not isinstance(value, list):
                         err = TypeError("Wrong type {} for list property \"{}\" on {}, expecting a list of {}"
                             .format(type(value), name, type(self), typ))
