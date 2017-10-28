@@ -23,10 +23,10 @@ def main():
   # pat = session.query(models.Patient).first()
   pat = models.Patient.query.first()
 
-  print(pat.to_resource().as_json())
+  print(pat.to_fhir().as_json())
 
   o = models.ProcedureRequest.query.first()
-  print(o.to_resource().as_json())
+  print(o.to_fhir().as_json())
   pat.bla()
 
 if __name__ == '__main__':

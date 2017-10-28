@@ -1,47 +1,25 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
 from db.backends.SQLAlchemy.AbstractBaseModel import ResourceMapping
-from Fhir.Resources import identifier, humanname, patient, requestgroup, reference, annotation, procedurerequest, codeableconcept
+from Fhir import resources as R
 from main import Base, engine
 
-class AMKA(identifier.Identifier):
-  def __init__(self, value):
-    super(AMKA, self).__init__()
-    self.value = value
-    self.system = 'AMKA'
-    self.use = 'official'
-
-  # def as_json(self():
-  #   return {'system': 'AMKA', 'use': 'official', 'value': self.value}
 
 
 # class Patient():
 class Patient(ResourceMapping):
   #
   # Use autoload to automaticaly populate the mapping's fields
-  # TODO: This seems slower should we use a tool to autogenerate definitions?
+  # TODO: This seems slower, should we use a tool to autogenerate definitions?
   #
-
-  # __tablename__ = 'CS_PATIENTS_TABLE'
-  #
-  # patient_id = Column('opat_id', Integer, primary_key=True)
-  # patient_given_name = Column('opat_first_name', String(256))
-  # patient_family_name = Column('opat_last_name', String(256))
-  # patient_ssn = Column('opat_amka', String(20))
-  #
-  #
-  # def to_resource(self):
-  #   ident  = AMKA(self.patient_ssn).as_json()
-  #   name = humanname.HumanName({'family': self.patient_family_name, 'given': [self.patient_given_name]}).as_json()
-  #   return patient.Patient({'id': str(self.patient_id), 'name': [name], 'identifier': [ident]})
 
   table = Table('CS_PATIENTS_TABLE', Base.metadata, autoload=True, autoload_with=engine)
   __table__ = table
 
-  def to_resource(self):
-    ident  = AMKA(self.opat_amka).as_json()
-    name = humanname.HumanName({'family': self.opat_last_name, 'given': [self.opat_first_name]}).as_json()
-    return patient.Patient({'id': str(self.opat_id), 'name': [name], 'identifier': [ident]})
+  def to_fhir(self):
+    ident  = R.AMKA(self.opat_amka).as_json()
+    name = R.HumanName({'family': self.opat_last_name, 'given': [self.opat_first_name]}).as_json()
+    return R.Patient({'id': str(self.opat_id), 'name': [name], 'identifier': [ident]})
 
   '''
     opat_id = models.FloatField(primary_key=True)
@@ -131,18 +109,18 @@ class ProcedureRequest(ResourceMapping):
   subject = Column('opat_id', ForeignKey('CS_PATIENTS_TABLE.opat_id'))
   comments = Column('lisor_comments', String(256))
 
-  def to_resource(self, *args, **kwargs):
+  def to_fhir(self, *args, **kwargs):
     # import ipdb; ipdb.set_trace()
-    result = procedurerequest.ProcedureRequest({
+    result = R.ProcedureRequest({
       'status': self.status,
       'intent': self.intent,
-      'subject': reference.Reference({'reference': f'Patient/{self.subject}'}).as_json(),
+      'subject': R.Reference({'reference': f'Patient/{self.subject}'}).as_json(),
       'authoredOn': self.date_create.strftime('%Y-%m-%d'),
       # 'action': self.tests
     }, False)
     result.action = self.tests
     if self.comments:
-      result['note'] = annotation.Annotation({'text': self.comments}).as_json()
+      result['note'] = R.Annotation({'text': self.comments}).as_json()
     return result
 
   @property
@@ -160,5 +138,5 @@ class Observation(ResourceMapping):
   id = Column('listest_id', Integer, primary_key=True)
   lisor_id = Column('lisor_id', ForeignKey('LIS_ORDERS.lisor_id'))
 
-  def to_resource(self):
+  def to_fhir(self):
     return observation.Observation()
