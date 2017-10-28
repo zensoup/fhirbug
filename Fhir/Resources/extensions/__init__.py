@@ -12,7 +12,7 @@ class AMKA(identifier.Identifier):
   >>> isinstance(a, identifier.Identifier)
   True
   >>> a.as_json()
-  {'system': 'AMKA', 'value': '123'}
+  {'system': 'AMKA', 'use': 'official', 'value': '123'}
   '''
 
   def __init__(self, jsondict, *args, **kwargs):
@@ -20,7 +20,8 @@ class AMKA(identifier.Identifier):
 
     amka_dict = {
       'value': jsondict,
-      'system': 'AMKA'
+      'system': 'AMKA',
+      'use': 'official',
     }
     return super(AMKA, self).__init__(amka_dict, *args, **kwargs)
 

@@ -77,7 +77,13 @@ class FHIRAbstractBase(object):
     >>> p.as_json() == TARGET
     True
 
-    -
+    - Use keyword arguments instead of dicts
+
+    >>> amka = Identifier(system='AMKA', value='123')
+    >>>
+    >>> p = Patient(identifier=amka)
+    >>> p.as_json() == TARGET
+    True
     """
 
     def __init__(self, jsondict=None, strict=True, **kwargs):
