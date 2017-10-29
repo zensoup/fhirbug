@@ -40,9 +40,12 @@ class AbstractBaseModel(Base):
       item = cls.query.get(id)
 
       # TODO: try..catch
-      self._contained_items.append(item.to_fhir())
+      as_fhir = item.to_fhir()
 
       self._refcount += 1
+
+      as_fhir.id = f'ref{self._refcount}'
+      self._contained_items.append(as_fhir)
 
       # Build the reference dict
       reference = {'reference': f'#ref{self._refcount}'}
