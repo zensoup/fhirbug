@@ -14,6 +14,19 @@ class Patient(FhirBaseModel):
 
   __table__ = Table('CS_PATIENTS_TABLE', Base.metadata, autoload=True, autoload_with=engine)
 
+  @classmethod
+  def _apply_searches_(cls, cls_query, rq_query):
+    if 'address-city' in rq_query.search_params:
+      cls_query = cls_query.filter(cls.opat_city == rq_query.search_params.get('address-city'))
+    if 'id' in rq_query.search_params: # or '_id' in query.modifiers:
+      value = rq_query.search_params.get('id', [''])[0]
+      if value.startswith('gt'):
+        cls_query = cls_query.filter(cls.opat_id > int(value[2:]))
+      if value.startswith('lt'):
+        cls_query = cls_query.filter(cls.opat_id < int(value[2:]))
+      if not value.startswith('lt') and not value.startswith('gt'):
+        cls_query = cls_query.filter(cls.opat_id == int(value[2:]))
+
   def _map_(self, *args, **kwargs):
     return R.Patient({
         'id': str(int(self.opat_id)),

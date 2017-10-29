@@ -20,6 +20,12 @@ class FhirBaseModel(AbstractBaseModel):
       return res.as_json()
 
     else:
+      # Handle search
+      # apply_search_filters(query, search_params)
+      if hasattr(cls, '_apply_searches_'):
+        cls._apply_searches_(cls.query, query)
+
+      # Handle pagination
       count = int(query.modifiers.get('_count', [settings.DEFAULT_BUNDLE_SIZE])[0])
       count = min(count, settings.MAX_BUNDLE_SIZE)
       offset = query.search_params.get('search-offset', ['1'])
