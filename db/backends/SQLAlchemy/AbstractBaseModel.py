@@ -20,32 +20,73 @@ class FhirBaseModel(Base):
   __abstract__ = True
 
   def ContainableResource(self, cls, id, name, force_display=False):
+    '''
+    Provides a shortcut for creating references that may or not be contained.
+      :param cls: The class of the model we are referring to (eg Patient)
+      :param id: the system id of the resource
+      :param name: the name of the field this reference occupies in the parent's Resources
+      :param force_display: If left to False, resources that are not contained will not include
+                            the `display` property since it requires an extra query.
+
+      :returns: A dict representing a reference object
+    '''
+
+    # Name of the model of the resource
+    # TODO: Assumes the model class has the same name as the resource endpoint
     cls_name = cls.__name__
-    if name in self._contained_names:
+
+    if name in self._contained_names:  # The resource should be contained
+      # Get the item
       item = cls.query.get(id)
-      self._contained_items = getattr(self, '_contained_items', []) + [item.to_fhir()]
-      self._refcount = getattr(self, '_refcount', 0) + 1
+
+      # TODO: try..catch
+      self._contained_items.append(item.to_fhir())
+
+      self._refcount += 1
+
+      # Build the reference dict
       reference = {'reference': f'#ref{self._refcount}'}
+
+      # Add a display if possible
       if hasattr(item, '_as_display'):
         reference['display'] = item._as_display
+
       return reference
-    else:
+
+    else:  # The resource is not contained, generate a url
+
+      # Build the reference dict
       reference = {'reference': f'{cls_name}/{id}'}
-      if force_display:
+
+      if force_display:  # Do a query to fetch the display
+        # TODO: can we check if it supprts `_as_display` before querying?
+
         item = cls.query.get(id)
+
         if hasattr(item, '_as_display'):
           reference['display'] = item._as_display
+
       return reference
 
 
   ## Lifecycle
 
   def to_fhir(self, *args, contained=[], **kwargs):
+    '''
+    Convert from a BaseModel to a Fhir Resource and return it.
+
+    self._map_() must be defined and return a Resource.
+    '''
+
+    # Initialize attributes
     self._contained_names = contained
     self._contained_items = []
     self._refcount = 0
-    # self.pre_transform(*args, **kwargs)
+
+    # Run _map_
     resource = self._map_(self, *args, **kwargs)
+
+    # Add any contained items that have been generated
     if self._contained_items:
       resource.contained = self._contained_items
 
