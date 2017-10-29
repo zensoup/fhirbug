@@ -1,8 +1,11 @@
 import sys
 import doctest
+
+# The modules to be tested
 from Fhir.Resources import fhirabstractbase
 from Fhir.Resources import extensions
 from Fhir import resources
+from http import requestparser
 
 def testResourceContructor(verbose=False):
   from Fhir import resources
@@ -16,7 +19,8 @@ def testResourceContructor(verbose=False):
   # Run the tests!
   doctest.testmod(fhirabstractbase, extraglobs=context, optionflags=doctest.NORMALIZE_WHITESPACE, verbose=verbose)
   doctest.testmod(extensions, extraglobs=context, optionflags=doctest.NORMALIZE_WHITESPACE, verbose=verbose)
-  doctest.testmod(resources, verbose=verbose)
+  doctest.testmod(resources, optionflags=doctest.NORMALIZE_WHITESPACE, verbose=verbose)
+  doctest.testmod(requestparser, optionflags=doctest.NORMALIZE_WHITESPACE, verbose=verbose)
 
 if __name__ == '__main__':
   verbose = True if '-v' in sys.argv else False
