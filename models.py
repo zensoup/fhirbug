@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
-from db.backends.SQLAlchemy.AbstractBaseModel import FhirBaseModel
+from db.backends.SQLAlchemy import FhirBaseModel
 from Fhir import resources as R
 from main import Base, engine
 

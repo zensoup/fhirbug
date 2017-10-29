@@ -12,7 +12,7 @@ def importStuff():
 
 Base = importStuff()
 
-class FhirBaseModel(Base):
+class AbstractBaseModel(Base):
   '''
   The base class to provide functionality to
   our models.
