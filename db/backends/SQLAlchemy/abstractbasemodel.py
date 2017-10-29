@@ -78,12 +78,15 @@ class AbstractBaseModel(Base):
     '''
     Convert from a BaseModel to a Fhir Resource and return it.
 
+    If param `query` is passed and is of type server.FhirRequestQuery, it is used to
+    allow for additional functionality like contained resources.
+
     self._map_() must be defined and return a Resource.
     '''
 
     # Initialize attributes
     self._contained_names = []
-    
+
     if query:
       self._contained_names = query.modifiers.get('_include', [])
 

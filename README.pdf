@@ -1,0 +1,771 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<< /F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 5 0 R /F5 6 0 R >>
+endobj
+2 0 obj
+<< /BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font >>
+endobj
+3 0 obj
+<< /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font >>
+endobj
+4 0 obj
+<< /BaseFont /Courier /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font >>
+endobj
+5 0 obj
+<< /BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding /Name /F4 /Subtype /Type1 /Type /Font >>
+endobj
+6 0 obj
+<< /BaseFont /Helvetica-BoldOblique /Encoding /WinAnsiEncoding /Name /F5 /Subtype /Type1 /Type /Font >>
+endobj
+7 0 obj
+<< /Contents 23 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 22 0 R /Resources << /Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ] >> /Rotate 0 /Trans <<  >> 
+  /Type /Page >>
+endobj
+8 0 obj
+<< /Border [ 0 0 0 ] /Contents () /Dest [ 7 0 R /XYZ 62.69291 699.0236 0 ] /Rect [ 62.69291 543.0236 121.0329 555.0236 ] /Subtype /Link /Type /Annot >>
+endobj
+9 0 obj
+<< /Border [ 0 0 0 ] /Contents () /Dest [ 10 0 R /XYZ 105.6929 325.8236 0 ] /Rect [ 136.0729 513.0236 177.7529 525.0236 ] /Subtype /Link /Type /Annot >>
+endobj
+10 0 obj
+<< /Annots [ 8 0 R 9 0 R ] /Contents 24 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 22 0 R /Resources << /Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ] >> /Rotate 0 
+  /Trans <<  >> /Type /Page >>
+endobj
+11 0 obj
+<< /Outlines 13 0 R /PageLabels 25 0 R /PageMode /UseNone /Pages 22 0 R /Type /Catalog >>
+endobj
+12 0 obj
+<< /Author () /CreationDate (D:20171029171235-02'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20171029171235-02'00') /Producer (ReportLab PDF Library - www.reportlab.com) 
+  /Subject (\(unspecified\)) /Title (FHIRBALL) /Trapped /False >>
+endobj
+13 0 obj
+<< /Count 11 /First 14 0 R /Last 17 0 R /Type /Outlines >>
+endobj
+14 0 obj
+<< /Count 2 /Dest [ 7 0 R /XYZ 62.69291 729.0236 0 ] /First 15 0 R /Last 16 0 R /Next 17 0 R /Parent 13 0 R 
+  /Title (Usage) >>
+endobj
+15 0 obj
+<< /Dest [ 7 0 R /XYZ 62.69291 696.0236 0 ] /Next 16 0 R /Parent 14 0 R /Title (Demo Server) >>
+endobj
+16 0 obj
+<< /Dest [ 7 0 R /XYZ 62.69291 590.8236 0 ] /Parent 14 0 R /Prev 15 0 R /Title (Writing Maps) >>
+endobj
+17 0 obj
+<< /Count 4 /Dest [ 7 0 R /XYZ 62.69291 512.8236 0 ] /First 18 0 R /Last 21 0 R /Parent 13 0 R /Prev 14 0 R 
+  /Title (Package Description) >>
+endobj
+18 0 obj
+<< /Count 1 /Dest [ 7 0 R /XYZ 62.69291 479.8236 0 ] /First 19 0 R /Last 19 0 R /Next 20 0 R /Parent 17 0 R 
+  /Title (db.backends -- Database specific stuff) >>
+endobj
+19 0 obj
+<< /Dest [ 7 0 R /XYZ 62.69291 449.8236 0 ] /Parent 18 0 R /Title (SQLALchemy - SqlAlchemy backend) >>
+endobj
+20 0 obj
+<< /Dest [ 10 0 R /XYZ 62.69291 621.0236 0 ] /Next 21 0 R /Parent 17 0 R /Prev 18 0 R /Title (Fhir -- Fhir resource models) >>
+endobj
+21 0 obj
+<< /Dest [ 10 0 R /XYZ 62.69291 272.8236 0 ] /Parent 17 0 R /Prev 20 0 R /Title (server -- Server related) >>
+endobj
+22 0 obj
+<< /Count 2 /Kids [ 7 0 R 10 0 R ] /Type /Pages >>
+endobj
+23 0 obj
+<< /Length 6217 >>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 62.69291 741.0236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4 Tm /F2 20 Tf 24 TL 184.9549 0 Td (FHIRBALL) Tj T* -184.9549 0 Td ET
+Q
+Q
+q
+1 0 0 1 62.69291 708.0236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Usage) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 678.0236 cm
+q
+BT 1 0 0 1 0 3 Tm 18 TL /F2 15 Tf 0 0 0 rg (Demo Server) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 660.0236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (run:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 602.8236 cm
+q
+q
+1 0 0 1 0 0 cm
+q
+1 0 0 1 6.6 6.6 cm
+q
+.662745 .662745 .662745 RG
+.5 w
+.960784 .960784 .862745 rg
+n -6 -6 468.6898 48 re B*
+Q
+q
+0 0 0 rg
+BT 1 0 0 1 0 26 Tm /F3 10 Tf 12 TL ($ export FLASK_APP=flask_app.py) Tj T* ($ export FLASK_DEBUG=1) Tj T* ($ flask run) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+1 0 0 1 62.69291 572.8236 cm
+q
+BT 1 0 0 1 0 3 Tm 18 TL /F2 15 Tf 0 0 0 rg (Writing Maps) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 542.8236 cm
+q
+BT 1 0 0 1 0 14 Tm 1.941318 Tw 12 TL /F1 10 Tf 0 0 0 rg (Create models in models.py and add a ) Tj /F4 10 Tf 0 0 0 rg (_map_ ) Tj /F1 10 Tf 0 0 0 rg (method. All fields in the corresponding ) Tj /F4 10 Tf 0 0 0 rg (__table__ ) Tj /F1 10 Tf 0 0 0 rg (are) Tj T* 0 Tw (available as ) Tj /F3 10 Tf 0 0 0 rg (self.field_name) Tj /F1 10 Tf 0 0 0 rg (.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 524.8236 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (Using these fields and possibly other models, ) Tj /F3 10 Tf 0 0 0 rg (_map_ ) Tj /F1 10 Tf 0 0 0 rg (must build and return a Fhir Resource instance.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 491.8236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Package Description) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 461.8236 cm
+q
+BT 1 0 0 1 0 3 Tm 18 TL /F4 15 Tf 0 0 0 rg (db.backends ) Tj /F2 15 Tf 0 0 0 rg (-- Database specific stuff) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 434.8236 cm
+q
+BT 1 0 0 1 0 2.5 Tm 15 TL /F4 12.5 Tf 0 0 0 rg (SQLALchemy ) Tj /F5 12.5 Tf 0 0 0 rg (- SqlAlchemy backend) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 422.8236 cm
+Q
+q
+1 0 0 1 62.69291 422.8236 cm
+Q
+q
+1 0 0 1 62.69291 133.8236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 274 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 274 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F3 10 Tf 12 TL (abstractbasemodel.AbstractBaseModel) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 264 Tm  T* ET
+q
+1 0 0 1 20 262 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (A subclass of SQLAlchemy's declarative_base.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 208 cm
+q
+BT 1 0 0 1 0 38 Tm 3.940814 Tw 12 TL /F1 10 Tf 0 0 0 rg (Adds additional fhir related functionality to all models. Most importantly, it provides the) Tj T* 0 Tw 1.904147 Tw /F3 10 Tf 0 0 0 rg (.to_fhir\(\) ) Tj /F1 10 Tf 0 0 0 rg (method that handles the transformation from an SQLAlchemy model to a Fhir) Tj T* 0 Tw 1.487976 Tw (resource. User-defined models subclassing this class ) Tj /F2 10 Tf (must ) Tj /F1 10 Tf (implement the ) Tj /F3 10 Tf 0 0 0 rg (_map_\(\) ) Tj /F1 10 Tf 0 0 0 rg (method) Tj T* 0 Tw (that has access to all of the related table's columns and must return a Fhir Resource instance.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 192 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F3 10 Tf 12 TL (to_fhir\(query=None\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 165 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 14 Tm  T* ET
+q
+1 0 0 1 20 0 cm
+q
+BT 1 0 0 1 0 14 Tm 6.406647 Tw 12 TL /F1 10 Tf 0 0 0 rg (Converts a model to a Fhir Resource. Accepts a ) Tj /F3 10 Tf 0 0 0 rg (query ) Tj /F1 10 Tf 0 0 0 rg (parameter of type) Tj T* 0 Tw /F3 10 Tf 0 0 0 rg (server.FhirRequestQuery ) Tj /F1 10 Tf 0 0 0 rg (that may alter functionality based on the request.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 147 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (ContainableResource\(cls,) Tj ( ) Tj (id,) Tj ( ) Tj (name,) Tj ( ) Tj (force_display=False\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 141 cm
+Q
+q
+1 0 0 1 20 0 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 2 Tm  T* ET
+q
+1 0 0 1 20 105 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 26 Tm /F1 10 Tf 12 TL 1.261318 Tw (A shortcut for defining external resources that may or may not be included based on the) Tj T* 0 Tw .371984 Tw (request. It will produce a Reference containing either an endpoint link to the resource or an) Tj T* 0 Tw (internal link to the contained data.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 87 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F2 10 Tf 0 0 0 rg (cls) Tj /F1 10 Tf (: The class of the model we are referring to \(eg Patient\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 69 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F2 10 Tf 0 0 0 rg (id) Tj /F1 10 Tf (: the system id of the resource) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 51 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F2 10 Tf 0 0 0 rg (name) Tj /F1 10 Tf (: the name of the field this reference occupies in the parent's Resources) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 21 cm
+q
+BT 1 0 0 1 0 14 Tm .677126 Tw 12 TL /F2 10 Tf 0 0 0 rg (force_display) Tj /F1 10 Tf (: If left to False, resources that are not contained will not include the ) Tj /F4 10 Tf 0 0 0 rg (display) Tj T* 0 Tw /F1 10 Tf 0 0 0 rg (property since it requires an extra query.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 15 cm
+Q
+q
+1 0 0 1 20 0 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL 35.25937 0 Td (returns:) Tj T* -35.25937 0 Td ET
+Q
+Q
+q
+1 0 0 1 91.03937 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (A dict representing a reference object) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 0 cm
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 127.8236 cm
+Q
+q
+1 0 0 1 62.69291 76.86614 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 35.95748 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 35.95748 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F3 10 Tf 12 TL (fhirbasemodel.FhirBaseModel) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 20.95748 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 2 Tm  T* ET
+q
+1 0 0 1 20 0 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Another abstract base class iheriting AbstractBaseModel.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+Q
+Q
+ 
+endstream
+endobj
+24 0 obj
+<< /Length 8026 >>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 62.69291 633.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 6 119 Tm  T* ET
+q
+1 0 0 1 23 -3 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 119 Tm  T* ET
+q
+1 0 0 1 20 117 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Implements fhir functionality like querying, searching, etc) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 99 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F4 10 Tf 0 0 0 rg (@classmethod) Tj /F1 10 Tf ( ) Tj /F3 10 Tf 0 0 0 rg (get\(cls,) Tj ( ) Tj (query\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 93 cm
+Q
+q
+1 0 0 1 20 0 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 2 Tm  T* ET
+q
+1 0 0 1 20 69 cm
+q
+BT 1 0 0 1 0 14 Tm .729213 Tw 12 TL /F1 10 Tf 0 0 0 rg (Handle get requests. Uses the information contained in ) Tj /F4 10 Tf 0 0 0 rg (query ) Tj /F1 10 Tf 0 0 0 rg (to determine how many and) Tj T* 0 Tw (which resources should be returned. Pagination happens here.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 51 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F2 10 Tf 0 0 0 rg (cls) Tj /F1 10 Tf (: The class of the resource that gas been requested) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 33 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F2 10 Tf 0 0 0 rg (query) Tj /F1 10 Tf (: An instance of ) Tj /F3 10 Tf 0 0 0 rg (server.FhirRequestQuery ) Tj /F1 10 Tf 0 0 0 rg (representing the current query) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 27 cm
+Q
+q
+1 0 0 1 20 0 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 15 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL 35.25937 0 Td (returns:) Tj T* -35.25937 0 Td ET
+Q
+Q
+q
+1 0 0 1 91.03937 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL 1.134581 Tw (A Json dict containing the response. The responce may be a single) Tj T* 0 Tw (Resource or a Bundle) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 0 cm
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 633.0236 cm
+Q
+q
+1 0 0 1 62.69291 603.0236 cm
+q
+BT 1 0 0 1 0 3 Tm 18 TL /F4 15 Tf 0 0 0 rg (Fhir ) Tj /F2 15 Tf 0 0 0 rg (-- Fhir resource models) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 585.0236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Auto-generated classes for Resource models.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 543.0236 cm
+q
+BT 1 0 0 1 0 26 Tm .088555 Tw 12 TL /F1 10 Tf 0 0 0 rg (These classes handle \(de-\)serialization and validation and they are the building blocks for models' ) Tj /F3 10 Tf 0 0 0 rg (_map_) Tj T* 0 Tw .307045 Tw /F1 10 Tf 0 0 0 rg (method. Many additions have been made to make it as easy as possible to create Resource objects. See) Tj T* 0 Tw 0 0 .501961 rg (Writing maps ) Tj 0 0 0 rg (for more.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 513.0236 cm
+q
+BT 1 0 0 1 0 14 Tm 1.311098 Tw 12 TL /F2 10 Tf 0 0 0 rg (Warning) Tj /F1 10 Tf (: Do not edit any of the files in the Fhir/Resources folder. They will be overwritten at the next) Tj T* 0 Tw (generation. See ) Tj 0 0 .501961 rg (Fhir.base ) Tj 0 0 0 rg (for details.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 507.0236 cm
+Q
+q
+1 0 0 1 62.69291 507.0236 cm
+Q
+q
+1 0 0 1 62.69291 410.8236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 81.2 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 81.2 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (Fhir.resources) Tj /F2 10 Tf 0 0 0 rg ( <) Tj (-- Use this to import stuff!) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 71.2 Tm  T* ET
+q
+1 0 0 1 20 57.2 cm
+q
+BT 1 0 0 1 0 14 Tm .516905 Tw 12 TL /F1 10 Tf 0 0 0 rg (An empty module that is dynamically populated by Fhir/) Tj /F4 10 Tf 0 0 0 rg (__init__) Tj /F1 10 Tf 0 0 0 rg (.py that allows easier imports of) Tj T* 0 Tw (Resources like:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 0 cm
+q
+q
+1 0 0 1 0 0 cm
+q
+1 0 0 1 6.6 6.6 cm
+q
+.662745 .662745 .662745 RG
+.5 w
+.960784 .960784 .862745 rg
+n -6 -6 425.6898 48 re B*
+Q
+q
+BT 1 0 0 1 0 26 Tm 12 TL /F3 10 Tf 0 0 0 rg (>) Tj (>) Tj (>) Tj ( from fhir import resources) Tj T* (>) Tj (>) Tj (>) Tj ( p = resources.Patient\(\)) Tj T* (>) Tj (>) Tj (>) Tj ( from fhir.resources import Patient) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 404.8236 cm
+Q
+q
+1 0 0 1 62.69291 347.8236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 42 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 42 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (Fhir.Resources.extensions) Tj /F2 10 Tf 0 0 0 rg ( <) Tj (-- Write here to extend stuff) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 32 Tm  T* ET
+q
+1 0 0 1 20 18 cm
+q
+BT 1 0 0 1 0 14 Tm 1.029982 Tw 12 TL /F1 10 Tf 0 0 0 rg (This module is imported by Fhir/) Tj /F4 10 Tf 0 0 0 rg (__init__) Tj /F1 10 Tf 0 0 0 rg (.py after the root Resources folder so classes defined) Tj T* 0 Tw (here will overwrite the generated ones with the same name.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 0 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (Contains shortcut wrapper classes like ) Tj /F3 10 Tf 0 0 0 rg (AMKA ) Tj /F1 10 Tf 0 0 0 rg (and ) Tj /F3 10 Tf 0 0 0 rg (HumanName) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 347.8236 cm
+Q
+q
+1 0 0 1 62.69291 341.8236 cm
+Q
+q
+1 0 0 1 62.69291 341.8236 cm
+Q
+q
+1 0 0 1 62.69291 284.8236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 42 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 42 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (Fhir.base) Tj /F2 10 Tf 0 0 0 rg ( <) Tj (-- This is where the actual magic happens) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 32 Tm  T* ET
+q
+1 0 0 1 20 30 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (Contains all resources deeded for Resource generation.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 0 cm
+q
+BT 1 0 0 1 0 14 Tm .964418 Tw 12 TL /F3 10 Tf 0 0 0 rg (fhirabstractbase ) Tj /F1 10 Tf 0 0 0 rg (and ) Tj /F3 10 Tf 0 0 0 rg (fhirabstractresource ) Tj /F1 10 Tf 0 0 0 rg (contain the two abstract classes that all) Tj T* 0 Tw (Resources inherit. This is where the actual functionality is implemented.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 284.8236 cm
+Q
+q
+1 0 0 1 62.69291 254.8236 cm
+q
+BT 1 0 0 1 0 3 Tm 18 TL /F4 15 Tf 0 0 0 rg (server ) Tj /F2 15 Tf 0 0 0 rg (-- Server related) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 242.8236 cm
+Q
+q
+1 0 0 1 62.69291 242.8236 cm
+Q
+q
+1 0 0 1 62.69291 107.8236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 120 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 120 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F3 10 Tf 12 TL (FhirRequestQuery) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 110 Tm  T* ET
+q
+1 0 0 1 20 108 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (A class that holds information contained in the request querystring) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 90 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Has the followng properties:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 84 cm
+Q
+q
+1 0 0 1 20 0 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 2 Tm  T* ET
+q
+1 0 0 1 20 72 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (resource) Tj /F1 10 Tf 0 0 0 rg (: The name of the requested Resource) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 54 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (resourceId) Tj /F1 10 Tf 0 0 0 rg (: The id following the reource if any) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 36 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (operation) Tj /F1 10 Tf 0 0 0 rg (: $operation string) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 18 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (modifiers) Tj /F1 10 Tf 0 0 0 rg (: dict of key, value pairs for all _reserved parameters) Tj T* ET
+Q
+Q
+q
+1 0 0 1 20 0 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (search_params) Tj /F1 10 Tf 0 0 0 rg (: dict of key, value pairs for all non _reserved parameters) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 0 cm
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 107.8236 cm
+Q
+ 
+endstream
+endobj
+25 0 obj
+<< /Nums [ 0 26 0 R 1 27 0 R ] >>
+endobj
+26 0 obj
+<< /S /D /St 1 >>
+endobj
+27 0 obj
+<< /S /D /St 2 >>
+endobj
+xref
+0 28
+0000000000 65535 f
+0000000075 00000 n
+0000000149 00000 n
+0000000259 00000 n
+0000000374 00000 n
+0000000482 00000 n
+0000000600 00000 n
+0000000722 00000 n
+0000000931 00000 n
+0000001101 00000 n
+0000001272 00000 n
+0000001506 00000 n
+0000001615 00000 n
+0000001885 00000 n
+0000001963 00000 n
+0000002112 00000 n
+0000002227 00000 n
+0000002343 00000 n
+0000002506 00000 n
+0000002688 00000 n
+0000002810 00000 n
+0000002956 00000 n
+0000003085 00000 n
+0000003155 00000 n
+0000009429 00000 n
+0000017512 00000 n
+0000017565 00000 n
+0000017602 00000 n
+trailer
+<< /ID 
+ % ReportLab generated PDF document -- digest (http://www.reportlab.com)
+ [(\344W\270\030\000\345\021\257\\\303\276\263\374\211]6) (\344W\270\030\000\345\021\257\\\303\276\263\374\211]6)]
+ /Info 12 0 R /Root 11 0 R /Size 28 >>
+startxref
+17639
+%%EOF
