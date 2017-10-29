@@ -5,8 +5,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 
-from http.requestparser import parse_url
 import settings
+from server.requestparser import parse_url
 
 # Create the db connection
 os.environ["NLS_LANG"] = "GREEK_GREECE.AL32UTF8"
