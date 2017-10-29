@@ -27,7 +27,6 @@ def main():
 
   o = models.ProcedureRequest.query.first()
   print(o.to_fhir().as_json())
-  pat.bla()
 
 if __name__ == '__main__':
   main()

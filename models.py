@@ -1,13 +1,13 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
-from db.backends.SQLAlchemy.AbstractBaseModel import ResourceMapping
+from db.backends.SQLAlchemy.AbstractBaseModel import FhirBaseModel
 from Fhir import resources as R
 from main import Base, engine
 
 
 
 # class Patient():
-class Patient(ResourceMapping):
+class Patient(FhirBaseModel):
   #
   # Use autoload to automaticaly populate the mapping's fields
   # TODO: This seems slower, should we use a tool to autogenerate definitions?
@@ -15,7 +15,7 @@ class Patient(ResourceMapping):
 
   __table__ = Table('CS_PATIENTS_TABLE', Base.metadata, autoload=True, autoload_with=engine)
 
-  def to_fhir(self):
+  def _map_(self, *args, **kwargs):
     return R.Patient({
         'id': str(int(self.opat_id)),
         'name': R.HumanName(family=self.opat_last_name, given=self.opat_first_name),
@@ -109,23 +109,28 @@ class Patient(ResourceMapping):
     '''
 
 # class RequestGroup(ResourceMapping):
-class ProcedureRequest(ResourceMapping):
-  __table__ = Table('LIS_ORDERS', Base.metadata, autoload=True, autoload_with=engine)
+class ProcedureRequest(FhirBaseModel):
+  __table__ = Table('LIS_ORDERS',
+                    Base.metadata,
+                    Column('opat_id', Integer, ForeignKey('CS_PATIENTS_TABLE')),
+                    autoload=True,
+                    autoload_with=engine)
 
-  def to_fhir(self, *args, **kwargs):
+  def _map_(self, *args, **kwargs):
     # import ipdb; ipdb.set_trace()
-    return R.ProcedureRequest({
+
+    resource = R.ProcedureRequest({
       'id': str(int(self.lisor_id)),
       'status': self.status,
       'intent': 'order',
-      'subject': R.FHIRReference(reference=f'Patient/{self.opat_id}'),
+      'subject': self.ContainableResource(cls=Patient, id=self.opat_id, name='subject'),
       'authoredOn': R.FHIRDate(self.date_create),
-      # 'action': self.tests
     }, False)
-    result.action = self.tests
-    if self.comments:
-      result['note'] = R.Annotation({'text': self.lisor_comments}).as_json()
-    return result
+
+    if self.lisor_comments:
+      ource.note = R.Annotation({'text': self.lisor_comments})
+
+    return resource
 
   @property
   def status(self):
@@ -134,10 +139,6 @@ class ProcedureRequest(ResourceMapping):
     except:
       return ''
 
-  @property
-  def tests(self, contained=False):
-    tests = Observation.query.filter(Observation.lisor_id==self.order_id)
-    return [test.id for test in tests]
 '''
     lisor_id = FloatField(primary_key=True)
     lisor_dept = ForeignKey(CsDepartments, DO_NOTHING)
@@ -171,7 +172,7 @@ class ProcedureRequest(ResourceMapping):
 '''
 
 
-class Observation(ResourceMapping):
+class Observation(FhirBaseModel):
   __tablename__  = 'LIS_TESTS'
 
   id = Column('listest_id', Integer, primary_key=True)

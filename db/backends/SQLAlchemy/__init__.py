@@ -14,4 +14,3 @@ SQLALCHEMY_CONFIG = {
   'BASE_CLASS':  # A string containing the module path to a declarative base class.
 }
 '''
-TEST='hoho'
