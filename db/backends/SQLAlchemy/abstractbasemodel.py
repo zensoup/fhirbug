@@ -74,7 +74,7 @@ class AbstractBaseModel(Base):
 
   ## Lifecycle
 
-  def to_fhir(self, *args, contained=[], **kwargs):
+  def to_fhir(self, *args, query=None, **kwargs):
     '''
     Convert from a BaseModel to a Fhir Resource and return it.
 
@@ -82,12 +82,16 @@ class AbstractBaseModel(Base):
     '''
 
     # Initialize attributes
-    self._contained_names = contained
+    self._contained_names = []
+    
+    if query:
+      self._contained_names = query.modifiers.get('_include', [])
+
     self._contained_items = []
     self._refcount = 0
 
     # Run _map_
-    resource = self._map_(self, *args, **kwargs)
+    resource = self._map_(self, *args, query=query, **kwargs)
 
     # Add any contained items that have been generated
     if self._contained_items:

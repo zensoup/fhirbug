@@ -16,7 +16,7 @@ class FhirBaseModel(AbstractBaseModel):
     '''
     if query.resourceId:
       item = cls.query.get(query.resourceId)
-      res = item.to_fhir(query, *args, **kwargs)
+      res = item.to_fhir(*args, query=query, **kwargs)
       return res.as_json()
 
     else:
