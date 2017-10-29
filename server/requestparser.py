@@ -1,6 +1,18 @@
 from urllib.parse import urlparse, parse_qs
 
 
+class FhirRequestQuery:
+  '''
+  Represents parsed parameters from reqests.
+  '''
+  def __init__(self, resource, resourceId, operation, modifiers, search_params):
+    self.resource = resource
+    self.resourceId = resourceId
+    self.operation = operation
+    self.modifiers = modifiers
+    self.search_params = search_params
+
+
 def parse_url(url):
   '''
   Parse an http request string and produce an option dict.
@@ -30,9 +42,9 @@ def parse_url(url):
   # Get the rest of the search parameters
   search_params = {param: value for param, value in qs.items() if not param in modifiers}
 
-  return {'resource': resource,
+  return FhirRequestQuery(**{'resource': resource,
           'resourceId': resourceId,
           'operation': operation,
           'modifiers': modifiers,
           'search_params': search_params,
-          }
+          })

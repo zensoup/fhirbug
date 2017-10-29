@@ -33,14 +33,14 @@ def main():
   print(o)
 
 def handle_get_request(url):
+  print('url', url)
   query = parse_url(url)
-  resource = query['resource']
+  resource = query.resource
   try:
     Resource = getattr(models, resource)
   except Exception as e:
     return {'error': 'resource does not exist'}, 400
-  if query['resourceId']:
-    return Resource.get(query['resourceId']), 200
+  return Resource.get(query=query), 200
 
 
 if __name__ == '__main__':

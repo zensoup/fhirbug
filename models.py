@@ -49,7 +49,7 @@ class ProcedureRequest(FhirBaseModel):
     }, False)
 
     if self.lisor_comments:
-      ource.note = R.Annotation({'text': self.lisor_comments})
+      resource.note = R.Annotation({'text': self.lisor_comments})
 
     return resource
 
