@@ -22,15 +22,17 @@ class FhirBaseModel(AbstractBaseModel):
     else:
       # Handle search
       # apply_search_filters(query, search_params)
+      sql_query = cls.query
       if hasattr(cls, '_apply_searches_'):
-        cls._apply_searches_(cls.query, query)
+        sql_query = cls._apply_searches_(sql_query, query)
+        print(cls.query)
 
       # Handle pagination
       count = int(query.modifiers.get('_count', [settings.DEFAULT_BUNDLE_SIZE])[0])
       count = min(count, settings.MAX_BUNDLE_SIZE)
       offset = query.search_params.get('search-offset', ['1'])
       offset = int(offset[0])
-      pagination = paginate(cls.query, offset, offset+count)
+      pagination = paginate(sql_query, offset, offset+count)
       params = {
           'items': [item.to_fhir(query, *args, **kwargs) for item in pagination.items],
           'total': pagination.total,
