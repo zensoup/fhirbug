@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
-from db.backends.SQLAlchemy import FhirBaseModel
+from db.backends.SQLAlchemy import Base, engine, Attribute, const
+from db.backends.SQLAlchemy.fhirbasemodel import FhirBaseModel
+
 from Fhir import resources as R
-from main import Base, engine
 
 
 
@@ -44,6 +45,36 @@ class Patient(FhirBaseModel):
         })
 
 
+# class _ProcedureRequest(FhirBaseModel):
+#   __table__ = Table('LIS_ORDERS',
+#                     Base.metadata,
+#                     Column('opat_id', Integer, ForeignKey('CS_PATIENTS_TABLE')),
+#                     Column('lisor_status', Integer),
+#                     autoload=True,
+#                     autoload_with=engine)
+#
+#   def _map_(self, *args, **kwargs):
+#
+#     resource = R.ProcedureRequest({
+#       'id': str(int(self.lisor_id)),
+#       'status': self.status,
+#       'intent': 'order',
+#       'subject': self.ContainableResource(cls=Patient, id=self.opat_id, name='subject'),
+#       'authoredOn': R.FHIRDate(self.date_create),
+#     }, False)
+#
+#     if self.lisor_comments:
+#       resource.note = R.Annotation({'text': self.lisor_comments})
+#
+#     return resource
+#
+#   @property
+#   def status(self):
+#     try:
+#       return ['active', 'unknown', 'cancelled', 'completed'][self.lisor_status]
+#     except:
+#       return ''
+
 class ProcedureRequest(FhirBaseModel):
   __table__ = Table('LIS_ORDERS',
                     Base.metadata,
@@ -52,20 +83,9 @@ class ProcedureRequest(FhirBaseModel):
                     autoload=True,
                     autoload_with=engine)
 
-  def _map_(self, *args, **kwargs):
-
-    resource = R.ProcedureRequest({
-      'id': str(int(self.lisor_id)),
-      'status': self.status,
-      'intent': 'order',
-      'subject': self.ContainableResource(cls=Patient, id=self.opat_id, name='subject'),
-      'authoredOn': R.FHIRDate(self.date_create),
-    }, False)
-
-    if self.lisor_comments:
-      resource.note = R.Annotation({'text': self.lisor_comments})
-
-    return resource
+  _id = Attribute('id', 'lisor_id', None, None)
+  _status = Attribute('status', 'status', None, None)
+  _intent = Attribute('intent', const('order'), None, True)
 
   @property
   def status(self):
@@ -73,6 +93,10 @@ class ProcedureRequest(FhirBaseModel):
       return ['active', 'unknown', 'cancelled', 'completed'][self.lisor_status]
     except:
       return ''
+
+
+
+
 
 
 class Observation(FhirBaseModel):

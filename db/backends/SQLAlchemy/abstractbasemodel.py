@@ -1,16 +1,17 @@
 import importlib
 
 from sqlalchemy.ext.declarative import declarative_base
-from settings import SQLALCHEMY_CONFIG
+# from settings import SQLALCHEMY_CONFIG
+from . import Base, engine
 
-def importStuff():
-  module_path, _, class_name = SQLALCHEMY_CONFIG['BASE_CLASS'].rpartition('.')
-
-  module = importlib.import_module(module_path)
-
-  return getattr(module, class_name)
-
-Base = importStuff()
+# def importStuff():
+#   module_path, _, class_name = SQLALCHEMY_CONFIG['BASE_CLASS'].rpartition('.')
+#
+#   module = importlib.import_module(module_path)
+#
+#   return getattr(module, class_name)
+#
+# Base = importStuff()
 
 class AbstractBaseModel(Base):
   '''
@@ -86,6 +87,7 @@ class AbstractBaseModel(Base):
 
     # Initialize attributes
     self._contained_names = []
+    self._searchables = []
 
     if query:
       self._contained_names = query.modifiers.get('_include', [])
