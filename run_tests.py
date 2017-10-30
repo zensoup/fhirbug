@@ -5,7 +5,7 @@ import doctest
 from Fhir.Resources import fhirabstractbase
 from Fhir.Resources import extensions
 from Fhir import resources
-from http import requestparser
+from server import requestparser
 
 def testResourceContructor(verbose=False):
   from Fhir import resources

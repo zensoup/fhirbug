@@ -1,4 +1,4 @@
-from sqlalchemy_pagination import paginate
+from db.backends.SQLAlchemy.pagination import paginate
 
 import settings
 from .abstractbasemodel import AbstractBaseModel

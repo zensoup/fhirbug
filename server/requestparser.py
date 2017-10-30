@@ -17,12 +17,18 @@ def parse_url(url):
   '''
   Parse an http request string and produce an option dict.
 
-  >>> parse_url('Patient/123/$validate?_format=json')
-  {'resource': 'Patient',
-  'resourceId': '123',
-  'operation': '$validate',
-  'modifiers': {'_format': ['json']},
-  'search_params': {}}
+  >>> p = parse_url('Patient/123/$validate?_format=json')
+  >>> p.resource
+  'Patient'
+  >>> p.resourceId
+  '123'
+  >>> p.operation
+  '$validate'
+  >>> p.modifiers
+  {'_format': ['json']}
+  >>> p.search_params
+  {}
+  
   '''
   parsed = urlparse(url)
 
