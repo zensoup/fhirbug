@@ -1,4 +1,5 @@
 import os
+import xml
 import importlib
 
 from sqlalchemy import create_engine
@@ -33,7 +34,6 @@ def main():
   print(o)
 
 def handle_get_request(url):
-  print('url', url)
   query = parse_url(url)
   resource = query.resource
   try:
@@ -42,6 +42,17 @@ def handle_get_request(url):
     return {'error': 'resource does not exist'}, 400
   return Resource.get(query=query), 200
 
+def handle_post_request(url, body):
+  query = parse_url(url)
+  resource = query.resource
+  try:
+    from Fhir import resources
+    Resource = getattr(resources, resource)
+  except Exception as e:
+    return {'error': 'resource does not exist'}, 400
+  print(Resource, body)
+  resource = Resource(body)
+  return resource.as_json(), 200
 
 if __name__ == '__main__':
   main()

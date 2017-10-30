@@ -16,7 +16,6 @@ class Patient(FhirBaseModel):
 
   @classmethod
   def _apply_searches_(cls, sql_query, rq_query):
-    print(rq_query.search_params)
     if 'address-city' in rq_query.search_params:
       sql_query = sql_query.filter(cls.opat_city == rq_query.search_params.get('address-city')[0])
     if 'id' in rq_query.search_params: # or '_id' in query.modifiers:

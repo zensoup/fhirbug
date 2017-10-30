@@ -25,7 +25,6 @@ class FhirBaseModel(AbstractBaseModel):
       sql_query = cls.query
       if hasattr(cls, '_apply_searches_'):
         sql_query = cls._apply_searches_(sql_query, query)
-        print(cls.query)
 
       # Handle pagination
       count = int(query.modifiers.get('_count', [settings.DEFAULT_BUNDLE_SIZE])[0])
