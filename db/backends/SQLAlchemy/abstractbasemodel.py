@@ -118,8 +118,6 @@ class AbstractBaseModel(Base):
     # Map the attributes
     attributes = [prop for prop in dir(self.Fhir) if not prop.startswith('_')]
 
-    param_dict = {attribute: getattr(self.Fhir, f'{attribute}') for attribute in attributes}
-
     # Use __Resource__ if it has been defined else the dame of the class
     resource_name = getattr(self, '__Resource__', self.__class__.__name__)
 
@@ -127,6 +125,11 @@ class AbstractBaseModel(Base):
     package = importlib.import_module('Fhir.resources')
 
     Resource = getattr(package, resource_name)
+
+    # Filter the matching fields
+    mock = Resource()
+    param_dict = {attribute: getattr(self.Fhir, f'{attribute}') for attribute in attributes if hasattr(mock, attribute)}
+
     resource = Resource(param_dict, strict=kwargs.get('strict', True))
 
     # Add any contained items that have been generated
