@@ -103,3 +103,37 @@ class AbstractBaseModel(Base):
       resource.contained = self._contained_items
 
     return resource
+
+  def to_fhir2(self, *args, query=None, **kwargs):
+    # Initialize attributes
+    self._contained_names = []
+    self._searchables = []
+
+    if query:
+      self._contained_names = query.modifiers.get('_include', [])
+
+    self._contained_items = []
+    self._refcount = 0
+
+    # Map the attributes
+    attributes = [prop for prop in dir(self.Fhir) if not prop.startswith('_')]
+
+    param_dict = {attribute: getattr(self.Fhir, f'{attribute}') for attribute in attributes}
+
+    # Use __Resource__ if it has been defined else the dame of the class
+    resource_name = getattr(self, '__Resource__', self.__class__.__name__)
+
+    # TODO: module_path = getattr(settings, 'Resource_Path', 'Fhir.resources')
+    package = importlib.import_module('Fhir.resources')
+
+    Resource = getattr(package, resource_name)
+    resource = Resource(param_dict, strict=kwargs.get('strict', True))
+
+    # Add any contained items that have been generated
+    if self._contained_items:
+      resource.contained = self._contained_items
+
+    return resource
+
+  def update_from_fhir(self, resource):
+    pass

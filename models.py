@@ -78,24 +78,74 @@ class Patient(FhirBaseModel):
 class ProcedureRequest(FhirBaseModel):
   __table__ = Table('LIS_ORDERS',
                     Base.metadata,
+                    Column('lisor_id', Integer, primary_key=True),
                     Column('opat_id', Integer, ForeignKey('CS_PATIENTS_TABLE')),
                     Column('lisor_status', Integer),
                     autoload=True,
                     autoload_with=engine)
 
-  _id = Attribute('id', 'lisor_id', None, None)
-  _status = Attribute('status', 'status', None, None)
-  _intent = Attribute('intent', const('order'), None, True)
+  @property
+  def get_date(self):
+    return R.FHIRDate(self.date_create)
 
   @property
-  def status(self):
+  def get_status(self):
     try:
       return ['active', 'unknown', 'cancelled', 'completed'][self.lisor_status]
     except:
       return ''
 
+  def set_status(self, value):
+    map = {'active': 0, 'unknown': 1, 'cancelled': 2, 'completed': 3}
+    if value not in map:
+      raise Exception('Invalid status value')
+    self.lisor_status = map.get(value)
+
+  @property
+  def get_subject(self):
+    return self.ContainableResource(cls=Patient, id=self.opat_id, name='subject')
+
+  @property
+  def set_date(self):
+    pass
+
+  @set_date.setter
+  def set_date(self, value):
+    if isinstance(value, (dict, str)):
+      res = R.FHIRDate(value)
+    elif isinstance(value, R.FHIRDate):
+      res = value
+    else:
+      raise Exception('Invalid date')
+
+    self.date_create = res.as_json()
 
 
+  _f_id = Attribute(('lisor_id', str), None, None)
+  _f_status = Attribute('get_status', set_status, None)
+  _f_intent = Attribute(const('order'), None, True)
+  _f_subject = Attribute('get_subject', 'opat_id', None)
+  _f_authoredOn = Attribute(('date_create', R.FHIRDate), 'set_date', None)
+
+  class FhirMap:
+    def get_status(self):
+      try:
+        return ['active', 'unknown', 'cancelled', 'completed'][self._model.lisor_status]
+      except:
+        return ''
+
+    def set_status(self, value):
+      map = {'active': 0, 'unknown': 1, 'cancelled': 2, 'completed': 3}
+      if value not in map:
+        raise Exception('Invalid status value')
+      self._model.lisor_status = map.get(value)
+
+
+    id = Attribute(('lisor_id', str), None, None)
+    status = Attribute(get_status, set_status, None)
+    intent = Attribute(const('order'), None, True)
+    subject = Attribute('get_subject', 'opat_id', None)
+    authoredOn = Attribute(('date_create', R.FHIRDate), 'set_date', None)
 
 
 

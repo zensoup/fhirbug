@@ -42,3 +42,10 @@ class FhirBaseModel(AbstractBaseModel):
           'previous_page': f'{cls.__name__}/?_count={count}&search-offset={max(offset-count,1)}',
       }
       return PaginatedBundle(pagination=params).as_json()
+
+  @property
+  def Fhir(self):
+    if not hasattr(self, '_Fhir'):
+      self._Fhir = self.FhirMap()
+      self._Fhir._model = self
+    return self._Fhir
