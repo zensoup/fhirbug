@@ -106,12 +106,8 @@ class AbstractBaseModel(Base):
 
   def to_fhir2(self, *args, query=None, **kwargs):
     # Initialize attributes
-    self._contained_names = []
     self._searchables = []
-
-    if query:
-      self._contained_names = query.modifiers.get('_include', [])
-
+    self._contained_names = query.modifiers.get('_include', []) if query else []
     self._contained_items = []
     self._refcount = 0
 
@@ -138,5 +134,9 @@ class AbstractBaseModel(Base):
 
     return resource
 
-  def update_from_fhir(self, resource):
-    pass
+  def create_from_resource(self, resource):
+    '''
+    Creates and saves a new row from a Fhir.Resource object
+    '''
+
+    ## HERE

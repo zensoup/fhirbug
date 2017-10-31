@@ -23,20 +23,32 @@ def handle_get_request(url):
   try:
     Resource = getattr(models, resource)
   except Exception as e:
-    return {'error': 'resource does not exist'}, 400
+    return {'error': 'resource does not exist'}, 404
   return Resource.get(query=query), 200
 
 def handle_post_request(url, body):
   query = parse_url(url)
   resource = query.resource
+  # Get the Resource
   try:
     from Fhir import resources
     Resource = getattr(resources, resource)
   except Exception as e:
-    return {'error': 'resource does not exist'}, 400
+    return {'error': 'resource does not exist'}, 404
   print(Resource, body)
-  resource = Resource(body)
-  return resource.as_json(), 200
+  # Validate the incoming json
+  try:
+    resource = Resource(body)
+  except Exception as e:
+    return {'error': 'validation error'}, 400
+  # Import the model
+  try:
+    Model = getattr(models, resource)
+  except Exception as e:
+    return {'error': 'This shouldn\'t happen'}, 404
+
+  new_resource = Model.create_from_resource(resource)
+  return new_resource.as_json(), 201
 
 if __name__ == '__main__':
   main()
