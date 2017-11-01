@@ -2,7 +2,7 @@ import importlib
 
 from sqlalchemy.ext.declarative import declarative_base
 # from settings import SQLALCHEMY_CONFIG
-from . import Base, engine
+from . import Base, engine, Attribute
 
 # def importStuff():
 #   module_path, _, class_name = SQLALCHEMY_CONFIG['BASE_CLASS'].rpartition('.')
@@ -60,7 +60,11 @@ class AbstractBaseModel(Base):
     else:  # The resource is not contained, generate a url
 
       # Build the reference dict
-      reference = {'reference': f'{cls_name}/{id}'}
+      reference = {'reference': f'{cls_name}/{id}',
+                   'identifier': {
+                      'system': 'Patient',
+                      'value': str(id),
+                   }}
 
       if force_display:  # Do a query to fetch the display
         # TODO: can we check if it supprts `_as_display` before querying?
@@ -134,7 +138,7 @@ class AbstractBaseModel(Base):
     return resource
 
   @classmethod
-  def create_from_resource(cls, resource):
+  def from_resource(cls, resource):
     '''
     Creates and saves a new row from a Fhir.Resource object
     '''
@@ -142,10 +146,11 @@ class AbstractBaseModel(Base):
     params = {}
 
     # Read the attributes of the FhirMap class
-    own_attributes = [prop for prop in dir(cls.FhirMap) if not prop.startswith('_')]
+    own_attributes = [prop for prop, type in cls.FhirMap.__dict__.items() if isinstance(type, Attribute)]
 
     obj = cls()
 
+    # for path in own_attributes:
     for path in own_attributes:
       value = getattr(resource, path.replace('_', '.'), None)
       if value:

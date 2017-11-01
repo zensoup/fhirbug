@@ -1,4 +1,5 @@
 from db.backends.SQLAlchemy.pagination import paginate
+from . import Attribute
 
 import settings
 from .abstractbasemodel import AbstractBaseModel
@@ -45,7 +46,13 @@ class FhirBaseModel(AbstractBaseModel):
 
   @property
   def Fhir(self):
+    # Initialize the FhirMap instance
+    ## TODO: should we use a base class instead and implement __init__?
     if not hasattr(self, '_Fhir'):
       self._Fhir = self.FhirMap()
       self._Fhir._model = self
+      self.Fhir._properties = [prop for prop, typ in self.FhirMap.__dict__.items()
+                                    if isinstance(typ, Attribute)]
+
+    # Return the singleton
     return self._Fhir

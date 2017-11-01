@@ -35,9 +35,6 @@ Base = declarative_base()
 Base.query = session.query_property()
 Base.session = property(lambda instance: session.object_session(instance))
 
-## Don't move this, it's black magic!
-from .fhirbasemodel import FhirBaseModel
-
 
 ## Mappings
 class Attribute2:
@@ -119,3 +116,7 @@ class Attribute:
 class const:
   def __init__(self, value):
     self.value = value
+
+    
+## Don't move this, it's black magic!
+from .fhirbasemodel import FhirBaseModel

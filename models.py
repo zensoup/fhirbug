@@ -5,6 +5,8 @@ from db.backends.SQLAlchemy.fhirbasemodel import FhirBaseModel
 
 from Fhir import resources as R
 
+import settings
+
 
 
 class Patient(FhirBaseModel):
@@ -85,10 +87,6 @@ class ProcedureRequest(FhirBaseModel):
                     autoload_with=engine)
 
   @property
-  def get_date(self):
-    return R.FHIRDate(self.date_create)
-
-  @property
   def get_status(self):
     try:
       return ['active', 'unknown', 'cancelled', 'completed'][self.lisor_status]
@@ -122,11 +120,28 @@ class ProcedureRequest(FhirBaseModel):
 
   class FhirMap:
     def set_subject(self, reference):
+      value = None
+      try:
+        # TODO: can we make this all a user-defined parameter for the entire identifier?
+        sys = reference.identifier.system
+        # assigner = reference.identifier.assigner
+        # if assigner == getattr(settings, 'ORGANIZATION_NAME', 'CSSA') and sys == 'Patient':
+        value = reference.identifier.value
+      except AttributeError:
+        pass
+
       if hasattr(reference, 'reference'):
-        if reference.reference.startswith('#')
+        ref = reference.reference
+        if ref.startswith('#'):
           # TODO read internal reference
           pass
-        
+
+      if value is None:
+        raise Exception('Invalid subject')
+
+      self._model.opat_id = value
+
+
     def get_status(self):
       try:
         return ['active', 'unknown', 'cancelled', 'completed'][self._model.lisor_status]
@@ -143,9 +158,8 @@ class ProcedureRequest(FhirBaseModel):
     id = Attribute(('lisor_id', str), None, None)
     status = Attribute(get_status, set_status, None)
     intent = Attribute(const('order'), None, True)
-    subject = Attribute('get_subject', 'opat_id', None)
+    subject = Attribute('get_subject', set_subject, None)
     authoredOn = Attribute(('date_create', R.FHIRDate), 'set_date', None)
-
 
 
 class Observation(FhirBaseModel):
