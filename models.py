@@ -120,14 +120,13 @@ class ProcedureRequest(FhirBaseModel):
 
     self.date_create = res.as_json()
 
-
-  _f_id = Attribute(('lisor_id', str), None, None)
-  _f_status = Attribute('get_status', set_status, None)
-  _f_intent = Attribute(const('order'), None, True)
-  _f_subject = Attribute('get_subject', 'opat_id', None)
-  _f_authoredOn = Attribute(('date_create', R.FHIRDate), 'set_date', None)
-
   class FhirMap:
+    def set_subject(self, reference):
+      if hasattr(reference, 'reference'):
+        if reference.reference.startswith('#')
+          # TODO read internal reference
+          pass
+        
     def get_status(self):
       try:
         return ['active', 'unknown', 'cancelled', 'completed'][self._model.lisor_status]

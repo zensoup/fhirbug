@@ -72,7 +72,6 @@ class AbstractBaseModel(Base):
 
       return reference
 
-
   ## Lifecycle
 
   def to_fhir(self, *args, query=None, **kwargs):
@@ -111,7 +110,7 @@ class AbstractBaseModel(Base):
     self._contained_items = []
     self._refcount = 0
 
-    # Map the attributes
+    # Read the attributes
     attributes = [prop for prop in dir(self.Fhir) if not prop.startswith('_')]
 
     # Use __Resource__ if it has been defined else the dame of the class
@@ -134,9 +133,22 @@ class AbstractBaseModel(Base):
 
     return resource
 
-  def create_from_resource(self, resource):
+  @classmethod
+  def create_from_resource(cls, resource):
     '''
     Creates and saves a new row from a Fhir.Resource object
     '''
 
-    ## HERE
+    params = {}
+
+    # Read the attributes of the FhirMap class
+    own_attributes = [prop for prop in dir(cls.FhirMap) if not prop.startswith('_')]
+
+    obj = cls()
+
+    for path in own_attributes:
+      value = getattr(resource, path.replace('_', '.'), None)
+      if value:
+        setattr(obj.Fhir, path, value)
+
+    return obj
