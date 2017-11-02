@@ -6,6 +6,7 @@ from Fhir.Resources import fhirabstractbase
 from Fhir.Resources import extensions
 from Fhir import resources
 from server import requestparser
+from db.backends import SQLAlchemy
 
 def testResourceContructor(verbose=False):
   from Fhir import resources
@@ -21,6 +22,7 @@ def testResourceContructor(verbose=False):
   doctest.testmod(extensions, extraglobs=context, optionflags=doctest.NORMALIZE_WHITESPACE, verbose=verbose)
   doctest.testmod(resources, optionflags=doctest.NORMALIZE_WHITESPACE, verbose=verbose)
   doctest.testmod(requestparser, optionflags=doctest.NORMALIZE_WHITESPACE, verbose=verbose)
+  doctest.testmod(SQLAlchemy, optionflags=doctest.NORMALIZE_WHITESPACE, verbose=verbose)
 
 if __name__ == '__main__':
   verbose = True if '-v' in sys.argv else False
