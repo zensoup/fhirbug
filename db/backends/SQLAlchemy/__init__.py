@@ -196,6 +196,7 @@ class ContainableAttribute(Attribute):
     self.id = id
     self.name = name
     self.force_display = force_display
+    self.searcher = None
 
   def __get__(self, instance, owner):
     cls_name = self.cls.__name__
@@ -300,7 +301,6 @@ class AbstractBaseModel(Base):
     # Filter the matching fields
     mock = Resource()
     self._Fhir._query = query
-    print(query, self._Fhir._query)
     param_dict = {attribute: getattr(self.Fhir, f'{attribute}') for attribute in attributes if hasattr(mock, attribute)}
 
     resource = Resource(param_dict, strict=kwargs.get('strict', True))
@@ -349,8 +349,11 @@ class FhirBaseModel(AbstractBaseModel):
       # Handle search
       # apply_search_filters(query, search_params)
       sql_query = cls.query
-      if hasattr(cls, '_apply_searches_'):
-        sql_query = cls._apply_searches_(sql_query, query)
+      for search in [*query.search_params, *query.modifiers]:
+        if search in cls.searchables():
+          values = query.search_params.get(search, query.modifiers.get(search))
+          for value in values:
+            sql_query = cls.searchables()[search](cls, search, value, sql_query, query)
 
       # Handle pagination
       count = int(query.modifiers.get('_count', [settings.DEFAULT_BUNDLE_SIZE])[0])
@@ -369,8 +372,20 @@ class FhirBaseModel(AbstractBaseModel):
       }
       return PaginatedBundle(pagination=params).as_json()
 
+  @classmethod
+  def searchables(cls):
+    '''
+    Returns a list od two-tuples containing the name of a searchable attribute and the function that searches for it based
+    on the Attribute definitions in the FhirMap subclass.
+    '''
+    return {name: prop.searcher for name, prop in cls.FhirMap.__dict__.items() if isinstance(prop, Attribute) and prop.searcher}
+
+
   @property
   def Fhir(self):
+    '''
+    Wrapper property that initializes an instance of FhirMap.
+    '''
     # Initialize the FhirMap instance
     ## TODO: should we use a base class instead and implement __init__?
     if not hasattr(self, '_Fhir'):
@@ -378,6 +393,7 @@ class FhirBaseModel(AbstractBaseModel):
       self._Fhir._model = self
       self._Fhir._properties = [prop for prop, typ in self.FhirMap.__dict__.items()
                                     if isinstance(typ, Attribute)]
+      # self._Fhir._searchables = [(name, prop.searcher) for name, prop in self.FhirMap.__dict__.items() if name in self._Fhir._properties and prop.searcher]
 
     # Return the singleton
     return self._Fhir

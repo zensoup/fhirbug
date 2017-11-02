@@ -1,12 +1,12 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
 from db.backends.SQLAlchemy.base import Base, engine
+from db.backends.SQLAlchemy.searches import NumericSearch
 from db.backends.SQLAlchemy import FhirBaseModel, Attribute, const, ContainableAttribute
 
 from Fhir import resources as R
 
 import settings
-
 
 
 class Patient(FhirBaseModel):
@@ -53,7 +53,7 @@ class Patient(FhirBaseModel):
     return R.HumanName(family=self.opat_last_name, given=self.opat_first_name)
 
   class FhirMap:
-    id = Attribute(('opat_id', str), None, None)
+    id = Attribute(('opat_id', str), None,  NumericSearch('opat_id'))
     name = Attribute('get_name', None, None)
     active = Attribute(const(True), None, None)
 
@@ -136,7 +136,7 @@ class ProcedureRequest(FhirBaseModel):
       self._model.lisor_status = map.get(value)
 
 
-    id = Attribute(('lisor_id', str), None, None)
+    id = Attribute(('lisor_id', str), None, NumericSearch('lisor_id'))
     status = Attribute(get_status, set_status, None)
     intent = Attribute(const('order'), None, True)
     # subject = Attribute('get_subject', set_subject, None)
