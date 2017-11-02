@@ -19,35 +19,6 @@ class Patient(FhirBaseModel):
                     Column('opat_id', Integer, primary_key=True),
                     autoload=True, autoload_with=engine)
 
-  @classmethod
-  def _apply_searches_(cls, sql_query, rq_query):
-    if 'address-city' in rq_query.search_params:
-      sql_query = sql_query.filter(cls.opat_city == rq_query.search_params.get('address-city')[0])
-    if 'id' in rq_query.search_params: # or '_id' in query.modifiers:
-      value = rq_query.search_params.get('id', [''])[0]
-      if value.startswith('gt'):
-        sql_query = sql_query.filter(cls.opat_id > int(value[2:]))
-      if value.startswith('lt'):
-        sql_query = sql_query.filter(cls.opat_id < int(value[2:]))
-      if not value.startswith('lt') and not value.startswith('gt'):
-        sql_query = sql_query.filter(cls.opat_id == int(value))
-    return sql_query
-
-  def _map_(self, *args, **kwargs):
-    return R.Patient({
-        'id': str(int(self.opat_id)),
-        'name': R.HumanName(family=self.opat_last_name, given=self.opat_first_name),
-        'identifier': R.AMKA(self.opat_amka),
-        'active': True,
-        'address': R.Address({
-            'use': 'home',
-            'line': self.opat_address,
-            'city': self.opat_city,
-            'postalCode': self.opat_zip}),
-        'telecom': R.ContactPoint(system='phone', value=self.opat_tel),
-        'birthDate': self.opat_birthday,
-        })
-
   @property
   def get_name(self):
     return R.HumanName(family=self.opat_last_name, given=self.opat_first_name)
@@ -68,23 +39,6 @@ class ProcedureRequest(FhirBaseModel):
                     autoload_with=engine)
 
   @property
-  def get_status(self):
-    try:
-      return ['active', 'unknown', 'cancelled', 'completed'][self.lisor_status]
-    except:
-      return ''
-
-  def set_status(self, value):
-    map = {'active': 0, 'unknown': 1, 'cancelled': 2, 'completed': 3}
-    if value not in map:
-      raise Exception('Invalid status value')
-    self.lisor_status = map.get(value)
-
-  @property
-  def get_subject(self):
-    return self.ContainableResource(cls=Patient, id=self.opat_id, name='subject')
-
-  @property
   def set_date(self):
     pass
 
@@ -100,28 +54,6 @@ class ProcedureRequest(FhirBaseModel):
     self.date_create = res.as_json()
 
   class FhirMap:
-    def set_subject(self, reference):
-      value = None
-      try:
-        # TODO: can we make this all a user-defined parameter for the entire identifier?
-        sys = reference.identifier.system
-        # assigner = reference.identifier.assigner
-        # if assigner == getattr(settings, 'ORGANIZATION_NAME', 'CSSA') and sys == 'Patient':
-        value = reference.identifier.value
-      except AttributeError:
-        pass
-
-      if hasattr(reference, 'reference'):
-        ref = reference.reference
-        if ref.startswith('#'):
-          # TODO read internal reference
-          pass
-
-      if value is None:
-        raise Exception('Invalid subject')
-
-      self._model.opat_id = value
-
 
     def get_status(self):
       try:
