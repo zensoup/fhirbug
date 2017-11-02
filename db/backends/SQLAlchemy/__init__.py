@@ -349,11 +349,13 @@ class FhirBaseModel(AbstractBaseModel):
       # Handle search
       # apply_search_filters(query, search_params)
       sql_query = cls.query
-      for search in [*query.search_params, *query.modifiers]:
+      for search in [*query.search_params, *query.modifiers]:  # TODO: Do we really need to check the modifiers here?
         if search in cls.searchables():
           values = query.search_params.get(search, query.modifiers.get(search))
           for value in values:
             sql_query = cls.searchables()[search](cls, search, value, sql_query, query)
+
+      # TODO: Handle sorting
 
       # Handle pagination
       count = int(query.modifiers.get('_count', [settings.DEFAULT_BUNDLE_SIZE])[0])
@@ -361,14 +363,16 @@ class FhirBaseModel(AbstractBaseModel):
       offset = query.search_params.get('search-offset', ['1'])
       offset = int(offset[0])
       pagination = paginate(sql_query, offset, offset+count)
+      url_queries = '&'.join([f'{param}={value}' for param, values in query.search_params.items() for value in values if param != 'search-offset'])
+      url_queries = '&' + url_queries if url_queries else ''
       params = {
           'items': [item.to_fhir(*args, query=query, **kwargs) for item in pagination.items],
           'total': pagination.total,
           'pages': pagination.pages,
           'has_next': pagination.has_next,
           'has_previous': pagination.has_previous,
-          'next_page': f'{cls.__name__}/?_count={count}&search-offset={offset+count}',
-          'previous_page': f'{cls.__name__}/?_count={count}&search-offset={max(offset-count,1)}',
+          'next_page': f'{cls.__name__}/?_count={count}&search-offset={offset+count}{url_queries}',
+          'previous_page': f'{cls.__name__}/?_count={count}&search-offset={max(offset-count,1)}{url_queries}',
       }
       return PaginatedBundle(pagination=params).as_json()
 

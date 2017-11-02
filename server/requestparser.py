@@ -5,12 +5,14 @@ class FhirRequestQuery:
   '''
   Represents parsed parameters from reqests.
   '''
-  def __init__(self, resource, resourceId, operation, modifiers, search_params):
+  def __init__(self, resource, resourceId, operation, modifiers, search_params, body=None, request=None):
     self.resource = resource
     self.resourceId = resourceId
     self.operation = operation
     self.modifiers = modifiers
     self.search_params = search_params
+    self.body = body
+    self.request = request
 
 
 def parse_url(url):
@@ -28,7 +30,7 @@ def parse_url(url):
   {'_format': ['json']}
   >>> p.search_params
   {}
-  
+
   '''
   parsed = urlparse(url)
 
@@ -48,9 +50,15 @@ def parse_url(url):
   # Get the rest of the search parameters
   search_params = {param: value for param, value in qs.items() if not param in modifiers}
 
-  return FhirRequestQuery(**{'resource': resource,
+  # We accept both id and _id params, but transfer _id to search_params as id
+  id_param = modifiers.pop('_id', None)
+  if id_param:
+    search_params['id'] = id_param
+
+  params = {'resource': resource,
           'resourceId': resourceId,
           'operation': operation,
           'modifiers': modifiers,
           'search_params': search_params,
-          })
+          }
+  return FhirRequestQuery(**params)
