@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
 from db.backends.SQLAlchemy.base import Base, engine
-from db.backends.SQLAlchemy import FhirBaseModel, Attribute, const
+from db.backends.SQLAlchemy import FhirBaseModel, Attribute, const, ContainableAttribute
 
 from Fhir import resources as R
 
@@ -56,7 +56,6 @@ class Patient(FhirBaseModel):
     id = Attribute(('opat_id', str), None, None)
     name = Attribute('get_name', None, None)
     active = Attribute(const(True), None, None)
-
 
 
 class ProcedureRequest(FhirBaseModel):
@@ -140,7 +139,8 @@ class ProcedureRequest(FhirBaseModel):
     id = Attribute(('lisor_id', str), None, None)
     status = Attribute(get_status, set_status, None)
     intent = Attribute(const('order'), None, True)
-    subject = Attribute('get_subject', set_subject, None)
+    # subject = Attribute('get_subject', set_subject, None)
+    subject = ContainableAttribute(cls=Patient, id='opat_id', name='subject')
     authoredOn = Attribute(('date_create', R.FHIRDate), 'set_date', None)
 
 
