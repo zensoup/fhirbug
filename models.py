@@ -15,7 +15,9 @@ class Patient(FhirBaseModel):
   # TODO: This seems slower, should we use a tool to autogenerate definitions?
   #
 
-  __table__ = Table('CS_PATIENTS_TABLE', Base.metadata, autoload=True, autoload_with=engine)
+  __table__ = Table('CS_PATIENTS_TABLE', Base.metadata,
+                    Column('opat_id', Integer, primary_key=True),
+                    autoload=True, autoload_with=engine)
 
   @classmethod
   def _apply_searches_(cls, sql_query, rq_query):
@@ -46,36 +48,16 @@ class Patient(FhirBaseModel):
         'birthDate': self.opat_birthday,
         })
 
+  @property
+  def get_name(self):
+    return R.HumanName(family=self.opat_last_name, given=self.opat_first_name)
 
-# class _ProcedureRequest(FhirBaseModel):
-#   __table__ = Table('LIS_ORDERS',
-#                     Base.metadata,
-#                     Column('opat_id', Integer, ForeignKey('CS_PATIENTS_TABLE')),
-#                     Column('lisor_status', Integer),
-#                     autoload=True,
-#                     autoload_with=engine)
-#
-#   def _map_(self, *args, **kwargs):
-#
-#     resource = R.ProcedureRequest({
-#       'id': str(int(self.lisor_id)),
-#       'status': self.status,
-#       'intent': 'order',
-#       'subject': self.ContainableResource(cls=Patient, id=self.opat_id, name='subject'),
-#       'authoredOn': R.FHIRDate(self.date_create),
-#     }, False)
-#
-#     if self.lisor_comments:
-#       resource.note = R.Annotation({'text': self.lisor_comments})
-#
-#     return resource
-#
-#   @property
-#   def status(self):
-#     try:
-#       return ['active', 'unknown', 'cancelled', 'completed'][self.lisor_status]
-#     except:
-#       return ''
+  class FhirMap:
+    id = Attribute(('opat_id', str), None, None)
+    name = Attribute('get_name', None, None)
+    active = Attribute(const(True), None, None)
+
+
 
 class ProcedureRequest(FhirBaseModel):
   __table__ = Table('LIS_ORDERS',
