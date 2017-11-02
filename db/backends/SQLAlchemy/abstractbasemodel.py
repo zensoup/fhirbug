@@ -84,30 +84,8 @@ class AbstractBaseModel(Base):
 
     If param `query` is passed and is of type server.FhirRequestQuery, it is used to
     allow for additional functionality like contained resources.
-
-    self._map_() must be defined and return a Resource.
     '''
-
-    # Initialize attributes
-    self._contained_names = []
-    self._searchables = []
-
-    if query:
-      self._contained_names = query.modifiers.get('_include', [])
-
-    self._contained_items = []
-    self._refcount = 0
-
-    # Run _map_
-    resource = self._map_(self, *args, query=query, **kwargs)
-
-    # Add any contained items that have been generated
-    if self._contained_items:
-      resource.contained = self._contained_items
-
-    return resource
-
-  def to_fhir2(self, *args, query=None, **kwargs):
+    
     # Initialize attributes
     self._searchables = []
     self._contained_names = query.modifiers.get('_include', []) if query else []

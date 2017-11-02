@@ -51,7 +51,7 @@ class FhirBaseModel(AbstractBaseModel):
     if not hasattr(self, '_Fhir'):
       self._Fhir = self.FhirMap()
       self._Fhir._model = self
-      self.Fhir._properties = [prop for prop, typ in self.FhirMap.__dict__.items()
+      self._Fhir._properties = [prop for prop, typ in self.FhirMap.__dict__.items()
                                     if isinstance(typ, Attribute)]
 
     # Return the singleton
