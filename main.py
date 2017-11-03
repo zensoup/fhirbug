@@ -2,7 +2,9 @@ import xml
 import importlib
 
 from server.requestparser import parse_url
+from db.backends.SQLAlchemy import MappingValidationError
 
+from Fhir.resources import OperationOutcome, FHIRValidationError
 import models  # Don't do from models import bla, stuff will break
 
 
@@ -23,8 +25,14 @@ def handle_get_request(url):
   try:
     Resource = getattr(models, resource)
   except Exception as e:
-    return {'error': 'resource does not exist'}, 404
-  return Resource.get(query=query), 200
+    op = OperationOutcome({'issue': [{'severity': 'error', 'code': 'not-found', 'diagnostics': f'Resource type \"{resource}\" does not exist or is not supported.'}]})
+    return op.as_json(), 404
+  try:
+    res = Resource.get(query=query)
+    return res, 200
+  except (MappingValidationError, FHIRValidationError) as e:
+    op = OperationOutcome({'issue': [{'severity': 'error', 'code': 'not-found', 'diagnostics': f'{e}'}]})
+    return op.as_json(), 404
 
 def handle_post_request(url, body):
   query = parse_url(url)
@@ -34,13 +42,15 @@ def handle_post_request(url, body):
     from Fhir import resources
     Resource = getattr(resources, resource_name)
   except Exception as e:
-    return {'error': 'resource does not exist'}, 404
+    op = OperationOutcome({'issue': [{'severity': 'error', 'code': 'not-found', 'diagnostics': f'Resource \"{resource_name}\" does not exist.'}]})
+    return op.as_json(), 404
   print(Resource, body)
   # Validate the incoming json
   try:
     resource = Resource(body)
   except Exception as e:
-    return {'error': 'validation error'}, 400
+    op = OperationOutcome({'issue': [{'severity': 'error', 'code': 'validation', 'diagnostics': f'{e}'}]})
+    return op.as_json(), 400
   # Import the model
   try:
     Model = getattr(models, resource_name)

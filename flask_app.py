@@ -27,4 +27,4 @@ def request(path):
     if flask.request.headers.get('Accept') == 'application/xml':
       return Response(dicttoxml.dicttoxml(content), status, mimetype='text/xml')
     else:
-      return Response(json.dumps(content), status, mimetype='application/json')
+      return Response(json.dumps(content, sort_keys=False), status, mimetype='application/json')

@@ -1,134 +1,134 @@
 '''
-SQLAlchemy backend.
-==================
+  SQLAlchemy backend.
+  ==================
 
-A declarative base class must be provided via the 'BASE_CLASS' setting.
-All models inherit from this class.
-Provides AbstractBaseModel as an abstract base for resource mappings to
-inherit from.
+  A declarative base class must be provided via the 'BASE_CLASS' setting.
+  All models inherit from this class.
+  Provides AbstractBaseModel as an abstract base for resource mappings to
+  inherit from.
 
-Settings:
+  Settings:
 
-SQLALCHEMY_CONFIG = {
-  'URI':  # The connection string for xc_Oracle
-  'BASE_CLASS':  # A string containing the module path to a declarative base class.
-}
+  SQLALCHEMY_CONFIG = {
+    'URI':  # The connection string for xc_Oracle
+    'BASE_CLASS':  # A string containing the module path to a declarative base class.
+  }
 
 
-Attribute
-=========
+  Attribute
+  =========
 
-The base class for declaring db to fhir mappings. Accepts three positional argumants, a getter, a setter and a searcher.
+  The base class for declaring db to fhir mappings. Accepts three positional argumants, a getter, a setter and a searcher.
 
-Getting values
---------------
+  Getting values
+  --------------
 
-The getter parameter can be a string, a tuple, a callable or type const.
+  The getter parameter can be a string, a tuple, a callable or type const.
 
-- Using a string:
+  - Using a string:
 
->>> from types import SimpleNamespace as SN
->>> class Bla:
-...   _model = SN(column_name=12)
-...   p = Attribute('column_name')
-...
->>> b = Bla()
->>> b.p
-12
+  >>> from types import SimpleNamespace as SN
+  >>> class Bla:
+  ...   _model = SN(column_name=12)
+  ...   p = Attribute('column_name')
+  ...
+  >>> b = Bla()
+  >>> b.p
+  12
 
-- Strings can also be properties:
+  - Strings can also be properties:
 
->>> class Model:
-...  column_name = property(lambda x: 13)
->>> class Bla:
-...   _model = Model()
-...   p = Attribute('column_name')
-...
->>> b = Bla()
->>> b.p
-13
+  >>> class Model:
+  ...  column_name = property(lambda x: 13)
+  >>> class Bla:
+  ...   _model = Model()
+  ...   p = Attribute('column_name')
+  ...
+  >>> b = Bla()
+  >>> b.p
+  13
 
-- Callables will be called:
+  - Callables will be called:
 
->>> class Bla:
-...   _model = SN(column_name=12)
-...   def get_col(self):
-...     return 'test'
-...   p = Attribute(get_col)
-...
->>> b = Bla()
->>> b.p
-'test'
+  >>> class Bla:
+  ...   _model = SN(column_name=12)
+  ...   def get_col(self):
+  ...     return 'test'
+  ...   p = Attribute(get_col)
+  ...
+  >>> b = Bla()
+  >>> b.p
+  'test'
 
-- As a shortcut, a tuple (col_name, callable) can be passed. The result will be callable(_model.col_name)
+  - As a shortcut, a tuple (col_name, callable) can be passed. The result will be callable(_model.col_name)
 
->>> import datetime
->>> class Bla:
-...  _model = SN(date='2012')
-...  p = Attribute(('date', int))
-...
->>> b = Bla()
->>> b.p
-2012
+  >>> import datetime
+  >>> class Bla:
+  ...  _model = SN(date='2012')
+  ...  p = Attribute(('date', int))
+  ...
+  >>> b = Bla()
+  >>> b.p
+  2012
 
-Setting values
---------------
+  Setting values
+  --------------
 
-The setter parameter can be a string, a tuple, a callable or type const.
+  The setter parameter can be a string, a tuple, a callable or type const.
 
-- Using a string:
+  - Using a string:
 
->>> class Bla:
-...  _model = SN(date='2012')
-...  p = Attribute(setter='date')
-...
->>> b = Bla()
->>> b.p = '2013'
->>> b._model.date
-'2013'
+  >>> class Bla:
+  ...  _model = SN(date='2012')
+  ...  p = Attribute(setter='date')
+  ...
+  >>> b = Bla()
+  >>> b.p = '2013'
+  >>> b._model.date
+  '2013'
 
-- Again, the string can point to a property with a setter:
+  - Again, the string can point to a property with a setter:
 
->>> class Model:
-...  b = 12
-...  def set_b(self, value):
-...    self.b = value
-...  column_name = property(lambda self: self.b, set_b)
->>> class Bla:
-...   _model = Model()
-...   p = Attribute(getter='column_name', setter='column_name')
-...
->>> b = Bla()
->>> b.p = 13
->>> b.p == b._model.b == 13
-True
+  >>> class Model:
+  ...  b = 12
+  ...  def set_b(self, value):
+  ...    self.b = value
+  ...  column_name = property(lambda self: self.b, set_b)
+  >>> class Bla:
+  ...   _model = Model()
+  ...   p = Attribute(getter='column_name', setter='column_name')
+  ...
+  >>> b = Bla()
+  >>> b.p = 13
+  >>> b.p == b._model.b == 13
+  True
 
-- Callables will be called:
+  - Callables will be called:
 
->>> class Bla:
-...   _model = SN(column_name=12)
-...   def set_col(self, value):
-...     self._model.column_name = value
-...   p = Attribute(setter=set_col)
-...
->>> b = Bla()
->>> b.p = 'test'
->>> b._model.column_name
-'test'
+  >>> class Bla:
+  ...   _model = SN(column_name=12)
+  ...   def set_col(self, value):
+  ...     self._model.column_name = value
+  ...   p = Attribute(setter=set_col)
+  ...
+  >>> b = Bla()
+  >>> b.p = 'test'
+  >>> b._model.column_name
+  'test'
 
-- Two-tuples contain a column name and a callable or const. Set the column to the result of the callable or const
+  - Two-tuples contain a column name and a callable or const. Set the column to the result of the callable or const
 
->>> def add(column, value):
-...  return column + value
+  >>> def add(column, value):
+  ...  return column + value
 
->>> class Bla:
-...   _model = SN(column_name=12)
-...   p = Attribute(setter=('column_name', add))
-...
->>> b = Bla()
->>> b.p = 3
->>> b._model.column_name
-15
+  >>> class Bla:
+  ...   _model = SN(column_name=12)
+  ...   p = Attribute(setter=('column_name', add))
+  ...
+  >>> b = Bla()
+  >>> b.p = 3
+  >>> b._model.column_name
+  15
 '''
 
 import importlib
@@ -141,6 +141,10 @@ from Fhir.resources import PaginatedBundle
 
 
 import settings
+
+
+class MappingValidationError(Exception):
+  pass
 
 
 class Attribute:
@@ -260,7 +264,7 @@ class ContainableAttribute(Attribute):
         pass
 
     if value is None:
-      raise Exception('Invalid subject')
+      raise MappingValidationError('Invalid subject')
 
     setattr(instance._model, self.id, value)
 
@@ -342,6 +346,8 @@ class FhirBaseModel(AbstractBaseModel):
     '''
     if query.resourceId:
       item = cls.query.get(query.resourceId)
+      if not item:
+        raise MappingValidationError(f'Resource \"{query.resource}/{query.resourceId}\" does not exist.')
       res = item.to_fhir(*args, query=query, **kwargs)
       return res.as_json()
 
@@ -362,7 +368,9 @@ class FhirBaseModel(AbstractBaseModel):
       count = min(count, settings.MAX_BUNDLE_SIZE)
       offset = query.search_params.get('search-offset', ['1'])
       offset = int(offset[0])
-      pagination = paginate(sql_query, offset, offset+count)
+      page = offset // count + 1
+      ## TODO: We skip one result between pages here
+      pagination = paginate(sql_query, page, count)
       url_queries = '&'.join([f'{param}={value}' for param, values in query.search_params.items() for value in values if param != 'search-offset'])
       url_queries = '&' + url_queries if url_queries else ''
       params = {

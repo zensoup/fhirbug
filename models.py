@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
 from db.backends.SQLAlchemy.base import Base, engine
 from db.backends.SQLAlchemy.searches import NumericSearch
-from db.backends.SQLAlchemy import FhirBaseModel, Attribute, const, ContainableAttribute
+from db.backends.SQLAlchemy import FhirBaseModel, Attribute, const, ContainableAttribute, MappingValidationError
 
 from Fhir import resources as R
 
@@ -49,7 +49,7 @@ class ProcedureRequest(FhirBaseModel):
     elif isinstance(value, R.FHIRDate):
       res = value
     else:
-      raise Exception('Invalid date')
+      raise MappingValidationError('Invalid date')
 
     self.date_create = res.as_json()
 
@@ -64,7 +64,7 @@ class ProcedureRequest(FhirBaseModel):
     def set_status(self, value):
       map = {'active': 0, 'unknown': 1, 'cancelled': 2, 'completed': 3}
       if value not in map:
-        raise Exception('Invalid status value')
+        raise MappingValidationError('Invalid status value')
       self._model.lisor_status = map.get(value)
 
 
@@ -77,10 +77,29 @@ class ProcedureRequest(FhirBaseModel):
 
 
 class Observation(FhirBaseModel):
-  __tablename__  = 'LIS_TESTS'
+  __table__ = Table('LIS_TESTS',
+                    Base.metadata,
+                    Column('listest_id', Integer, primary_key=True),
+                    Column('lisor_id', Integer, primary_key=True),
+                    autoload=True,
+                    autoload_with=engine)
 
-  id = Column('listest_id', Integer, primary_key=True)
-  lisor_id = Column('lisor_id', ForeignKey('LIS_ORDERS.lisor_id'))
+  class FhirMap:
+    def get_status(self):
+      return ['registered', 'preliminary', 'final', 'final', 'ammended'][self._model.listest_status -1]
+    def set_status(self):
+      pass
+    def get_code(self):
+      return {'coding': [{'system': 'CSSA', 'code': str(int(self._model.srch_id))}]}
+    def search_based_on(cls, field_name, value, sql_query, query):
+      col = getattr(cls, 'lisor_id')
+      sql_query = sql_query.filter(col == value)
+      return sql_query
 
-  def to_fhir(self):
-    return observation.Observation()
+
+    id = Attribute(getter=('listest_id', str))
+    basedOn = ContainableAttribute(cls=ProcedureRequest, id='lisor_id', name='basedOn')
+    status = Attribute(get_status, set_status)
+    value = Attribute('listest_result')
+    code = Attribute(get_code)
+    based = Attribute(searcher=search_based_on)
