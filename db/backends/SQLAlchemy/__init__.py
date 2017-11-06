@@ -316,7 +316,7 @@ class AbstractBaseModel(Base):
     return resource
 
   @classmethod
-  def from_resource(cls, resource, query=None):
+  def create_from_resource(cls, resource, query=None):
     '''
     Creates and saves a new row from a Fhir.Resource object
     '''
@@ -335,6 +335,25 @@ class AbstractBaseModel(Base):
 
     return obj
 
+  @classmethod
+  def update_from_resource(cls, resource, query=None):
+    '''
+    Edits an existing row from a Fhir.Resource object
+    '''
+
+    # Read the attributes of the FhirMap class
+    own_attributes = [prop for prop, type in cls.FhirMap.__dict__.items() if isinstance(type, Attribute)]
+
+    obj = cls()
+    obj.Fhir._query = query
+
+    # for path in own_attributes:
+    for path in own_attributes:
+      value = getattr(resource, path.replace('_', '.'), None)
+      if value:
+        setattr(obj.Fhir, path, value)
+
+    return obj
 
 class FhirBaseModel(AbstractBaseModel):
   __abstract__ = True

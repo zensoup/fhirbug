@@ -51,7 +51,7 @@ class ProcedureRequest(FhirBaseModel):
     else:
       raise MappingValidationError('Invalid date')
 
-    self.date_create = res.as_json()
+    self.date_create = res.date
 
   class FhirMap:
 

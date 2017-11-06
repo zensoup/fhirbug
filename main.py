@@ -57,7 +57,8 @@ def handle_post_request(url, body):
   except Exception as e:
     return {'error': 'This shouldn\'t happen', 'exception': str(e)}, 404
 
-  new_resource = Model.from_resource(resource, query=query)
+  new_resource = Model.create_from_resource(resource, query=query)
+  # new_resource.save()
   return new_resource.to_fhir().as_json(), 201
 
 if __name__ == '__main__':
