@@ -1,8 +1,9 @@
+import re
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
 from db.backends.SQLAlchemy.base import Base, engine
-from db.backends.SQLAlchemy.searches import NumericSearch
+from db.backends.SQLAlchemy.searches import NumericSearch, NameSearch
 from db.backends.SQLAlchemy import FhirBaseModel, Attribute, const, ContainableAttribute, MappingValidationError
 
 from Fhir import resources as R
@@ -36,12 +37,63 @@ class Patient(FhirBaseModel):
       return R.FHIRDate(self._model.death_date) if self._model.death_date != datetime(1, 1, 1) else None
 
     id = Attribute(getter=('pid', str), searcher=NumericSearch('id'))
-    name = Attribute('get_name')
+    name = Attribute('get_name', searcher=NameSearch('name_last'))
     active = Attribute(const(True))
     birthDate = Attribute(('date_birth', R.FHIRDate))
     telecom = Attribute(get_telecom)
     gender = Attribute(get_gender)
     deceasedDateTime = Attribute(get_deceased)
+
+    given = Attribute(searcher=NameSearch('name_last'))
+    family =  Attribute(searcher=NameSearch('name_first'))
+
+
+class Encounter(FhirBaseModel):
+  __table__ = Table('CARE_ENCOUNTER', Base.metadata,
+                    autoload=True, autoload_with=engine)
+
+  class FhirMap:
+
+    def get_status(self):
+      return 'finished' if self._model.is_discharged else 'in-progress'
+
+    def get_period(self):
+      return R.Period(start=R.FHIRDate(self._model.encounter_date), end=R.FHIRDate(self._model.discharge_date))
+
+    id = Attribute(getter=('encounter_nr', str), searcher=NumericSearch('encounter_nr'))
+    status = Attribute(get_status)
+    period = Attribute(get_period)
+    subject = ContainableAttribute(cls=Patient, id='pid', name='subject')
+
+
+class Condition(FhirBaseModel):
+
+  __table__ = Table('DIAG_V', Base.metadata,
+                    Column('nr', Integer, primary_key=True),
+                    autoload=True, autoload_with=engine)
+
+  @property
+  def patient(self):
+    enc = Encounter.query.get(self.encounter_nr)
+    pat = Patient.query.get(enc.pid)
+    return pat.pid
+
+  class FhirMap:
+    def get_code(self):
+      codeRes = R.CodeableConcept(text=self._model.notes)
+
+      res = re.search(r'([\w\d.]+) - .*', self._model.notes)
+      if res:
+        code, = res.groups()
+        codeRes.coding = [R.Coding(**{'system': 'ICD-10', 'code': code})]
+
+      return codeRes
+
+    id = Attribute(getter=('nr', str), searcher=NumericSearch('nr'))
+    category = Attribute(const({'text':'encounter-diagnosis'}))
+    subject = ContainableAttribute(cls=Patient, id='patient', name='subject')
+    context = ContainableAttribute(cls=Encounter, id='encounter_nr', name='context')
+    code = Attribute(get_code)
 
 
 '''
