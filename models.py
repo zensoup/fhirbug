@@ -96,6 +96,14 @@ class Condition(FhirBaseModel):
     code = Attribute(get_code)
 
 
+class Procedure(FhirBaseModel):
+  __table__ = Table('IP_NURSING_MEDICAL_ACTS', Base.metadata,
+                    autoload=True, autoload_with=engine, schema='CS')
+
+class _Ip_Patient_Nursing(FhirBaseModel):
+  __table__ = Table('IP_PATIENT_NURSINGS', Base.metadata,
+                    autoload=True, autoload_with=engine, schema='CS')
+
 '''
   class ProcedureRequest(FhirBaseModel):
     __table__ = Table('LIS_ORDERS',
