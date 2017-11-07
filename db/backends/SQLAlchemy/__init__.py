@@ -232,7 +232,7 @@ class ContainableAttribute(Attribute):
       # Build the reference dict
       reference = {'reference': f'{cls_name}/{id}',
                    'identifier': {
-                      'system': 'Patient',
+                      'system': f'{cls_name}',
                       'value': str(id),
                    }}
 
