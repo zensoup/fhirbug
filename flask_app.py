@@ -28,3 +28,5 @@ def request(path):
       return Response(dicttoxml.dicttoxml(content), status, mimetype='text/xml')
     else:
       return Response(json.dumps(content, sort_keys=False), status, mimetype='application/json')
+
+app.run(debug=True)
