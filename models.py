@@ -45,7 +45,7 @@ class Patient(FhirBaseModel):
     deceasedDateTime = Attribute(get_deceased)
 
     given = Attribute(searcher=NameSearch('name_last'))
-    family =  Attribute(searcher=NameSearch('name_first'))
+    family = Attribute(searcher=NameSearch('name_first'))
 
 
 class Encounter(FhirBaseModel):
@@ -70,13 +70,17 @@ class Condition(FhirBaseModel):
 
   __table__ = Table('DIAG_V', Base.metadata,
                     Column('nr', Integer, primary_key=True),
+                    Column('encounter_nr', Integer),
                     autoload=True, autoload_with=engine)
 
   @property
   def patient(self):
     enc = Encounter.query.get(self.encounter_nr)
-    pat = Patient.query.get(enc.pid)
-    return pat.pid
+    if enc:
+      pat = Patient.query.get(enc.pid)
+      return pat.pid
+    else:
+      return None
 
   class FhirMap:
     def get_code(self):
@@ -98,12 +102,182 @@ class Condition(FhirBaseModel):
 
 class Procedure(FhirBaseModel):
   __table__ = Table('IP_NURSING_MEDICAL_ACTS', Base.metadata,
+                    Column('nurm_id', Integer, primary_key=True),
                     autoload=True, autoload_with=engine, schema='CS')
+
+  @property
+  def get_subject(self):
+    nursing = _Ip_Patient_Nursing.query.get(self.nurm_pnur_id)
+    enc = Encounter.query.filter(Encounter.pnur_id==nursing.pnur_id).first()
+    patient = enc.pid
+    return patient
+
+  @property
+  def get_encounter(self):
+    nursing = _Ip_Patient_Nursing.query.get(self.nurm_pnur_id)
+    enc = Encounter.query.filter(Encounter.pnur_id==nursing.pnur_id).first()
+    return enc.encounter_nr
+
+  class FhirMap:
+    def get_code(self):
+      medact = _Medact.query.get(self._model.nurm_mact_id)
+      c = R.CodeableConcept(coding=R.Coding(system='ELOKIP', code=medact.mact_code), text=medact.mact_name)
+      return c
+
+    id = Attribute(getter=('nurm_id', str), searcher=NumericSearch('nurm_id'))
+    status = Attribute(const('completed'))
+    code = Attribute(get_code)
+    subject = ContainableAttribute(cls=Patient, id='get_subject', name='subject')
+    context = ContainableAttribute(cls=Encounter, id='get_encounter', name='context')
+
+
+class ProcedureRequest(FhirBaseModel):
+  __table__ = Table('LIS_ORDERS',
+                    Base.metadata,
+                    Column('lisor_id', Integer, primary_key=True),
+                    Column('opat_id', Integer),
+                    Column('lisor_status', Integer),
+                    autoload=True,
+                    autoload_with=engine)
+
+  @property
+  def set_date(self):
+    pass
+
+  @set_date.setter
+  def set_date(self, value):
+    if isinstance(value, (dict, str)):
+      res = R.FHIRDate(value)
+    elif isinstance(value, R.FHIRDate):
+      res = value
+    else:
+      raise MappingValidationError('Invalid date')
+
+    self.date_create = res.date
+
+  @property
+  def patient(self):
+    pat = Patient.query.filter(Patient.opat_id==self.opat_id).first()
+    return pat.pid
+
+  class FhirMap:
+
+    def get_status(self):
+      try:
+        return ['active', 'unknown', 'cancelled', 'completed'][self._model.lisor_status]
+      except:
+        return ''
+
+    def set_status(self, value):
+      map = {'active': 0, 'unknown': 1, 'cancelled': 2, 'completed': 3}
+      if value not in map:
+        raise MappingValidationError('Invalid status value')
+      self._model.lisor_status = map.get(value)
+
+
+    id = Attribute(('lisor_id', str), None, NumericSearch('lisor_id'))
+    status = Attribute(get_status, set_status, None)
+    intent = Attribute(const('order'), None, True)
+    # subject = Attribute('get_subject', set_subject, None)
+    subject = ContainableAttribute(cls=Patient, id='patient', name='subject')
+    authoredOn = Attribute(('date_create', R.FHIRDate), 'set_date', None)
+
+
+class Observation(FhirBaseModel):
+    __table__ = Table('LIS_TESTS',
+                      Base.metadata,
+                      Column('listest_id', Integer, primary_key=True),
+                      Column('lisor_id', Integer),
+                      autoload=True,
+                      autoload_with=engine)
+
+    class FhirMap:
+      def get_status(self):
+        return ['registered', 'preliminary', 'final', 'final', 'ammended'][self._model.listest_status -1]
+      def set_status(self):
+        pass
+      def get_code(self):
+        return {'coding': [{'system': 'CSSA', 'code': str(int(self._model.srch_id))}]}
+      def search_based_on(cls, field_name, value, sql_query, query):
+        col = getattr(cls, 'lisor_id')
+        sql_query = sql_query.filter(col == value)
+        return sql_query
+
+      def get_results(self):
+        res = self._model.listest_result
+        if not res:
+          return None
+
+        components = []
+
+        # try:
+        res = res.split('\n')
+        lines = [r.split(':=') for r in res if r]
+
+        for abbr, res in lines:
+          # Get the intrepretation
+          if '>>' in res:
+            interpretation = 'High'
+          elif '<<' in res:
+            interpretation = 'Low'
+          else:
+            interpretation = 'Normal'
+          res = res.replace('>>', '')
+          res = res.replace('<<', '')
+
+          # Get the normal values
+          if 'Φ.Τ.' in res:
+            regex = r'Φ\.Τ\. ([\d,]+)-([\d,]+)'
+            r = re.search(regex, res)
+            if r and r.groups():
+              low, high = r.groups()
+              low = float(low.replace(',', '.'))
+              high = float(high.replace(',', '.'))
+            else:
+              low, high = 0, 0
+            res = re.sub(r'Φ\.Τ\..*', '', res)
+
+          # Get the measure units
+          regex = r'[\d,]*[<>]* ([\w/]*)'
+          r = re.search(regex, res)
+          if r and r.groups():
+            measure_units = r.groups()[0]
+            res = res.replace(measure_units, '')
+          else:
+            measure_units = ''
+
+          try:
+            res = float(res.strip().replace(',', '.'))
+          except:
+            pass
+
+          if isinstance(res, str):
+            components.append({'code': {'text': abbr}, 'valueString': res, 'interpretation': {'text': interpretation}})
+          else:
+            components.append({'code': {'text': abbr}, 'valueQuantity': {'value': res, 'unit': measure_units}, 'interpretation': {'text': interpretation}})
+          if low:
+            components[-1]['referenceRange'] = {'low': {'value': low}, 'high': {'value': high}}
+        # except:
+        #   return None
+        return components
+
+
+      id = Attribute(getter=('listest_id', str))
+      basedOn = ContainableAttribute(cls=ProcedureRequest, id='lisor_id', name='basedOn')
+      status = Attribute(get_status, set_status)
+      value = Attribute('listest_result')
+      code = Attribute(get_code)
+      based = Attribute(searcher=search_based_on)
+      component = Attribute(get_results)
+
 
 class _Ip_Patient_Nursing(FhirBaseModel):
   __table__ = Table('IP_PATIENT_NURSINGS', Base.metadata,
                     autoload=True, autoload_with=engine, schema='CS')
 
+class _Medact(FhirBaseModel):
+  __table__ = Table('CS_MEDICAL_ACTS', Base.metadata,
+                    autoload=True, autoload_with=engine, schema='CS')
 '''
   class ProcedureRequest(FhirBaseModel):
     __table__ = Table('LIS_ORDERS',
