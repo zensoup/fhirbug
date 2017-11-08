@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
 from db.backends.SQLAlchemy.base import Base, engine
-from db.backends.SQLAlchemy.searches import NumericSearch, NameSearch
+from db.backends.SQLAlchemy.searches import NumericSearch, NameSearch,SimpleSearch
 from db.backends.SQLAlchemy import FhirBaseModel, Attribute, const, ContainableAttribute, MappingValidationError
 
 from Fhir import resources as R
@@ -63,7 +63,7 @@ class Encounter(FhirBaseModel):
     id = Attribute(getter=('encounter_nr', str), searcher=NumericSearch('encounter_nr'))
     status = Attribute(get_status)
     period = Attribute(get_period)
-    subject = ContainableAttribute(cls=Patient, id='pid', name='subject')
+    subject = ContainableAttribute(cls=Patient, id='pid', name='subject', searcher=SimpleSearch('pid'))
 
 
 class Condition(FhirBaseModel):
@@ -93,10 +93,14 @@ class Condition(FhirBaseModel):
 
       return codeRes
 
+    def search_subject(cls, field_name, value, sql_query, query):
+      encounters = Encounter.query.session.query(Encounter.encounter_nr).filter(Encounter.pid==value)
+      return sql_query.filter(Condition.encounter_nr.in_(encounters))
+
     id = Attribute(getter=('nr', str), searcher=NumericSearch('nr'))
     category = Attribute(const({'text':'encounter-diagnosis'}))
-    subject = ContainableAttribute(cls=Patient, id='patient', name='subject')
-    context = ContainableAttribute(cls=Encounter, id='encounter_nr', name='context')
+    subject = ContainableAttribute(cls=Patient, id='patient', name='subject', searcher=search_subject)
+    context = ContainableAttribute(cls=Encounter, id='encounter_nr', name='context', searcher=SimpleSearch('encounter_nr'))
     code = Attribute(get_code)
 
 
@@ -124,11 +128,19 @@ class Procedure(FhirBaseModel):
       c = R.CodeableConcept(coding=R.Coding(system='ELOKIP', code=medact.mact_code), text=medact.mact_name)
       return c
 
+    def search_subject(cls, field_name, value, sql_query, query):
+      encounters = Encounter.query.session.query(Encounter.pnur_id).filter(Encounter.pid==value)
+      return sql_query.filter(Procedure.nurm_pnur_id.in_(encounters))
+
+    def search_context(cls, field_name, value, sql_query, query):
+      encounters = Encounter.query.session.query(Encounter.pnur_id).filter(Encounter.encounter_nr==value)
+      return sql_query.filter(Procedure.nurm_pnur_id.in_(encounters))
+
     id = Attribute(getter=('nurm_id', str), searcher=NumericSearch('nurm_id'))
     status = Attribute(const('completed'))
     code = Attribute(get_code)
-    subject = ContainableAttribute(cls=Patient, id='get_subject', name='subject')
-    context = ContainableAttribute(cls=Encounter, id='get_encounter', name='context')
+    subject = ContainableAttribute(cls=Patient, id='get_subject', name='subject', searcher=search_subject)
+    context = ContainableAttribute(cls=Encounter, id='get_encounter', name='context', searcher=search_context)
 
 
 class ProcedureRequest(FhirBaseModel):
@@ -174,13 +186,80 @@ class ProcedureRequest(FhirBaseModel):
         raise MappingValidationError('Invalid status value')
       self._model.lisor_status = map.get(value)
 
+    ## TODO: Why you no work?
+    def search_subject(cls, field_name, value, sql_query, query):
+      patients = Patient.query.session.query(Patient.opat_id).filter(Patient.pid==value)
+      return sql_query.filter(ProcedureRequest.opat_id.in_(patients))
 
     id = Attribute(('lisor_id', str), None, NumericSearch('lisor_id'))
     status = Attribute(get_status, set_status, None)
     intent = Attribute(const('order'), None, True)
     # subject = Attribute('get_subject', set_subject, None)
-    subject = ContainableAttribute(cls=Patient, id='patient', name='subject')
+    subject = ContainableAttribute(cls=Patient, id='patient', name='subject', searcher=search_subject)
     authoredOn = Attribute(('date_create', R.FHIRDate), 'set_date', None)
+
+
+def get_results(listest_result):
+  res = listest_result
+
+  if not res:
+    return None
+
+  components = []
+
+  # try:
+  res = res.split('\n')
+  lines = [r.split(':=') for r in res if r]
+
+  for line in lines:
+    low, high = 0, 0
+    if len(line) != 2:
+      continue  ## TODO: Parse ~~ stuffs
+    else:
+      abbr, res = line
+    # Get the intrepretation
+    if '>>' in res:
+      interpretation = 'High'
+    elif '<<' in res:
+      interpretation = 'Low'
+    else:
+      interpretation = 'Normal'
+    res = res.replace('>>', '')
+    res = res.replace('<<', '')
+
+    # Get the normal values
+    if 'Φ.Τ.' in res:
+      regex = r'Φ\.Τ\. ([\d,]+)-([\d,]+)'
+      r = re.search(regex, res)
+      if r and r.groups():
+        low, high = r.groups()
+        low = float(low.replace(',', '.'))
+        high = float(high.replace(',', '.'))
+      res = re.sub(r'Φ\.Τ\..*', '', res)
+
+    # Get the measure units
+    regex = r'[\d,]*[<>]* ([\w/]*)'
+    r = re.search(regex, res)
+    if r and r.groups():
+      measure_units = r.groups()[0]
+      res = res.replace(measure_units, '')
+    else:
+      measure_units = ''
+
+    try:
+      res = float(res.strip().replace(',', '.'))
+    except:
+      pass
+
+    if isinstance(res, str):
+      components.append({'code': {'text': abbr}, 'valueString': res, 'interpretation': {'text': interpretation}})
+    else:
+      components.append({'code': {'text': abbr}, 'valueQuantity': {'value': res, 'unit': measure_units}, 'interpretation': {'text': interpretation}})
+    if low:
+      components[-1]['referenceRange'] = {'low': {'value': low}, 'high': {'value': high}}
+  # except:
+  #   return None
+  return components
 
 
 class Observation(FhirBaseModel):
@@ -203,72 +282,13 @@ class Observation(FhirBaseModel):
         sql_query = sql_query.filter(col == value)
         return sql_query
 
-      def get_results(self):
-        res = self._model.listest_result
-        if not res:
-          return None
-
-        components = []
-
-        # try:
-        res = res.split('\n')
-        lines = [r.split(':=') for r in res if r]
-
-        for abbr, res in lines:
-          # Get the intrepretation
-          if '>>' in res:
-            interpretation = 'High'
-          elif '<<' in res:
-            interpretation = 'Low'
-          else:
-            interpretation = 'Normal'
-          res = res.replace('>>', '')
-          res = res.replace('<<', '')
-
-          # Get the normal values
-          if 'Φ.Τ.' in res:
-            regex = r'Φ\.Τ\. ([\d,]+)-([\d,]+)'
-            r = re.search(regex, res)
-            if r and r.groups():
-              low, high = r.groups()
-              low = float(low.replace(',', '.'))
-              high = float(high.replace(',', '.'))
-            else:
-              low, high = 0, 0
-            res = re.sub(r'Φ\.Τ\..*', '', res)
-
-          # Get the measure units
-          regex = r'[\d,]*[<>]* ([\w/]*)'
-          r = re.search(regex, res)
-          if r and r.groups():
-            measure_units = r.groups()[0]
-            res = res.replace(measure_units, '')
-          else:
-            measure_units = ''
-
-          try:
-            res = float(res.strip().replace(',', '.'))
-          except:
-            pass
-
-          if isinstance(res, str):
-            components.append({'code': {'text': abbr}, 'valueString': res, 'interpretation': {'text': interpretation}})
-          else:
-            components.append({'code': {'text': abbr}, 'valueQuantity': {'value': res, 'unit': measure_units}, 'interpretation': {'text': interpretation}})
-          if low:
-            components[-1]['referenceRange'] = {'low': {'value': low}, 'high': {'value': high}}
-        # except:
-        #   return None
-        return components
-
-
       id = Attribute(getter=('listest_id', str))
-      basedOn = ContainableAttribute(cls=ProcedureRequest, id='lisor_id', name='basedOn')
+      basedOn = ContainableAttribute(cls=ProcedureRequest, id='lisor_id', name='basedOn', searcher=search_based_on)
       status = Attribute(get_status, set_status)
       value = Attribute('listest_result')
       code = Attribute(get_code)
       based = Attribute(searcher=search_based_on)
-      component = Attribute(get_results)
+      component = Attribute(('listest_result', get_results))
 
 
 class _Ip_Patient_Nursing(FhirBaseModel):
