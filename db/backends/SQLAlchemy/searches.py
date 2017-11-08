@@ -45,3 +45,9 @@ def NameSearch(column):
 
     return sql_query.filter(col.contains(value))
   return search_name
+
+def SimpleSearch(column):
+  def search(cls, field_name, value, sql_query, query):
+    col = getattr(cls, column)
+    return sql_query.filter(col==value)
+  return search

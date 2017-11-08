@@ -195,12 +195,12 @@ class const:
 
 
 class ContainableAttribute(Attribute):
-  def __init__(self, cls, id, name, force_display=False):
+  def __init__(self, cls, id, name, force_display=False, searcher=None):
     self.cls = cls
     self.id = id
     self.name = name
     self.force_display = force_display
-    self.searcher = None
+    self.searcher = searcher
 
   def __get__(self, instance, owner):
     cls_name = self.cls.__name__
@@ -309,6 +309,16 @@ class AbstractBaseModel(Base):
 
     resource = Resource(param_dict, strict=kwargs.get('strict', True))
 
+    if query and '_revinclude' in query.modifiers:
+      import models
+      revincludes = query.modifiers.get('_revinclude')
+      for rev in revincludes:
+        resource_name, field, *_ = rev.split(':')
+        Resource = getattr(models, resource_name)
+            # sql_query = cls.searchables()[search](cls, search, value, sql_query, query)
+        items = Resource.searchables()[field](Resource, field, self.Fhir.id, Resource.query, query).all()
+        self._contained_items += list(map(lambda i: i.to_fhir(), items))
+
     # Add any contained items that have been generated
     if self._contained_items:
       resource.contained = self._contained_items
@@ -354,6 +364,7 @@ class AbstractBaseModel(Base):
         setattr(obj.Fhir, path, value)
 
     return obj
+
 
 class FhirBaseModel(AbstractBaseModel):
   __abstract__ = True
