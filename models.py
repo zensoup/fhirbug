@@ -270,6 +270,12 @@ class Observation(FhirBaseModel):
                       autoload=True,
                       autoload_with=engine)
 
+    @property
+    def get_subject(self):
+      order = ProcedureRequest.query.get(self.lisor_id)
+      patient = Patient.query.filter(Patient.opat_id==order.opat_id).first()
+      return patient.pid
+
     class FhirMap:
       def get_status(self):
         return ['registered', 'preliminary', 'final', 'final', 'ammended'][self._model.listest_status -1]
@@ -281,6 +287,10 @@ class Observation(FhirBaseModel):
         col = getattr(cls, 'lisor_id')
         sql_query = sql_query.filter(col == value)
         return sql_query
+      def search_subject(cls, field_name, value, sql_query, query):
+        patients = Patient.query.session.query(Patient.opat_id).filter(Patient.pid==value)
+        orders = ProcedureRequest.query.session.query(ProcedureRequest.lisor_id).filter(ProcedureRequest.opat_id.in_(patients))
+        return sql_query.filter(Observation.lisor_id.in_(orders))
 
       id = Attribute(getter=('listest_id', str))
       basedOn = ContainableAttribute(cls=ProcedureRequest, id='lisor_id', name='basedOn', searcher=search_based_on)
@@ -288,6 +298,7 @@ class Observation(FhirBaseModel):
       value = Attribute('listest_result')
       code = Attribute(get_code)
       based = Attribute(searcher=search_based_on)
+      subject = ContainableAttribute(cls=Patient, id='get_subject', name='subject', searcher=search_subject)
       component = Attribute(('listest_result', get_results))
 
 
