@@ -1,10 +1,10 @@
 import xml
 import importlib
 
-from server.requestparser import parse_url
-from db.backends.SQLAlchemy import MappingValidationError
+from fhirball.server.requestparser import parse_url
+from fhirball.db.backends.SQLAlchemy import MappingValidationError
 
-from Fhir.resources import OperationOutcome, FHIRValidationError
+from fhirball.Fhir.resources import OperationOutcome, FHIRValidationError
 import models  # Don't do from models import bla, stuff will break
 
 

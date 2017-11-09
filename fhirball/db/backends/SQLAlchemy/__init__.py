@@ -133,11 +133,11 @@
 
 import importlib
 
-from db.backends.SQLAlchemy.pagination import paginate
-from db.backends.SQLAlchemy.base import Base
+from fhirball.db.backends.SQLAlchemy.pagination import paginate
+from fhirball.db.backends.SQLAlchemy.base import Base
 
 ## TODO: I'm pretty sure this shouldn't be happening here
-from Fhir.resources import PaginatedBundle
+from fhirball.Fhir.resources import PaginatedBundle
 
 
 import settings
@@ -298,7 +298,7 @@ class AbstractBaseModel(Base):
     resource_name = getattr(self, '__Resource__', self.__class__.__name__)
 
     # TODO: module_path = getattr(settings, 'Resource_Path', 'Fhir.resources')
-    package = importlib.import_module('Fhir.resources')
+    package = importlib.import_module('fhirball.Fhir.resources')
 
     Resource = getattr(package, resource_name)
 

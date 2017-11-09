@@ -2,14 +2,14 @@ import sys
 import doctest
 
 # The modules to be tested
-from Fhir.Resources import fhirabstractbase
-from Fhir.Resources import extensions
-from Fhir import resources
-from server import requestparser
-from db.backends import SQLAlchemy
+from fhirball.Fhir.Resources import fhirabstractbase
+from fhirball.Fhir.Resources import extensions
+from fhirball.Fhir import resources
+from fhirball.server import requestparser
+from fhirball.db.backends import SQLAlchemy
 
 def testResourceContructor(verbose=False):
-  from Fhir import resources
+  from fhirball.Fhir import resources
 
   # Create the extra globals
   context = {

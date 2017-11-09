@@ -2,11 +2,11 @@ import re
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Table
 
-from db.backends.SQLAlchemy.base import Base, engine
-from db.backends.SQLAlchemy.searches import NumericSearch, NameSearch,SimpleSearch
-from db.backends.SQLAlchemy import FhirBaseModel, Attribute, const, ContainableAttribute, MappingValidationError
+from fhirball.db.backends.SQLAlchemy.base import Base, engine
+from fhirball.db.backends.SQLAlchemy.searches import NumericSearch, NameSearch,SimpleSearch
+from fhirball.db.backends.SQLAlchemy import FhirBaseModel, Attribute, const, ContainableAttribute, MappingValidationError
 
-from Fhir import resources as R
+from fhirball.Fhir import resources as R
 
 import settings
 
@@ -36,7 +36,7 @@ class Patient(FhirBaseModel):
     def get_deceased(self):
       return R.FHIRDate(self._model.death_date) if self._model.death_date != datetime(1, 1, 1) else None
 
-    id = Attribute(getter=('pid', str), searcher=NumericSearch('id'))
+    id = Attribute(getter=('pid', str), searcher=NumericSearch('pid'))
     name = Attribute('get_name', searcher=NameSearch('name_last'))
     active = Attribute(const(True))
     birthDate = Attribute(('date_birth', R.FHIRDate))
