@@ -29,4 +29,4 @@ def request(path):
     else:
       return Response(json.dumps(content, sort_keys=False), status, mimetype='application/json')
 
-app.run(debug=True)
+app.run(host='192.168.1.87', debug=True)
