@@ -8,7 +8,8 @@ import inspect
 
 from fhirball.Fhir import resources
 
-for module_file in os.listdir('fhirball/Fhir/Resources'):
+dir = os.path.dirname(__file__)
+for module_file in os.listdir(os.path.join(dir, 'Resources')):
     if module_file != '__init__.py' and module_file[-3:] == '.py':
         module_name = module_file[:-3]
         # TODO I would like this path to be dynamically retrieved but now is not the time
