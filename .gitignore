@@ -8,3 +8,8 @@ flask_app.py
 main.py
 settings.py
 .gitignore
+flask_app.py
+main.py
+models.py
+settings.py
+README.pdf
