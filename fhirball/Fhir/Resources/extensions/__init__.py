@@ -26,11 +26,27 @@ class AMKA(identifier.Identifier):
     return super(AMKA, self).__init__(amka_dict, *args, **kwargs)
 
 
-class HumanName(humanname.HumanName):
+class EAMA(identifier.Identifier):
   '''
-  This subclass can be instantiated with kwargs instead of
+  Create an Identifier Resource representing the AMKA coding from a string
+  containing the AMKA code.
+
+  >>> a = EAMA('123')
+  >>> isinstance(a, identifier.Identifier)
+  True
+  >>> a.as_json()
+  {'system': 'EAMA', 'use': 'usual', 'value': '123'}
   '''
-  pass
+
+  def __init__(self, jsondict, *args, **kwargs):
+    # TODO: validate
+
+    amka_dict = {
+      'value': jsondict,
+      'system': 'EAMA',
+      'use': 'usual',
+    }
+    return super(EAMA, self).__init__(amka_dict, *args, **kwargs)
 
 
 class PaginatedBundle(bundle.Bundle):
