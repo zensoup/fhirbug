@@ -138,13 +138,12 @@ from fhirball.db.backends.SQLAlchemy.base import Base
 
 ## TODO: I'm pretty sure this shouldn't be happening here
 from fhirball.Fhir.resources import PaginatedBundle
+from fhirball.Fhir import resources
+
+from fhirball.exceptions import MappingValidationError
 
 
 import settings
-
-
-class MappingValidationError(Exception):
-  pass
 
 
 class Attribute:
@@ -268,22 +267,23 @@ class ContainableAttribute(Attribute):
 
     setattr(instance._model, self.id, value)
 
+
 class AbstractBaseModel(Base):
-  '''
+  """
   The base class to provide functionality to
   our models.
-  '''
+  """
   __abstract__ = True
 
   ## Lifecycle
 
   def to_fhir(self, *args, query=None, **kwargs):
-    '''
+    """
     Convert from a BaseModel to a Fhir Resource and return it.
 
     If param `query` is passed and is of type server.FhirRequestQuery, it is used to
     allow for additional functionality like contained resources.
-    '''
+    """
 
     # Initialize attributes
     self._searchables = []
@@ -291,39 +291,56 @@ class AbstractBaseModel(Base):
     self._contained_items = []
     self._refcount = 0
 
-    # Read the attributes
-    attributes = [prop for prop in dir(self.Fhir) if not prop.startswith('_')]
-
     # Use __Resource__ if it has been defined else the dame of the class
     resource_name = getattr(self, '__Resource__', self.__class__.__name__)
+    Resource = getattr(resources, resource_name)
 
-    # TODO: module_path = getattr(settings, 'Resource_Path', 'Fhir.resources')
-    package = importlib.import_module('fhirball.Fhir.resources')
-
-    Resource = getattr(package, resource_name)
+    # TODO: remove this if nothing breaks
+    # self._Fhir._query = query
 
     # Filter the matching fields
-    mock = Resource()
-    self._Fhir._query = query
-    param_dict = {attribute: getattr(self.Fhir, f'{attribute}') for attribute in attributes if hasattr(mock, attribute)}
+    param_dict = self.get_params_dict(Resource)
 
+    # Cast to a resource
     resource = Resource(param_dict, strict=kwargs.get('strict', True))
 
-    if query and '_revinclude' in query.modifiers:
-      import models
-      revincludes = query.modifiers.get('_revinclude')
-      for rev in revincludes:
-        resource_name, field, *_ = rev.split(':')
-        Resource = getattr(models, resource_name)
-            # sql_query = cls.searchables()[search](cls, search, value, sql_query, query)
-        items = Resource.searchables()[field](Resource, field, self.Fhir.id, Resource.query, query).all()
-        self._contained_items += list(map(lambda i: i.to_fhir(), items))
+    self.get_rev_includes(query)
 
     # Add any contained items that have been generated
     if self._contained_items:
       resource.contained = self._contained_items
 
     return resource
+
+  def get_params_dict(self, resource):
+    """
+    Return a dictionary of all valid values this instance can provide for a resource of the type ``resource``.
+
+    :param resource: The class of the resource we with to create
+    :return: A dictionary to be used as an argument to initialize a resource instance
+    """
+    # TODO: Allow for a fields attribute to manually specify which fields to be used?
+
+    # Read this instances available attributes
+    attributes = [prop for prop in dir(self.Fhir) if not prop.startswith('_')]
+
+    # Create a mock resource for comparison
+    mock = resource()
+
+    # Evaluate the common attributes. This is where all the getters are called
+    param_dict = {attribute: getattr(self.Fhir, attribute) for attribute in attributes if hasattr(mock, attribute)}
+    return param_dict
+
+  def get_rev_includes(self, query):
+    if query and '_revinclude' in query.modifiers:
+      import models
+      revincludes = query.modifiers.get('_revinclude')
+      for rev in revincludes:
+        resource_name, field, *_ = rev.split(':')
+        Resource = getattr(models, resource_name)
+        # sql_query = cls.searchables()[search](cls, search, value, sql_query, query)
+        items = Resource.searchables()[field](Resource, field, self.Fhir.id, Resource.query, query).all()
+        self._contained_items += list(map(lambda i: i.to_fhir(), items))
 
   @classmethod
   def create_from_resource(cls, resource, query=None):

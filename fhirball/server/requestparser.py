@@ -1,5 +1,6 @@
 from urllib.parse import urlparse, parse_qs
 
+from fhirball.exceptions import QueryValidationError
 
 class FhirRequestQuery:
   '''
@@ -61,4 +62,20 @@ def parse_url(url):
           'modifiers': modifiers,
           'search_params': search_params,
           }
+  validate_params(params)
   return FhirRequestQuery(**params)
+
+
+def validate_params(params):
+  """
+  Validate a parameter dictionary
+
+  :param params: Parameter dictionary produced by parse_url
+  :return:
+  """
+
+  if params['resourceId'] is not None:
+    try:
+      int(params['resourceId'])
+    except ValueError:
+      raise QueryValidationError(f'Invalid request string: \'{params["resourceId"]}\' is not a valid resource id')

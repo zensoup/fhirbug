@@ -1,4 +1,5 @@
 *.pyc
+.idea
 __pycache__
 table_fields.py
 /*.egg-info
