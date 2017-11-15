@@ -3,10 +3,23 @@ import settings
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
 
-Base = declarative_base()
+class AbstractModelMeta(DeclarativeMeta):
+  def __new__(mcs, name, bases, attrs, **kwargs):
+    ret = super().__new__(mcs, name, bases, attrs)
+    print(name, 'query' in bases[0].__dict__)
+    if '__get_query__' in attrs:
+      cc = [cl for cl in bases[0].mro() if 'query' in cl.__dict__]
+      import ipdb; ipdb.set_trace()
+      ret.query = ret.__get_query__(bases[0].query)
+    return ret
+
+
+Base = declarative_base(metaclass=AbstractModelMeta)
+print('now')
+# Base = declarative_base()
 
 # Create the db connection
 os.environ["NLS_LANG"] = "GREEK_GREECE.AL32UTF8"

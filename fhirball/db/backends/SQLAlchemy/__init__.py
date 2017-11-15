@@ -268,29 +268,23 @@ class ContainableAttribute(Attribute):
     setattr(instance._model, self.id, value)
 
 
-class AbstractModelMeta(type):
-  def __new__(mcs, name, bases, attrs, **kwargs):
-    # print(mcs, name, bases, attrs)
-    ret = super().__new__(mcs, name, bases, attrs)
-    if '__model__' in attrs:
-      ## TODO: We assume attrs['__model__'] is a class
-      ret.query = attrs['__model__'].query
-    if '__get_query__' in attrs:
-      ret.query = attrs['__get_query__']()
-    return ret
+# class AbstractModelMeta(type):
+#   def __new__(mcs, name, bases, attrs, **kwargs):
+#     # print(mcs, name, bases, attrs)
+#     ret = super().__new__(mcs, name, bases, attrs)
+#     if '__model__' in attrs:
+#       ## TODO: We assume attrs['__model__'] is a class
+#       ret.query = attrs['__model__'].query
+#     if '__get_query__' in attrs:
+#       ret.query = attrs['__get_query__']()
+#     return ret
 
-class AbstractBaseModel(metaclass=AbstractModelMeta):
+class AbstractBaseModel(Base):
   """
   The base class to provide functionality to
   our models.
   """
   __abstract__ = True
-  class Test:
-    query = 'derp'
-  __model__ = Test
-
-  def  __get_query__():
-    return 'doing'
 
   ## Lifecycle
 
