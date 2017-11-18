@@ -180,10 +180,10 @@ class FhirBaseModel(AbstractBaseModel):
       # apply_search_filters(query, search_params)
       sql_query = cls.query
       for search in [*query.search_params, *query.modifiers]:  # TODO: Do we really need to check the modifiers here?
-        if search in cls.searchables():
+        if cls.has_searcher(search):
           values = query.search_params.get(search, query.modifiers.get(search))
           for value in values:
-            sql_query = cls.searchables()[search](cls, search, value, sql_query, query)
+            sql_query = cls.get_searcher(search)(cls, search, value, sql_query, query)
 
       # TODO: Handle sorting
 
@@ -209,12 +209,28 @@ class FhirBaseModel(AbstractBaseModel):
       return PaginatedBundle(pagination=params).as_json()
 
   @classmethod
+  def has_searcher(cls, query_string):
+    return len([re.match(srch, query_string) for srch in cls.searchables()])
+
+  @classmethod
+  def get_searcher(cls, query_string):
+    searchers = [ func for srch, func in cls.searchables().items() if re.match(srch, query_string)]
+    if len(searchers) == 0:
+      raise AttributeError(f'Searcher does not exist: {query_string}')
+    return searchers[0]
+
+  @classmethod
   def searchables(cls):
     '''
     Returns a list od two-tuples containing the name of a searchable attribute and the function that searches for it based
     on the Attribute definitions in the FhirMap subclass.
     '''
-    return {name: prop.searcher for name, prop in cls.FhirMap.__dict__.items() if isinstance(prop, Attribute) and prop.searcher}
+    searchables = {}
+    for name, prop in cls.FhirMap.__dict__.items():
+      if isinstance(prop, Attribute) and prop.searcher:
+        key = name if not hasattr(prop, 'search_regex') else prop.search_regex
+        searchables[key] = prop.searcher
+    return searchables
 
 
   @property
