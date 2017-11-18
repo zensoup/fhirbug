@@ -25,7 +25,6 @@ class AbstractModelMeta(DeclarativeMeta):
 
 
 Base = declarative_base(metaclass=AbstractModelMeta)
-print('now')
 # Base = declarative_base()
 
 # Create the db connection
