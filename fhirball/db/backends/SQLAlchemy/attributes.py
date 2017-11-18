@@ -115,6 +115,7 @@
   15
 '''
 from fhirball.Fhir import resources as fhir
+from fhirball.db.backends.SQLAlchemy.searches import DateSearch
 
 
 class Attribute:
@@ -241,3 +242,13 @@ class ContainableAttribute(Attribute):
 
     setattr(instance._model, self.id, value)
 
+
+class DateAttribute(Attribute):
+  def __init__(self, field):
+
+    def setter(old_date_str, new_date_str):
+      return fhir.FHIRDate(new_date_str).date
+
+    self.getter = (field, fhir.FHIRDate)
+    self.setter = (field, setter)
+    self.searcher = DateSearch(field)
