@@ -115,7 +115,7 @@
   15
 '''
 from fhirball.Fhir import resources as fhir
-from fhirball.db.backends.SQLAlchemy.searches import DateSearch
+from fhirball.db.backends.SQLAlchemy.searches import DateSearch, StringSearch
 
 
 class Attribute:
@@ -254,3 +254,23 @@ class DateAttribute(Attribute):
     self.getter = (field, fhir.FHIRDate)
     self.setter = (field, setter)
     self.searcher = DateSearch(field)
+
+
+class NameAttribute(Attribute):
+  def __init__(self, family, given):
+
+    def getter(instance):
+      return fhir.HumanName(family=instance._model.name_last, given=instance._model.name_first)
+    def setter(old_date_str, new_date_str):
+      return fhir.FHIRDate(new_date_str).date
+
+    def searcher(cls, field_name, value, sql_query, query):
+      if 'family' in field_name:
+        return StringSearch(family)(cls, field_name, value, sql_query, query)
+      if 'given' in field_name:
+        return StringSearch(given)(cls, field_name, value, sql_query, query)
+      return StringSearch(family, given)(cls, field_name, value, sql_query, query)
+
+    self.getter = getter
+    self.searcher = searcher
+    self.search_regex = r'(family|given|name)(:\w*)?'
