@@ -120,10 +120,12 @@ from fhirball.db.backends.SQLAlchemy.searches import DateSearch
 
 class Attribute:
 
-  def __init__(self, getter=None, setter=None, searcher=None):
+  def __init__(self, getter=None, setter=None, searcher=None, search_regex=None):
     self.getter = getter
     self.setter = setter
     self.searcher = searcher
+    if search_regex:
+      self.search_regex = search_regex
 
   def __get__(self, instance, owner):
     ## HERE
