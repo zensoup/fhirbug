@@ -1,5 +1,6 @@
 import isodate
 from datetime import timedelta
+from sqlalchemy import or_
 from fhirball.exceptions import QueryValidationError
 
 
@@ -65,6 +66,27 @@ def DateSearch(column):
 
     return sql_query.filter(col == transform(value, trim=False))
   return search_datetime
+
+
+def StringSearch(*column_names):
+  '''
+  Search for string types, supports :contains and :exact modifiers.
+
+  If string search should be performed in multiple columns using OR
+  multiple columns can be passed.
+  '''
+  if len(column_names) == 0:
+    raise TypeError('StringSearch takes at least one positional argument (0 given)')
+  def search(cls, field_name, value, sql_query, query):
+    columns = [getattr(cls, column) for column in column_names]
+    if ':contains' in field_name:
+      value = value.replace(':contains', '')
+      return sql_query.filter(or_(col.contains(value) for col in columns))
+    if ':exact' in field_name:
+      value = value.replace(':exact', '')
+      return sql_query.filter(or_(col == value for col in columns))
+    return sql_query.filter(or_(col.startswith(value) for col in columns))
+  return search
 
 
 def NameSearch(column):
