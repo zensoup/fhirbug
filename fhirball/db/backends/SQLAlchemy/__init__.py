@@ -210,7 +210,9 @@ class FhirBaseModel(AbstractBaseModel):
 
   @classmethod
   def has_searcher(cls, query_string):
-    return len([re.match(srch, query_string) for srch in cls.searchables()])
+    for srch in cls.searchables():
+      if re.match(srch, query_string):
+        return True
 
   @classmethod
   def get_searcher(cls, query_string):
