@@ -30,6 +30,8 @@ def handle_get_request(url):
     return op.as_json(), 404
   except Exception as e:
     op = OperationOutcome({'issue': [{'severity': 'error', 'code': 'server-error', 'diagnostics': f'{e}'}]})
+    import traceback
+    print(traceback.format_exc())
     return op.as_json(), 500
 
 
@@ -58,5 +60,3 @@ def handle_post_request(url, body):
     new_resource = Model.create_from_resource(resource, query=query)
     # new_resource.save()
     return new_resource.to_fhir().as_json(), 201
-
-
