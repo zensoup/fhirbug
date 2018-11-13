@@ -1,5 +1,6 @@
 *.pyc
 .idea
+build*
 __pycache__
 table_fields.py
 /*.egg-info
@@ -11,6 +12,6 @@ settings.py
 .gitignore
 flask_app.py
 main.py
-models.py
+/models.py
 settings.py
 README.pdf
