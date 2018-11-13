@@ -2,8 +2,9 @@ from fhirball.server.requestparser import parse_url
 from fhirball.exceptions import MappingValidationError, QueryValidationError
 
 from fhirball.Fhir.resources import OperationOutcome, FHIRValidationError
+from fhirball.config import import_models
 
-import models  # Don't do from models import bla, stuff will break
+models = import_models()  # Don't do from models import bla, stuff will break
 
 def handle_get_request(url):
   # Try to parse the url
