@@ -40,7 +40,6 @@ Base.session = property(lambda instance: session.object_session(instance))
 def get_base(connection_str='sqlite:///sqlite.db'):
   Base = declarative_base(metaclass=AbstractModelMeta)
   # Create the db connection
-  os.environ["NLS_LANG"] = "GREEK_GREECE.AL32UTF8"
   engine = create_engine(connection_str)
   session = scoped_session(sessionmaker(bind=engine))
 
