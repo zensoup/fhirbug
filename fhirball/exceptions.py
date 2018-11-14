@@ -1,5 +1,13 @@
 class QueryValidationError(Exception):
-  pass
+    pass
+
 
 class MappingValidationError(Exception):
-  pass
+    pass
+
+
+class ConfigurationException(Exception):
+    '''
+    Something is wrong with the settings
+    '''
+    pass
