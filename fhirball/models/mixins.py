@@ -129,7 +129,6 @@ class FhirBaseModelMixin:
 
       else:
         # Handle search
-        # apply_search_filters(query, search_params)
         sql_query = cls._get_orm_query()
         for search in [*query.search_params, *query.modifiers]:  # TODO: Do we really need to check the modifiers here?
           if cls.has_searcher(search):
@@ -165,6 +164,7 @@ class FhirBaseModelMixin:
       for srch in cls.searchables():
         if re.match(srch, query_string):
           return True
+      return False
 
     @classmethod
     def get_searcher(cls, query_string):
