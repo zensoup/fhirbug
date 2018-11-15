@@ -21,8 +21,6 @@
 from fhirball.db.backends.SQLAlchemy.pagination import paginate
 from fhirball.db.backends.SQLAlchemy.base import Base
 
-## TODO: I'm pretty sure this shouldn't be happening here
-
 from fhirball.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
 
 

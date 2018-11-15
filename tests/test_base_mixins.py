@@ -14,6 +14,19 @@ class TestAbstractBaseMixin(unittest.TestCase):
         )
         self.assertEquals(inst.get_params_dict(Observation), {})
 
+    def test_get_params_dict_with_elements(self):
+        """
+        get_params_dict should retun a dict containing the FhirMap Attributes that match the Fhir resource, containing only the elements spectified in the parameter
+        """
+        inst = models.BaseMixinModel()
+        self.assertEquals(
+            inst.get_params_dict(Patient, ['active', 'name']), {"active": True, "name": "hello"}
+        )
+        self.assertEquals(
+            inst.get_params_dict(Patient, ['active']), {"active": True}
+        )
+        self.assertEquals(inst.get_params_dict(Observation), {})
+
     def test_get_rev_includes(self):
         # TODO
         assert False == True
@@ -30,6 +43,34 @@ class TestAbstractBaseMixin(unittest.TestCase):
             {
                 "active": True,
                 "name": [{"family": "sponge", "given": ["bob"]}],
+                "resourceType": "Patient",
+            },
+        )
+
+    def test_to_fhir_with_elements(self):
+        """
+        to_fhir should convert to a Fhir Resource, containing only the attributes specified in elements
+        """
+        from fhirball.server.requestparser import parse_url
+        q = parse_url('Patient?_elements=active,name')
+
+        inst = models.BetterBaseMixinModel()
+        inst_as_fhir = inst.to_fhir(query=q)
+        self.assertEquals(
+            inst_as_fhir.as_json(),
+            {
+                "active": True,
+                "name": [{"family": "sponge", "given": ["bob"]}],
+                "resourceType": "Patient",
+            },
+        )
+
+        q = parse_url('Patient?_elements=active')
+        inst_as_fhir = inst.to_fhir(query=q)
+        self.assertEquals(
+            inst_as_fhir.as_json(),
+            {
+                "active": True,
                 "resourceType": "Patient",
             },
         )

@@ -20,6 +20,7 @@ class FhirAbstractBaseMixin:
     # Initialize attributes
     self._searchables = []
     self._contained_names = query.modifiers.get('_include', []) if query else []
+    self._elements = query.modifiers.get('_elements', None) if query else None
     self._contained_items = []
     self._refcount = 0
 
@@ -31,7 +32,7 @@ class FhirAbstractBaseMixin:
     # self._Fhir._query = query
 
     # Filter the matching fields
-    param_dict = self.get_params_dict(Resource)
+    param_dict = self.get_params_dict(Resource, elements=self._elements)
 
     # Cast to a resource
     resource = Resource(param_dict, strict=kwargs.get('strict', True))
@@ -44,7 +45,7 @@ class FhirAbstractBaseMixin:
 
     return resource
 
-  def get_params_dict(self, resource):
+  def get_params_dict(self, resource, elements=None):
     """
     Return a dictionary of all valid values this instance can provide for a resource of the type ``resource``.
 
@@ -58,6 +59,12 @@ class FhirAbstractBaseMixin:
 
     # Create a mock resource for comparison
     mock = resource()
+
+    # If the _eelements paramater has been passed, return the elements specified there,
+    # along with all mandatory ones
+    # TODO: toggle inclusion of mandatory based on a setting
+    if elements:
+        attributes = [attr for attr in attributes if attr in elements]
 
     # Evaluate the common attributes. This is where all the getters are called
     param_dict = {attribute: getattr(self.Fhir, attribute) for attribute in attributes if hasattr(mock, attribute)}
