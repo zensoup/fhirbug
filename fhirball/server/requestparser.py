@@ -6,10 +6,11 @@ class FhirRequestQuery:
   '''
   Represents parsed parameters from reqests.
   '''
-  def __init__(self, resource, resourceId, operation, modifiers, search_params, body=None, request=None):
+  def __init__(self, resource, resourceId, operation, operationId, modifiers, search_params, body=None, request=None):
     self.resource = resource
     self.resourceId = resourceId
     self.operation = operation
+    self.operationId = operationId
     self.modifiers = modifiers
     self.search_params = search_params
     self.body = body
@@ -33,14 +34,32 @@ def parse_url(url):
   {}
 
   '''
+
+  # Supported operations that may be applied straight on a resource type
+  base_operations = ['_search', '_history']
+
   parsed = urlparse(url)
 
   # Parse the path
   path = parsed.path.split('/')
 
+  # Remove the empty string from the end if the path ends with a slash
+  if path[-1] == '':
+      path.pop(-1)
+
+  # Remove the empty string from the start if the path is only a slash
+  if path and path[0] == '':
+      path.pop(0)
+
   resource = path.pop(0) if path else None
-  resourceId = path.pop(0) if path else None
-  operation = path.pop(0) if path else None
+  # The second item may be a resource id or a base operator. We check if it exists in base_operations
+  if path and path[0] in base_operations:
+      resourceId = None
+      operation = path.pop(0) if path else None
+  else:
+      resourceId = path.pop(0) if path else None
+      operation = path.pop(0) if path else None
+  operationId = path.pop(0) if operation and path else None
 
   # parse the query strings
   qs = parse_qs(parsed.query)
@@ -59,6 +78,7 @@ def parse_url(url):
   params = {'resource': resource,
           'resourceId': resourceId,
           'operation': operation,
+          'operationId': operationId,
           'modifiers': modifiers,
           'search_params': search_params,
           }
