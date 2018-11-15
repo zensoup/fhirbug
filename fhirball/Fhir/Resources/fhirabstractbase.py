@@ -197,6 +197,12 @@ class FHIRAbstractBase(object):
         """
         return []
 
+    def getMandatoryFields(self):
+        """ Returns a list of properties that are marked as mandatory.
+        """
+        properties = self.elementProperties()
+        return [prop[0] for prop in properties if prop[-1] == True]
+
     def update_with_json(self, jsondict):
         """ Update the receiver with data in a JSON dictionary.
 
