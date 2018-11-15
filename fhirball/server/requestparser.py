@@ -2,6 +2,15 @@ from urllib.parse import urlparse, parse_qs
 
 from fhirball.exceptions import QueryValidationError
 
+def split_join(lst):
+    """
+    Accepts a list of comma separated strings, splits them and joins them in a new list
+
+    >>> split_join(['a,b,c', 'd', 'e,f'])
+    ['a', 'b', 'c', 'd', 'e', 'f']
+    """
+    return [e for elem in lst for e in elem.split(',')]
+
 class FhirRequestQuery:
   '''
   Represents parsed parameters from reqests.
@@ -65,10 +74,10 @@ def parse_url(url):
   qs = parse_qs(parsed.query)
 
   # Get the built-in `_keywords`
-  modifiers = {param: value for param, value in qs.items() if param.startswith('_')}
+  modifiers = {param: split_join(value) for param, value in qs.items() if param.startswith('_')}
 
   # Get the rest of the search parameters
-  search_params = {param: value for param, value in qs.items() if not param in modifiers}
+  search_params = {param: split_join(value) for param, value in qs.items() if not param in modifiers}
 
   # We accept both id and _id params, but transfer _id to search_params as id
   id_param = modifiers.pop('_id', None)
