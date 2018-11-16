@@ -1,7 +1,6 @@
 from fhirball.exceptions import MappingValidationError
 from fhirball.Fhir import resources as fhir
 from fhirball.config import import_searches
-searches = import_searches()
 
 
 class Attribute:
@@ -260,6 +259,7 @@ class ContainableAttribute(Attribute):
 
 class DateAttribute(Attribute):
   def __init__(self, field):
+    searches = import_searches()
 
     def setter(old_date_str, new_date_str):
       return fhir.FHIRDate(new_date_str).date
@@ -271,6 +271,7 @@ class DateAttribute(Attribute):
 
 class NameAttribute(Attribute):
   def __init__(self, family, given):
+    searches = import_searches()
 
     def getter(instance):
       return fhir.HumanName(family=instance._model.name_last, given=instance._model.name_first)
