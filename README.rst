@@ -1,31 +1,40 @@
 FHIRBALL
 --------
 
+Fhirball is a full-featured `fhir`_ server for python. It is intended to be very easy to set up and configure and be flexible when it comes to the rest of tools used, like web frameworks and database interfaces. In most simple cases, very little code has to be written apart from field mappings (see `examples`_).
+
+Fhirball has out-of-the-box support for SQLAlchemy and DjangoORM and has been tested with both `django`_ and `flask`_.
+However, one can use just the field-mapping part of fhirball to convert database entries to Fhir resources and handle everything else any way you want.
+
+Please note: **Fhirball is still under development. It currently lacks several features and is probably buggy. Use at your own risk.**
+
 ___________________
-Usage
+Quick Overview
 ___________________
 
-.. _`Writing maps`:
-
-============
-Demo Server
-============
-
-run::
-
-    $ export FLASK_APP=flask_app.py
-    $ export FLASK_DEBUG=1
-    $ flask run
 
 ============
 Writing Maps
 ============
 
-Create models in models.py and add a `_map_` method. All fields in the
-corresponding `__table__` are available as ``self.field_name``.
+Mapping from a database model to a Fhir resource is pretty simple.
+Begin by declaring your models using the ORM of your choice. Subclass or extend your models to use fhirball's mixins and declare a class called FhirMap.
 
-Using these fields and possibly other models, ``_map_`` must build and
-return a Fhir Resource instance.
+Inside FhirMap, use Attributes to declare properties using the name of the corresponding Fhir resource.
+
+Here's a simple example for SQLAlchemy:
+::
+
+  from fhirball.db.backends.SQLAlchemy.base import Base, engine
+   from fhirball.db.backends.SQLAlchemy import FhirBaseModel
+
+    class Location(FhirBaseModel):
+        __table__ = Table('HospitalLocations', Base.metadata,
+                    autoload=True, autoload_with=engine)
+
+        class FhirMap:
+            id = Attribute(getter='location_id', setter=None, searcher=NumericSearch('patient_id'))
+            name = Attribute()
 
 ___________________
 Package Description
@@ -138,3 +147,7 @@ been made to make it as easy as possible to create Resource objects. See `Writin
         ``modifiers``: dict of key, value pairs for all _reserved parameters
 
         ``search_params``: dict of key, value pairs for all non _reserved parameters
+
+.. _fhir: https://www.hl7.org/fhir/
+.. _flask: http://flask.pocoo.org/
+.. _django: https://www.djangoproject.com/
