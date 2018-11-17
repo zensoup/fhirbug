@@ -30,6 +30,20 @@ def NumericSearch(column):
       val = to_float(value[2:])
       return sql_query.filter(col >= val-val*0.1).filter(col <= val+val*0.1)
 
+    return sql_query.filter(col == to_float(value))
+  return search
+
+def NumericSearchWithQuantity(column, convert_value=None, alter_query=None):
+    def search(cls, field_name, value, sql_query, query):
+        parts = value.split('|', 1)
+        if len(parts) == 2:
+            value, quantity = parts
+            if convert_value:
+                value = convert_value(value, quantity)
+            if alter_query:
+                sql_query = alter_query(query, value, quantity)
+        return NumericSearch(column).search(cls, field_name, value, sql_query, query)
+    return search
 
 def DateSearch(column):
   def transform(value, trim=True):
