@@ -5,6 +5,9 @@ from fhirball.exceptions import ConfigurationError
 
 
 class FhirSettings:
+    STRICT_MODE = {
+        'set_attribute_without_setter': False,
+    }
     pass
 
 settings = None

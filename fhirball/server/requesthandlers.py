@@ -2,7 +2,7 @@ from fhirball.server.requestparser import parse_url
 from fhirball.exceptions import MappingValidationError, QueryValidationError, ConfigurationError
 
 from fhirball.Fhir.resources import OperationOutcome, FHIRValidationError
-from fhirball.config import import_models
+from fhirball.config import import_models, settings
 
 
 def handle_get_request(url):
@@ -70,6 +70,16 @@ def handle_post_request(url, body):
     except Exception as e:
         return {'error': 'This shouldn\'t happen', 'exception': str(e)}, 404
 
-    new_resource = Model.create_from_resource(resource, query=query)
+    try:
+        new_resource = Model.create_from_resource(resource, query=query)
+    except Exception as e:
+        if settings.DEBUG:
+            import traceback
+            print(traceback.format_exc())
+            op = OperationOutcome({'issue': [{'severity': 'error', 'code': 'validation', 'diagnostics': traceback.format_exc()}]})
+        else:
+            op = OperationOutcome({'issue': [{'severity': 'error', 'code': 'validation', 'diagnostics': f'{e}'}]})
+
+        return op.as_json(), 422
     # new_resource.save()
     return new_resource.to_fhir().as_json(), 201

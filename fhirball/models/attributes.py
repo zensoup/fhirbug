@@ -1,6 +1,6 @@
-from fhirball.exceptions import MappingValidationError
+from fhirball.exceptions import MappingValidationError, UnsupportedOperationError
 from fhirball.Fhir import resources as fhir
-from fhirball.config import import_searches
+from fhirball.config import import_searches, settings
 
 
 class Attribute:
@@ -146,7 +146,15 @@ class Attribute:
 
   # def __set__(self, instance, owner, value):
   def __set__(self, instance, value):
-    setter = self.setter
+    try:
+      setter = self.setter
+    except AttributeError:
+      if settings.STRICT_MODE['set_attribute_without_setter']:
+        raise UnsupportedOperationError('You are trying to alter an attribute that can not be changed')
+      else:
+        # TODO: log
+        return
+
     # Strings are column names
     if isinstance(setter, str):
       setattr(instance._model, setter, value)
@@ -161,7 +169,6 @@ class Attribute:
       else:
         res = func(getattr(instance._model, column), value)  ## TODO: Do we need to pass the current value here?
         setattr(instance._model, column, res)
-
 
 class const:
   """
@@ -262,7 +269,12 @@ class DateAttribute(Attribute):
     searches = import_searches()
 
     def setter(old_date_str, new_date_str):
-      return fhir.FHIRDate(new_date_str).date
+      if hasattr(new_date_str, 'strftime'):
+        return fhir.FHIRDate(new_date_str).date
+      if isinstance(new_date_str, str):
+        return fhir.FHIRDate(new_date_str).date
+      elif isinstance(new_date_str, fhir.FHIRDate):
+        return new_date_str.date
 
     self.getter = (field, fhir.FHIRDate)
     self.setter = (field, setter)

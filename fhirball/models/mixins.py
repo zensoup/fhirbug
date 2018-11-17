@@ -93,7 +93,6 @@ class FhirAbstractBaseMixin:
     obj = cls()
     obj.Fhir._query = query
 
-    # for path in own_attributes:
     for path in own_attributes:
       value = getattr(resource, path.replace('_', '.'), None)
       if value:
