@@ -1,32 +1,39 @@
 import isodate
 from datetime import timedelta
-from fhirball.exceptions import QueryValidationError
 from django.db.models import Q
+from fhirball.exceptions import QueryValidationError
+
+
+def to_float(str):
+    try:
+        return float(str)
+    except ValueError:
+        raise QueryValidationError('{} is an invalid numerical parameter'.format(str))
 
 
 def NumericSearch(column):
-  def search_id(cls, field_name, value, sql_query, query):
-    # value = query.search_params[field_name] if field_name in query.search_params else query.modifiers[field_name]
-    # value = value.pop()
-    # col = getattr(cls, column)
-    if value.startswith('lt'):  # Less than
-      return sql_query.filter(**{'{}__lt'.format(column): value[2:]})
-    if value.startswith('gt'):  # Greater than
-      return sql_query.filter(**{'{}__gt'.format(column): value[2:]})
-    if value.startswith('le'):  # Less or equal
-      return sql_query.filter(**{'{}__lte'.format(column): value[2:]})
-    if value.startswith('ge'):  # Greater or equal
-      return sql_query.filter(**{'{}__gte'.format(column): value[2:]})
-    if value.startswith('eq'):  # Equals
-      return sql_query.filter(**{column: value[2:]})
-    if value.startswith('ne'):  # Not Equal
-      return sql_query.filter(~Q(**{column: value[2:]}))
-    if value.startswith('ap'):  # Approximately (+- 10%)
-      val = float(value[2:])
-      return sql_query.filter(**{'{}__gte'.format(column): val-val*0.1}).filter(**{'{}__gte'.format(column): val+val*0.1})
+  def search(cls, field_name, value, sql_query, query):
 
-    return sql_query.filter(**{column: value})
-  return search_id
+    if value.startswith('lt'):  # Less than
+      return sql_query.filter(**{'{}__lt'.format(column): to_float(value[2:])})
+    if value.startswith('gt'):  # Greater than
+      return sql_query.filter(**{'{}__gt'.format(column): to_float(value[2:])})
+    if value.startswith('le'):  # Less or equal
+      return sql_query.filter(**{'{}__lte'.format(column): to_float(value[2:])})
+    if value.startswith('ge'):  # Greater or equal
+      return sql_query.filter(**{'{}__gte'.format(column): to_float(value[2:])})
+    if value.startswith('eq'):  # Equals
+      return sql_query.filter(**{column: to_float(value[2:])})
+    if value.startswith('ne'):  # Not Equal
+      return sql_query.filter(**{'{}__ne'.format(column): to_float(value[2:])})
+    if value.startswith('ap'):  # Approximately (+- 10%)
+      val = to_float(value[2:])
+      return sql_query.filter(**{'{}__gte'.format(column): val-val*0.1}).filter(**{'{}__lte'.format(column): val+val*0.1})
+
+    return sql_query.filter(**{column: to_float(value)})
+  return search
+
+
 
 def DateSearch(column):
   def transform(value, trim=True):
