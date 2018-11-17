@@ -23,3 +23,9 @@ class UnsupportedOperationError(Exception):
     The requested opertion is not supported by this server
     '''
     pass
+
+class MappingException(Exception):
+    '''
+    A fhir mapping has been set up wrong
+    '''
+    pass

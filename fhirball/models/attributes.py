@@ -1,4 +1,4 @@
-from fhirball.exceptions import MappingValidationError, UnsupportedOperationError
+from fhirball.exceptions import MappingValidationError, UnsupportedOperationError, MappingException
 from fhirball.Fhir import resources as fhir
 from fhirball.config import import_searches, settings
 
@@ -128,7 +128,6 @@ class Attribute:
       self.search_regex = search_regex
 
   def __get__(self, instance, owner):
-    ## HERE
     getter = self.getter
     # Strings are column names
     if isinstance(getter, str):
@@ -167,7 +166,7 @@ class Attribute:
       if isinstance(func, const):
         setattr(instance._model, column, func.value)
       else:
-        res = func(getattr(instance._model, column), value)  ## TODO: Do we need to pass the current value here?
+        res = func(getattr(instance._model, column), value)
         setattr(instance._model, column, res)
 
 class const:
@@ -282,21 +281,59 @@ class DateAttribute(Attribute):
 
 
 class NameAttribute(Attribute):
-  def __init__(self, family, given):
+  """
+  NameAttribute is for used on fields that represnt a HumanName resource.
+  The parameters can be any of the valid getter and setter types for
+  simple :class:`Attribute`s
+
+  :param family_getter: A getter type parameter for the family name.
+  :param given_getter: A getter type parameter for the given name
+  :param family_setter: A setter type parameter for the family name
+  :param given_setter: A getter type parameter for the given name
+  """
+
+  def __init__(self,
+               family_getter=None,
+               given_getter=None,
+               family_setter=None,
+               given_setter=None,
+               join_given_names=False,
+               pass_given_names=False,
+               getter=None,
+               setter=None,
+               searcher=None,
+               given_join_separator=' '):
     searches = import_searches()
+    if join_given_names and pass_given_names:
+        raise MappingException('You can not pass both pass_given_names and join_given_names. Only one of these arguments is allowed to be True')
 
-    def getter(instance):
-      return fhir.HumanName(family=instance._model.name_last, given=instance._model.name_first)
-    def setter(old_date_str, new_date_str):
-      return fhir.FHIRDate(new_date_str).date
+    def _getter(instance):
+      family = Attribute(family_getter).__get__(instance, None)
+      given = Attribute(given_getter).__get__(instance, None)
+      return fhir.HumanName(family=family, given=given)
 
-    def searcher(cls, field_name, value, sql_query, query):
+    def _setter(instance, humanNames):
+      family = humanNames[0].family
+
+      if join_given_names:
+          given = given_join_separator.join(humanNames[0].given)
+      elif pass_given_names:
+          given = humanNames[0].given
+      else:
+        given = humanNames[0].given[0]
+
+      Attribute(setter=family_setter).__set__(instance, family)
+      Attribute(setter=given_setter).__set__(instance, given)
+
+    def _searcher(cls, field_name, value, sql_query, query):
+      # TODO: only works with string fields
       if 'family' in field_name:
-        return searches.StringSearch(family)(cls, field_name, value, sql_query, query)
+        return searches.StringSearch(family_getter)(cls, field_name, value, sql_query, query)
       if 'given' in field_name:
-        return searches.StringSearch(given)(cls, field_name, value, sql_query, query)
-      return searches.StringSearch(family, given)(cls, field_name, value, sql_query, query)
+        return searches.StringSearch(given_getter)(cls, field_name, value, sql_query, query)
+      return searches.StringSearch(family_getter, family_getter)(cls, field_name, value, sql_query, query)
 
-    self.getter = getter
-    self.searcher = searcher
+    self.getter = getter or _getter
+    self.setter = setter or _setter
+    self.searcher = searcher or _searcher
     self.search_regex = r'(family|given|name)(:\w*)?'
