@@ -1,4 +1,6 @@
 import unittest
+from fhirball.config import configure
+configure({'DB_BACKEND': 'SQLAlchemy'})
 from . import models
 from fhirball.Fhir.resources import Patient, Observation
 

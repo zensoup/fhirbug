@@ -1,4 +1,6 @@
 import unittest
+from fhirball.config import configure
+configure({'DB_BACKEND': 'SQLAlchemy'})
 from . import models
 
 
@@ -79,7 +81,7 @@ class TestDateAttributes(unittest.TestCase):
         '''
         inst = models.WithDateAttribute()
         self.assertEquals(inst.date.as_json(), '2012-12-12T00:00:00')
-        
+
     def test_date_setter(self):
         '''
         Date setter converts to and from fhir date automatically

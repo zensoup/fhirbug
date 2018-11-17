@@ -6,7 +6,7 @@ class MappingValidationError(Exception):
     pass
 
 
-class ConfigurationException(Exception):
+class ConfigurationError(Exception):
     '''
     Something is wrong with the settings
     '''

@@ -1,4 +1,5 @@
 import unittest
+from fhirball.config import configure
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta

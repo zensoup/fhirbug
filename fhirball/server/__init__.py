@@ -1,10 +1,9 @@
 from fhirball.server.requestparser import parse_url
-from fhirball.exceptions import MappingValidationError, QueryValidationError
+from fhirball.exceptions import MappingValidationError, QueryValidationError, ConfigurationError
 
 from fhirball.Fhir.resources import OperationOutcome, FHIRValidationError
 from fhirball.config import import_models
 
-models = import_models()  # Don't do from models import bla, stuff will break
 
 def handle_get_request(url):
   # Try to parse the url
@@ -15,6 +14,12 @@ def handle_get_request(url):
     return op.as_json(), 400
 
   resource = query.resource
+  try:
+      models = import_models()
+  except ConfigurationError:
+      op = OperationOutcome({'issue': [{'severity': 'error', 'code': 'server-error', 'diagnostics': f'The server is improprly configured'}]})
+      return op.as_json(), 500
+
   # Try to import the resource map class
   try:
     Resource = getattr(models, resource)
@@ -39,6 +44,13 @@ def handle_get_request(url):
 def handle_post_request(url, body):
     query = parse_url(url)
     resource_name = query.resource
+
+    try:
+        models = import_models()
+    except ConfigurationError:
+        op = OperationOutcome({'issue': [{'severity': 'error', 'code': 'server-error', 'diagnostics': f'The server is improprly configured'}]})
+        return op.as_json(), 500
+        
     # Get the Resource
     try:
         from fhirball.Fhir import resources
