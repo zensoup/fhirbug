@@ -10,6 +10,10 @@ class FhirSettings:
 settings = None
 
 def configure_from_path(path):
+    """
+    Read a path to a module and import all viariables defined inside it
+    as the project settings
+    """
     global settings
     if not settings:
         settings = FhirSettings()
@@ -22,6 +26,9 @@ def configure_from_path(path):
             setattr(settings, key, getattr(settings_module, key))
 
 def configure_from_dict(dict):
+    """
+    Read a dictionary and load it as project settings.
+    """
     global settings
     if not settings:
         settings = FhirSettings()
@@ -30,6 +37,9 @@ def configure_from_dict(dict):
     return settings
 
 def configure(config):
+    """
+    Configuration wrapper. Accept a dictionary or string and pass it on to :func:`configure_from_dict` or :func:`configure_from_path`
+    """
     if isinstance(config, str):
         return configure_from_path(config)
     if isinstance(config, dict):
@@ -37,6 +47,9 @@ def configure(config):
     raise ConfigurationError('Invlid configuration object, you must provide a dict or string representing the path to a configuration file')
 
 def import_models():
+    """
+    Dynamic import of the models module based on the backend selected in the configuration
+    """
     global settings
     if not settings:
         raise ConfigurationError('Fhirball settings have not been initialized. Use fhirball.config.configure before using fhirball.')
@@ -47,6 +60,9 @@ def import_models():
     return importlib.import_module(models_path)
 
 def import_searches():
+    """
+    Dynamic import of the searches module based on the backend selected in the configuration
+    """
     global settings
     if not settings:
         raise ConfigurationError('Fhirball settings have not been initialized. Use fhirball.config.configure before using fhirball.')
