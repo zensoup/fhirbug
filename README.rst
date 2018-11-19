@@ -6,7 +6,82 @@ Fhirball is a full-featured `fhir`_ server for python. It is intended to be very
 Fhirball has out-of-the-box support for SQLAlchemy and DjangoORM and has been tested with both `django`_ and `flask`_.
 However, one can use just the field-mapping part of fhirball to convert database entries to Fhir resources and handle everything else any way you want.
 
-Please note: **Fhirball is still under development. It currently lacks several features and is probably buggy. Use at your own risk.**
+Please note: **Fhirball is still under development. It currently lacks several features and is probably buggy.**
+
+___________________
+Roadmap
+___________________
+
+   [ ] Refactoring
+
+      [ ] Configuration
+
+   [ ] Complete unit test coverage
+
+      [ ] pagination
+
+      [ ] request handlers
+
+      [ ] DB models (?)
+
+   [ ] Integration tests
+
+   [ ] Authorization / Auditing ?
+
+   [ ] Complete documendation coverage
+
+   [ ] Complete README.rst
+
+   [ ] Add Mongodb backend
+
+   [ ] Complete POST / PUT / DELETE
+
+   [ ] Support all `search parameters`_
+
+      [ ] _content
+
+      [ ] _lastUpdated
+
+      [ ] _profile
+
+      [ ] _security
+
+      [ ] _tag
+
+      [ ] _text
+
+      [ ] _list
+
+      [ ] _has
+
+      [ ] _summary
+
+      [ ] _sort
+
+      [ ]_count
+
+   [ ] logging
+
+   [ ] `Documents`_
+
+   [ ] More Searches
+
+   [ ] More attributes
+
+   [ ] If-Modified-Since header
+
+   [ ] Support application/fhir+json and _format
+
+   [ ] Html serving (?)
+
+   [ ] Versions
+
+   [ ] Versioned updates
+
+   [ ] Generate Capability Statement
+
+   [ ] Generate Strtucture Definition
+
 
 ___________________
 Quick Overview
@@ -151,3 +226,5 @@ been made to make it as easy as possible to create Resource objects. See `Writin
 .. _fhir: https://www.hl7.org/fhir/
 .. _flask: http://flask.pocoo.org/
 .. _django: https://www.djangoproject.com/
+.. _`search parameters`: https://www.hl7.org/fhir/searchparameter-registry.html
+.. _`Documents`: https://www.hl7.org/fhir/documents.html

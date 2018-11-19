@@ -10,6 +10,7 @@ Welcome to fhirball's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   overview
    attributes
    mixins
 
