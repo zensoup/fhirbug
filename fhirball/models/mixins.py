@@ -95,9 +95,10 @@ class FhirAbstractBaseMixin:
 
     for path in own_attributes:
       value = getattr(resource, path.replace('_', '.'), None)
-      if value:
+      if value is not None:
         setattr(obj.Fhir, path, value)
 
+    obj = cls.save_instance(obj)
     return obj
 
   @classmethod

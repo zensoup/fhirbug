@@ -19,7 +19,7 @@
 
 
 from fhirball.db.backends.SQLAlchemy.pagination import paginate
-from fhirball.db.backends.SQLAlchemy.base import Base
+from fhirball.db.backends.SQLAlchemy.base import Base, session
 
 from fhirball.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
 
@@ -40,6 +40,12 @@ class AbstractBaseModel(Base, FhirAbstractBaseMixin):
 
 class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
   __abstract__ = True
+
+  @classmethod
+  def save_instance(cls, instance):
+      session.add(instance)
+      session.commit()
+      return instance
 
   @classmethod
   def paginate(cls, *args, **kwargs):
