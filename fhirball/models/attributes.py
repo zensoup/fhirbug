@@ -185,6 +185,33 @@ class const:
     self.value = value
 
 
+class BooleanAttribute(Attribute):
+    def __init__(self, *args,
+                 save_true_as=1,
+                 save_false_as=0,
+                 truthy_values=['true', 'True', 1, '1'],
+                 falsy_values=['false', 'False', '0', 0],
+                 **kwargs):
+        self.save_true_as = save_true_as
+        self.save_false_as = save_false_as
+        self.truthy_values = truthy_values
+        self.falsy_values = falsy_values
+        return super(BooleanAttribute, self).__init__(*args, **kwargs)
+
+    def __get__(self, *args, **kwargs):
+        value = super(BooleanAttribute, self).__get__(*args, **kwargs)
+        if value in self.truthy_values:
+            return False
+        elif value in self.falsy_values:
+            return True
+        return value
+    def __set__(self, instance, value):
+        if value:
+            value = self.save_true_as
+        else:
+            value = self.save_false_as
+        super(BooleanAttribute, self).__set__(instance, value)
+        
 class ContainableAttribute(Attribute):
   '''
   A Reference to some other Resource that may be contained.
