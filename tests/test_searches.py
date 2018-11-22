@@ -7,7 +7,7 @@ from fhirball.db.backends.SQLAlchemy import searches as searches_sqla
 from fhirball.db.backends.DjangoORM import searches as searches_django
 
 
-class TestSQLAlchemy(unittest.TestCase):
+class TestSQLAlchemyNumeric(unittest.TestCase):
     def setUp(self):
         self.NumericSearch = searches_sqla.NumericSearch
         self.NumericSearchWithQuantity = searches_sqla.NumericSearchWithQuantity
@@ -106,7 +106,75 @@ class TestSQLAlchemy(unittest.TestCase):
             aq.assert_called_with("query", cv(), "http://unitsofmeasure.org|mg")
 
 
-class TestDjangoORM(TestSQLAlchemy):
+class TestSQLAlchemyString(unittest.TestCase):
+    def setUp(self):
+        self.StringSearch = searches_sqla.StringSearch
+        self.MockPath = "fhirball.db.backends.SQLAlchemy.searches.or_"
+        column = Mock()
+        column.__eq__ = Mock()
+        self.column = column
+        self.cls = SimpleNamespace(name=column)
+        self.sql_query = Mock()
+        self.search = self.StringSearch("name")
+
+    def test_search_no_args(self):
+        """
+        Stringsearch should raise TypeError if it is initialized without a column name
+        """
+        self.assertRaises(TypeError, self.StringSearch)
+
+    def test_search_simple(self):
+        """
+        With simple arguments it shoud do a `startswith` query
+        """
+        with patch(self.MockPath) as or_:
+            self.search(self.cls, "name", "bob", self.sql_query, None)
+            self.sql_query.filter.assert_called_with(or_())
+            args = next(or_.call_args_list[0][0][0])
+            self.column.startswith.assert_called_with("bob")
+            self.assertEquals(args, self.column.startswith())
+
+    def test_search_contains(self):
+        """
+        With the `contains` modifier it should do a `contains` query
+        """
+        with patch(self.MockPath) as or_:
+            self.search(self.cls, "name:contains", "bob", self.sql_query, None)
+            self.sql_query.filter.assert_called_with(or_())
+            args = next(or_.call_args_list[0][0][0])
+            self.column.contains.assert_called_with("bob")
+            self.assertEquals(args, self.column.contains())
+
+    def test_search_exact(self):
+        """
+        With the `exact` modifier it should do an equality query
+        """
+        with patch(self.MockPath) as or_:
+            self.search(self.cls, "name:exact", "guy", self.sql_query, None)
+            self.sql_query.filter.assert_called_with(or_())
+            args = next(or_.call_args_list[0][0][0])
+            self.column.__eq__.assert_called_with("guy")
+            self.assertEquals(args, self.column.__eq__())
+
+    def test_search_multiple_columns(self):
+        """
+        Multiple column names can be passed to the search constructor which will be
+        joined together with or in the resulting query.
+        """
+        search = self.StringSearch('first_name', 'last_name')
+        column1 = Mock()
+        column2 = Mock()
+        cls = SimpleNamespace(first_name=column1, last_name=column2)
+        with patch(self.MockPath) as or_:
+            search(cls, "name", "John", self.sql_query, None)
+            self.sql_query.filter.assert_called_with(or_())
+            args = list(or_.call_args_list[0][0][0])
+            column1.startswith.assert_called_with("John")
+            column2.startswith.assert_called_with("John")
+            self.assertEquals(args, [column1.startswith(), column2.startswith()])
+
+
+class TestDjangoORMNumeric(TestSQLAlchemyNumeric):
     def setUp(self):
         self.NumericSearch = searches_django.NumericSearch
         self.NumericSearchWithQuantity = searches_django.NumericSearchWithQuantity
