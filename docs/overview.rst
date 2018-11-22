@@ -2,7 +2,7 @@ Overview
 ========
 
 Creating Mappings
-----------------
+-----------------
 
 Fhirball offers a simple declarative way to map your database tables to
 `Fhir Resources`_. You need to have created models for your tables using one of

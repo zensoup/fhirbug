@@ -1,8 +1,14 @@
 class QueryValidationError(Exception):
+    '''
+    A http request query was malformed or not understood by the server
+    '''
     pass
 
 
 class MappingValidationError(Exception):
+    '''
+    A fhir mapping has been set up wrong
+    '''
     pass
 
 
@@ -26,6 +32,6 @@ class UnsupportedOperationError(Exception):
 
 class MappingException(Exception):
     '''
-    A fhir mapping has been set up wrong
+    A fhir mapping received data that was not correct
     '''
     pass

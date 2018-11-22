@@ -71,6 +71,15 @@ class FhirAbstractBaseMixin:
     return param_dict
 
   def get_rev_includes(self, query):
+    """
+    Read the _revincludes that were asked for in the request, query the database to retrieve
+    them and add them to the initial resources ``contained`` field.
+
+    :param query: A :class:`FhirRequestQuery` object holding the current request.
+    :type query: :class:`fhirball.server.requestparser.FhirRequestQuery`
+
+    :returns: None
+    """
     if query and '_revinclude' in query.modifiers:
       models = import_models()
       revincludes = query.modifiers.get('_revinclude')
@@ -168,6 +177,15 @@ class FhirBaseModelMixin:
 
     @classmethod
     def has_searcher(cls, query_string):
+      """
+      Search if this resource has a registered searcher for the provided query string
+
+      :param query_string: A query string that is matched against registered field names or regular expressions
+                           by existing searchers
+      :type query_string: string
+
+      :returns: bool
+      """
       for srch in cls.searchables():
         if re.match(srch, query_string):
           return True
@@ -175,6 +193,15 @@ class FhirBaseModelMixin:
 
     @classmethod
     def get_searcher(cls, query_string):
+      """
+      Return the first search function that matches the provided query string
+
+      :param query_string: A query string that is matched against registered field names or regular expressions
+                           by existing searchers
+      :type query_string: string
+
+      :returns: function
+      """
       searchers = [ func for srch, func in cls.searchables().items() if re.match(srch, query_string)]
       if len(searchers) == 0:
         raise AttributeError(f'Searcher does not exist: {query_string}')

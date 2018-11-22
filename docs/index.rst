@@ -7,12 +7,11 @@ Welcome to fhirball's documentation!
 ====================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    overview
-   attributes
-   mixins
+   api
 
 
 
@@ -22,3 +21,6 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. automodule:: fhirball.exceptions
+    :members:

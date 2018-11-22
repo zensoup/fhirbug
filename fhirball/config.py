@@ -78,3 +78,5 @@ def import_searches():
           return importlib.import_module('fhirball.db.backends.SQLAlchemy.searches')
     elif db_backend.lower() == 'djangoorm':
         return importlib.import_module('fhirball.db.backends.DjangoORM.searches')
+    elif db_backend.lower() == 'pymodm':
+        return importlib.import_module('fhirball.db.backends.pymodm.searches')
