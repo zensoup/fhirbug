@@ -13,15 +13,32 @@ def split_join(lst):
 
 class FhirRequestQuery:
   '''
-  Represents parsed parameters from reqests.
+  Represents parsed parameters from requests.
   '''
   def __init__(self, resource, resourceId, operation, operationId, modifiers, search_params, body=None, request=None):
+    #: A string containing the name of the requested Resource. eg: ``'Procedure'``
     self.resource = resource
+
+    #: The id of the requested resource if a specific resource was requested else ``None``
     self.resourceId = resourceId
+
+    #: A string holding the requested `operation <http://google.com>`_ such as ``$meta`` or ``$validate``
     self.operation = operation
+
+    #: Extra parameters passed after the operation. For example if ``Patient/123/_history/2`` was requested,
+    #: ``operation`` would be ``_history`` and ``operationId`` would be ``2``
     self.operationId = operationId
+
+    #: Dictionary. Keys are modifier names and values are the provided values. Holds search parameters
+    #: that start with an underscore.
+    #: For example ``Patient/123?_format=json`` would have a modifiers value of ``{'_format': 'json'}``
     self.modifiers = modifiers
+
+    #: Dictionary. Keys are parameter names and values are the provided values. Holds search parameters
+    #: that are not modifiers
+    #: For example ``Patient/123?_format=json`` would have a modifiers value of ``{'_format': 'json'}``
     self.search_params = search_params
+
     self.body = body
     self.request = request
 
@@ -41,6 +58,11 @@ def parse_url(url):
   {'_format': ['json']}
   >>> p.search_params
   {}
+
+  :param url: a string containing the path of the request. It should not contain the server
+              path. For example: `Patients/123?name:contains=Jo`
+  :returns: A :class:`FhirRequestQuery` object
+
 
   '''
 
@@ -101,6 +123,7 @@ def validate_params(params):
 
   :param params: Parameter dictionary produced by parse_url
   :return:
+  :raises: :exc:`fhirball.exceptions.QueryValidationError`
   """
 
   if params['resourceId'] is not None:

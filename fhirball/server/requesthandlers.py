@@ -6,6 +6,19 @@ from fhirball.config import import_models, settings
 
 
 def handle_get_request(url):
+  """
+  Receive a request url as a string and handle it. This includes parsing the string into a
+  :class:`fhirball.server.requestparser.FhirRequestQuery`, finding the model for the requested
+  resource and calling `Resource.get` on it.
+  It returns a tuple (response json, status code).
+  If an error occurs during the process, an OperationOutcome is returned.
+
+  :param url: a string containing the path of the request. It should not contain the server
+              path. For example: `Patients/123?name:contains=Jo`
+  :returns: (response json, status code) Where response_json may be the requested resource,
+            a Bundle or an OperationOutcome in case of an error.
+
+  """
   # Try to parse the url
   try:
     query = parse_url(url)
@@ -42,6 +55,24 @@ def handle_get_request(url):
 
 
 def handle_post_request(url, body):
+    """
+    Receive a request url and the request body of a POST request and handle it. This includes parsing the string into a
+    :class:`fhirball.server.requestparser.FhirRequestQuery`, finding the model for the requested
+    resource and creating a new instance.
+    It returns a tuple (response json, status code).
+    If an error occurs during the process, an OperationOutcome is returned.
+
+    :param url: a string containing the path of the request. It should not contain the server
+                path. For example: `Patients/123?name:contains=Jo`
+    :type url: string
+    :param body: a dictionary containing all data that was sent with the request
+    :type body: dict
+
+    :returns: A tuple ``(response_json, status code)``, where response_json may be the requested resource,
+              a Bundle or an OperationOutcome in case of an error.
+    :rtype: tuple
+
+    """
     query = parse_url(url)
     resource_name = query.resource
 
