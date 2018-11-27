@@ -1,53 +1,9 @@
 import importlib
-from types import SimpleNamespace
-
 from fhirball.exceptions import ConfigurationError
+from fhirball.config.utils import LazySettings
 
 
-class FhirSettings:
-    STRICT_MODE = {
-        'set_attribute_without_setter': False,
-    }
-    pass
-
-settings = None
-
-def configure_from_path(path):
-    """
-    Read a path to a module and import all viariables defined inside it
-    as the project settings
-    """
-    global settings
-    if not settings:
-        settings = FhirSettings()
-    try:
-        settings_module = importlib.import_module(path)
-    except Exception as e:
-        print(e)
-    for key in dir(settings_module):
-        if not key.startswith('__'):
-            setattr(settings, key, getattr(settings_module, key))
-
-def configure_from_dict(dict):
-    """
-    Read a dictionary and load it as project settings.
-    """
-    global settings
-    if not settings:
-        settings = FhirSettings()
-    for key, value in dict.items():
-        setattr(settings, key, value)
-    return settings
-
-def configure(config):
-    """
-    Configuration wrapper. Accept a dictionary or string and pass it on to :func:`configure_from_dict` or :func:`configure_from_path`
-    """
-    if isinstance(config, str):
-        return configure_from_path(config)
-    if isinstance(config, dict):
-        return configure_from_dict(config)
-    raise ConfigurationError('Invlid configuration object, you must provide a dict or string representing the path to a configuration file')
+settings = LazySettings()
 
 def import_models():
     """

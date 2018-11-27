@@ -1,7 +1,8 @@
 import unittest
-from fhirball.config import configure
-configure({'DB_BACKEND': 'SQLAlchemy'})
+from fhirball.config import settings
 from . import models
+
+settings.configure({'DB_BACKEND': 'SQLAlchemy'})
 
 
 class TestAttributes(unittest.TestCase):

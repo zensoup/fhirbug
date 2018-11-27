@@ -1,9 +1,11 @@
 import unittest
-from fhirball.config import configure
-configure({'DB_BACKEND': 'SQLAlchemy'})
+from fhirball.config import settings
 from . import models
 from fhirball.Fhir.resources import Patient, Observation
 
+if settings.is_configured():
+    settings._reset()
+settings.configure({'DB_BACKEND': 'SQLAlchemy'})
 
 class TestAbstractBaseMixin(unittest.TestCase):
     def test_get_params_dict(self):
