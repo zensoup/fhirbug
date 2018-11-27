@@ -42,7 +42,7 @@ class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
   __abstract__ = True
 
   @classmethod
-  def save_instance(cls, instance):
+  def _after_create(cls, instance):
       session.add(instance)
       try:
           session.commit()
@@ -50,6 +50,16 @@ class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
           session.rollback()
           raise e
       return instance
+
+  @classmethod
+  def _after_update(cls, instance):
+      try:
+          session.commit()
+      except Exception as e:
+          session.rollback()
+          raise e
+      return instance
+
 
   @classmethod
   def paginate(cls, *args, **kwargs):

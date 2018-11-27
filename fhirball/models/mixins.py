@@ -118,32 +118,31 @@ class FhirAbstractBaseMixin:
             if value is not None:
                 setattr(obj.Fhir, path, value)
 
-        obj = cls.save_instance(obj)
+        obj = cls._after_create(obj)
         return obj
 
-    @classmethod
-    def update_from_resource(cls, resource, query=None):
+    def update_from_resource(self, resource, query=None):
         """
-    Edits an existing row from a Fhir.Resource object
-    """
+        Edits an existing row from a Fhir.Resource object
+        """
 
         # Read the attributes of the FhirMap class
         own_attributes = [
             prop
-            for prop, type in cls.FhirMap.__dict__.items()
+            for prop, type in self.FhirMap.__dict__.items()
             if isinstance(type, Attribute)
         ]
 
-        obj = cls()
-        obj.Fhir._query = query
+        self.Fhir._query = query
 
         # for path in own_attributes:
         for path in own_attributes:
             value = getattr(resource, path.replace("_", "."), None)
-            if value:
-                setattr(obj.Fhir, path, value)
+            if value is not None:
+                setattr(self.Fhir, path, value)
 
-        return obj
+        new = self.__class__._after_update(self)
+        return new
 
 
 class FhirBaseModelMixin:
