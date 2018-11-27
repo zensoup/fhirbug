@@ -1,10 +1,14 @@
-from fhirball.exceptions import MappingValidationError, UnsupportedOperationError, MappingException
+from fhirball.exceptions import (
+    MappingValidationError,
+    UnsupportedOperationError,
+    MappingException,
+)
 from fhirball.Fhir import resources as fhir
 from fhirball.config import import_searches, settings
 
 
 class Attribute:
-  '''
+    """
   Attribute
   =========
 
@@ -119,58 +123,62 @@ class Attribute:
   >>> b.p = 3
   >>> b._model.column_name
   15
-  '''
-  def __init__(self, getter=None, setter=None, searcher=None, search_regex=None):
-    self.getter = getter
-    self.setter = setter
-    self.searcher = searcher
-    if search_regex:
-      self.search_regex = search_regex
+  """
 
-  def __get__(self, instance, owner):
-    getter = self.getter
-    # Strings are column names
-    if isinstance(getter, str):
-      return getattr(instance._model, getter)
-    # Consts provide a constant value
-    if isinstance(getter, const):
-      return getter.value
-    # Callables should be called
-    if callable(getter):
-      return getter(instance)
-    # Two-tuples contain a column name and a callable. Pass the column value to the callable
-    if isinstance(getter, (tuple, list)):
-      column, func = getter
-      return func(getattr(instance._model, column))
+    def __init__(self, getter=None, setter=None, searcher=None, search_regex=None):
+        self.getter = getter
+        self.setter = setter
+        self.searcher = searcher
+        if search_regex:
+            self.search_regex = search_regex
 
-  # def __set__(self, instance, owner, value):
-  def __set__(self, instance, value):
-    try:
-      setter = self.setter
-    except AttributeError:
-      if settings.STRICT_MODE['set_attribute_without_setter']:
-        raise UnsupportedOperationError('You are trying to alter an attribute that can not be changed')
-      else:
-        # TODO: log
-        return
+    def __get__(self, instance, owner):
+        getter = self.getter
+        # Strings are column names
+        if isinstance(getter, str):
+            return getattr(instance._model, getter)
+        # Consts provide a constant value
+        if isinstance(getter, const):
+            return getter.value
+        # Callables should be called
+        if callable(getter):
+            return getter(instance)
+        # Two-tuples contain a column name and a callable. Pass the column value to the callable
+        if isinstance(getter, (tuple, list)):
+            column, func = getter
+            return func(getattr(instance._model, column))
 
-    # Strings are column names
-    if isinstance(setter, str):
-      setattr(instance._model, setter, value)
-    # Callables should be called
-    if callable(setter):
-      setter(instance, value)
-    # Two-tuples contain a column name and a callable or const. Set the column to the result of the callable or const
-    if isinstance(setter, (tuple, list)):
-      column, func = setter
-      if isinstance(func, const):
-        setattr(instance._model, column, func.value)
-      else:
-        res = func(getattr(instance._model, column), value)
-        setattr(instance._model, column, res)
+    # def __set__(self, instance, owner, value):
+    def __set__(self, instance, value):
+        try:
+            setter = self.setter
+        except AttributeError:
+            if settings.STRICT_MODE["set_attribute_without_setter"]:
+                raise UnsupportedOperationError(
+                    "You are trying to alter an attribute that can not be changed"
+                )
+            else:
+                # TODO: log
+                return
+
+        # Strings are column names
+        if isinstance(setter, str):
+            setattr(instance._model, setter, value)
+        # Callables should be called
+        if callable(setter):
+            setter(instance, value)
+        # Two-tuples contain a column name and a callable or const. Set the column to the result of the callable or const
+        if isinstance(setter, (tuple, list)):
+            column, func = setter
+            if isinstance(func, const):
+                setattr(instance._model, column, func.value)
+            else:
+                res = func(getattr(instance._model, column), value)
+                setattr(instance._model, column, res)
+
 
 class const:
-  """
+    """
   const can be used as a getter for an attribute that should always return the same value
 
   >>> from types import SimpleNamespace as SN
@@ -181,17 +189,21 @@ class const:
   >>> b.p
   12
   """
-  def __init__(self, value):
-    self.value = value
+
+    def __init__(self, value):
+        self.value = value
 
 
 class BooleanAttribute(Attribute):
-    def __init__(self, *args,
-                 save_true_as=1,
-                 save_false_as=0,
-                 truthy_values=['true', 'True', 1, '1'],
-                 falsy_values=['false', 'False', '0', 0],
-                 **kwargs):
+    def __init__(
+        self,
+        *args,
+        save_true_as=1,
+        save_false_as=0,
+        truthy_values=["true", "True", 1, "1"],
+        falsy_values=["false", "False", "0", 0],
+        **kwargs,
+    ):
         self.save_true_as = save_true_as
         self.save_false_as = save_false_as
         self.truthy_values = truthy_values
@@ -201,10 +213,11 @@ class BooleanAttribute(Attribute):
     def __get__(self, *args, **kwargs):
         value = super(BooleanAttribute, self).__get__(*args, **kwargs)
         if value in self.truthy_values:
-            return False
-        elif value in self.falsy_values:
             return True
+        elif value in self.falsy_values:
+            return False
         return value
+
     def __set__(self, instance, value):
         if value:
             value = self.save_true_as
@@ -212,103 +225,106 @@ class BooleanAttribute(Attribute):
             value = self.save_false_as
         super(BooleanAttribute, self).__set__(instance, value)
 
+
 class ContainableAttribute(Attribute):
-  '''
+    """
   A Reference to some other Resource that may be contained.
-  '''
-  def __init__(self, cls, id, name, force_display=False, searcher=None):
-    self.cls = cls
-    self.id = id
-    self.name = name
-    self.force_display = force_display
-    self.searcher = searcher
+  """
 
-  def __get__(self, instance, owner):
-    cls_name = self.cls.__name__
-    id = getattr(instance._model, self.id)
+    def __init__(self, cls, id, name, force_display=False, searcher=None):
+        self.cls = cls
+        self.id = id
+        self.name = name
+        self.force_display = force_display
+        self.searcher = searcher
 
-    if self.name in instance._model._contained_names:  # The resource should be contained
-      # Get the item
-      item = self.cls._get_orm_query().get(id)
+    def __get__(self, instance, owner):
+        cls_name = self.cls.__name__
+        id = getattr(instance._model, self.id)
 
-      # TODO: try..catch
-      as_fhir = item.to_fhir()
+        if (
+            self.name in instance._model._contained_names
+        ):  # The resource should be contained
+            # Get the item
+            item = self.cls._get_orm_query().get(id)
 
-      instance._model._refcount += 1
+            # TODO: try..catch
+            as_fhir = item.to_fhir()
 
-      as_fhir.id = f'ref{instance._model._refcount}'
-      instance._model._contained_items.append(as_fhir)
+            instance._model._refcount += 1
 
-      # Build the reference dict
-      reference = {'reference': f'#ref{instance._model._refcount}'}
+            as_fhir.id = f"ref{instance._model._refcount}"
+            instance._model._contained_items.append(as_fhir)
 
-      # Add a display if possible
-      if hasattr(item, '_as_display'):
-        reference['display'] = item._as_display
+            # Build the reference dict
+            reference = {"reference": f"#ref{instance._model._refcount}"}
 
-      return reference
+            # Add a display if possible
+            if hasattr(item, "_as_display"):
+                reference["display"] = item._as_display
 
-    else:  # The resource is not contained, generate a url
+            return reference
 
-      # Build the reference dict
-      reference = {'reference': f'{cls_name}/{id}',
-                   'identifier': {
-                      'system': f'{cls_name}',
-                      'value': str(id),
-                   }}
+        else:  # The resource is not contained, generate a url
 
-      if self.force_display:  # Do a query to fetch the display
-        # TODO: can we check if it supprts `_as_display` before querying?
+            # Build the reference dict
+            reference = {
+                "reference": f"{cls_name}/{id}",
+                "identifier": {"system": f"{cls_name}", "value": str(id)},
+            }
 
-        item = self.cls._get_orm_query().get(id)
+            if self.force_display:  # Do a query to fetch the display
+                # TODO: can we check if it supprts `_as_display` before querying?
 
-        if hasattr(item, '_as_display'):
-          reference['display'] = item._as_display
+                item = self.cls._get_orm_query().get(id)
 
-      return reference
+                if hasattr(item, "_as_display"):
+                    reference["display"] = item._as_display
 
-  def __set__(self, instance, reference):
-    value = None
-    try:
-      # TODO: can we make this all a user-defined parameter for the entire identifier?
-      sys = reference.identifier.system
-      # assigner = reference.identifier.assigner
-      # if assigner == getattr(settings, 'ORGANIZATION_NAME', 'CSSA') and sys == 'Patient':
-      value = reference.identifier.value
-    except AttributeError:
-      pass
+            return reference
 
-    if hasattr(reference, 'reference'):
-      ref = reference.reference
-      if ref.startswith('#'):
-        # TODO read internal reference
-        pass
+    def __set__(self, instance, reference):
+        value = None
+        try:
+            # TODO: can we make this all a user-defined parameter for the entire identifier?
+            sys = reference.identifier.system
+            # assigner = reference.identifier.assigner
+            # if assigner == getattr(settings, 'ORGANIZATION_NAME', 'CSSA') and sys == 'Patient':
+            value = reference.identifier.value
+        except AttributeError:
+            pass
 
-    if value is None:
-      raise MappingValidationError('Invalid subject')
+        if hasattr(reference, "reference"):
+            ref = reference.reference
+            if ref.startswith("#"):
+                # TODO read internal reference
+                pass
 
-    setattr(instance._model, self.id, value)
+        if value is None:
+            raise MappingValidationError("Invalid subject")
+
+        setattr(instance._model, self.id, value)
 
 
 class DateAttribute(Attribute):
-  def __init__(self, field):
-    searches = import_searches()
+    def __init__(self, field):
+        searches = import_searches()
 
-    def setter(old_date_str, new_date_str):
-      if hasattr(new_date_str, 'strftime'):
-        return fhir.FHIRDate(new_date_str).date
-      if isinstance(new_date_str, str):
-        return fhir.FHIRDate(new_date_str).date
-      elif isinstance(new_date_str, fhir.FHIRDate):
-        return new_date_str.date
+        def setter(old_date_str, new_date_str):
+            if hasattr(new_date_str, "strftime"):
+                return fhir.FHIRDate(new_date_str).date
+            if isinstance(new_date_str, str):
+                return fhir.FHIRDate(new_date_str).date
+            elif isinstance(new_date_str, fhir.FHIRDate):
+                return new_date_str.date
 
-    self.getter = (field, fhir.FHIRDate)
-    self.setter = (field, setter)
-    self.searcher = searches.DateSearch(field)
+        self.getter = (field, fhir.FHIRDate)
+        self.setter = (field, setter)
+        self.searcher = searches.DateSearch(field)
 
 
 class NameAttribute(Attribute):
-  """
+    """
   NameAttribute is for used on fields that represnt a HumanName resource.
   The parameters can be any of the valid getter and setter types for
   simple :class:`Attribute`
@@ -319,48 +335,58 @@ class NameAttribute(Attribute):
   :param given_setter: A getter type parameter for the given name
   """
 
-  def __init__(self,
-               family_getter=None,
-               given_getter=None,
-               family_setter=None,
-               given_setter=None,
-               join_given_names=False,
-               pass_given_names=False,
-               getter=None,
-               setter=None,
-               searcher=None,
-               given_join_separator=' '):
-    searches = import_searches()
-    if join_given_names and pass_given_names:
-        raise MappingException('You can not pass both pass_given_names and join_given_names. Only one of these arguments is allowed to be True')
+    def __init__(
+        self,
+        family_getter=None,
+        given_getter=None,
+        family_setter=None,
+        given_setter=None,
+        join_given_names=False,
+        pass_given_names=False,
+        getter=None,
+        setter=None,
+        searcher=None,
+        given_join_separator=" ",
+    ):
+        searches = import_searches()
+        if join_given_names and pass_given_names:
+            raise MappingException(
+                "You can not pass both pass_given_names and join_given_names. Only one of these arguments is allowed to be True"
+            )
 
-    def _getter(instance):
-      family = Attribute(family_getter).__get__(instance, None)
-      given = Attribute(given_getter).__get__(instance, None)
-      return fhir.HumanName(family=family, given=given)
+        def _getter(instance):
+            family = Attribute(family_getter).__get__(instance, None)
+            given = Attribute(given_getter).__get__(instance, None)
+            return fhir.HumanName(family=family, given=given)
 
-    def _setter(instance, humanNames):
-      family = humanNames[0].family
+        def _setter(instance, humanNames):
+            family = humanNames[0].family
 
-      if join_given_names:
-          given = given_join_separator.join(humanNames[0].given)
-      elif pass_given_names:
-          given = humanNames[0].given
-      else:
-        given = humanNames[0].given[0]
+            if join_given_names:
+                given = given_join_separator.join(humanNames[0].given)
+            elif pass_given_names:
+                given = humanNames[0].given
+            else:
+                given = humanNames[0].given[0]
 
-      Attribute(setter=family_setter).__set__(instance, family)
-      Attribute(setter=given_setter).__set__(instance, given)
+            Attribute(setter=family_setter).__set__(instance, family)
+            Attribute(setter=given_setter).__set__(instance, given)
 
-    def _searcher(cls, field_name, value, sql_query, query):
-      # TODO: only works with string fields
-      if 'family' in field_name:
-        return searches.StringSearch(family_getter)(cls, field_name, value, sql_query, query)
-      if 'given' in field_name:
-        return searches.StringSearch(given_getter)(cls, field_name, value, sql_query, query)
-      return searches.StringSearch(family_getter, family_getter)(cls, field_name, value, sql_query, query)
+        def _searcher(cls, field_name, value, sql_query, query):
+            # TODO: only works with string fields
+            if "family" in field_name:
+                return searches.StringSearch(family_getter)(
+                    cls, field_name, value, sql_query, query
+                )
+            if "given" in field_name:
+                return searches.StringSearch(given_getter)(
+                    cls, field_name, value, sql_query, query
+                )
+            return searches.StringSearch(family_getter, family_getter)(
+                cls, field_name, value, sql_query, query
+            )
 
-    self.getter = getter or _getter
-    self.setter = setter or _setter
-    self.searcher = searcher or _searcher
-    self.search_regex = r'(family|given|name)(:\w*)?'
+        self.getter = getter or _getter
+        self.setter = setter or _setter
+        self.searcher = searcher or _searcher
+        self.search_regex = r"(family|given|name)(:\w*)?"
