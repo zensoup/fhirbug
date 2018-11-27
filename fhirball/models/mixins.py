@@ -6,7 +6,8 @@ from fhirball.config import import_models
 from fhirball.exceptions import MappingValidationError
 from fhirball.Fhir.resources import PaginatedBundle
 
-import settings
+from fhirball.config import settings
+
 
 class FhirAbstractBaseMixin:
   def to_fhir(self, *args, query=None, **kwargs):

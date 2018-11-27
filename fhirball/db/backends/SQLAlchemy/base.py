@@ -1,10 +1,10 @@
 import os
-import settings
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
+from fhirball.config import settings
 
 class AbstractModelMeta(DeclarativeMeta):
   # def __new__(mcs, name, bases, attrs, **kwargs):
