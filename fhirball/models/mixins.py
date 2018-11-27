@@ -12,11 +12,11 @@ from fhirball.config import settings
 class FhirAbstractBaseMixin:
     def to_fhir(self, *args, query=None, **kwargs):
         """
-    Convert from a BaseModel to a Fhir Resource and return it.
+        Convert from a BaseModel to a Fhir Resource and return it.
 
-    If param `query` is passed and is of type server.FhirRequestQuery, it is used to
-    allow for additional functionality like contained resources.
-    """
+        If param `query` is passed and is of type server.FhirRequestQuery, it is used to
+        allow for additional functionality like contained resources.
+        """
 
         # Initialize attributes
         self._searchables = []
@@ -48,11 +48,11 @@ class FhirAbstractBaseMixin:
 
     def get_params_dict(self, resource, elements=None):
         """
-    Return a dictionary of all valid values this instance can provide for a resource of the type ``resource``.
+        Return a dictionary of all valid values this instance can provide for a resource of the type ``resource``.
 
-    :param resource: The class of the resource we with to create
-    :return: A dictionary to be used as an argument to initialize a resource instance
-    """
+        :param resource: The class of the resource we with to create
+        :return: A dictionary to be used as an argument to initialize a resource instance
+        """
         # TODO: Allow for a fields attribute to manually specify which fields to be used?
 
         # Read this instances available attributes
@@ -77,14 +77,14 @@ class FhirAbstractBaseMixin:
 
     def get_rev_includes(self, query):
         """
-    Read the _revincludes that were asked for in the request, query the database to retrieve
-    them and add them to the initial resources ``contained`` field.
+        Read the _revincludes that were asked for in the request, query the database to retrieve
+        them and add them to the initial resources ``contained`` field.
 
-    :param query: A :class:`FhirRequestQuery` object holding the current request.
-    :type query: :class:`fhirball.server.requestparser.FhirRequestQuery`
+        :param query: A :class:`FhirRequestQuery` object holding the current request.
+        :type query: :class:`fhirball.server.requestparser.FhirRequestQuery`
 
-    :returns: None
-    """
+        :returns: None
+        """
         if query and "_revinclude" in query.modifiers:
             models = import_models()
             revincludes = query.modifiers.get("_revinclude")
@@ -100,8 +100,8 @@ class FhirAbstractBaseMixin:
     @classmethod
     def create_from_resource(cls, resource, query=None):
         """
-    Creates and saves a new row from a Fhir.Resource object
-    """
+        Creates and saves a new row from a Fhir.Resource object
+        """
 
         # Read the attributes of the FhirMap class
         own_attributes = [
