@@ -24,3 +24,19 @@ class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
   @classmethod
   def paginate(cls, *args, **kwargs):
     return paginate(*args, **kwargs)
+
+  @classmethod
+  def _after_create(cls, instance):
+      try:
+          instance.save()
+      except Exception as e:
+          raise e
+      return instance
+
+  @classmethod
+  def _after_update(cls, instance):
+      try:
+          instance.save()
+      except Exception as e:
+          raise e
+      return instance
