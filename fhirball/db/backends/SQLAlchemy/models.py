@@ -44,7 +44,11 @@ class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
   @classmethod
   def save_instance(cls, instance):
       session.add(instance)
-      session.commit()
+      try:
+          session.commit()
+      except Exception as e:
+          session.rollback()
+          raise e
       return instance
 
   @classmethod
