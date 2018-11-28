@@ -3,6 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
 Welcome to fhirball's documentation!
 ====================================
 
@@ -10,8 +11,9 @@ Welcome to fhirball's documentation!
    :maxdepth: 3
    :caption: Contents:
 
+   quickstart
    overview
-   api
+   api_index
 
 
 
@@ -21,6 +23,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-.. automodule:: fhirball.exceptions
-    :members:

@@ -9,121 +9,119 @@ from fhirball.config import import_searches, settings
 
 class Attribute:
     """
-  Attribute
-  =========
 
-  The base class for declaring db to fhir mappings. Accepts three positional argumants, a getter, a setter and a searcher.
+    The base class for declaring db to fhir mappings. Accepts three positional argumants, a getter, a setter and a searcher.
 
-  Getting values
-  --------------
+    Getting values
+    --------------
 
-  The getter parameter can be a string, a tuple, a callable or type const.
+    The getter parameter can be a string, a tuple, a callable or type const.
 
-  - Using a string:
+    - Using a string:
 
-  >>> from types import SimpleNamespace as SN
-  >>> class Bla:
-  ...   _model = SN(column_name=12)
-  ...   p = Attribute('column_name')
-  ...
-  >>> b = Bla()
-  >>> b.p
-  12
+    >>> from types import SimpleNamespace as SN
+    >>> class Bla:
+    ...   _model = SN(column_name=12)
+    ...   p = Attribute('column_name')
+    ...
+    >>> b = Bla()
+    >>> b.p
+    12
 
-  - Strings can also be properties:
+    - Strings can also be properties:
 
-  >>> class Model:
-  ...  column_name = property(lambda x: 13)
-  >>> class Bla:
-  ...   _model = Model()
-  ...   p = Attribute('column_name')
-  ...
-  >>> b = Bla()
-  >>> b.p
-  13
+    >>> class Model:
+    ...  column_name = property(lambda x: 13)
+    >>> class Bla:
+    ...   _model = Model()
+    ...   p = Attribute('column_name')
+    ...
+    >>> b = Bla()
+    >>> b.p
+    13
 
-  - Callables will be called:
+    - Callables will be called:
 
-  >>> class Bla:
-  ...   _model = SN(column_name=12)
-  ...   def get_col(self):
-  ...     return 'test'
-  ...   p = Attribute(get_col)
-  ...
-  >>> b = Bla()
-  >>> b.p
-  'test'
+    >>> class Bla:
+    ...   _model = SN(column_name=12)
+    ...   def get_col(self):
+    ...     return 'test'
+    ...   p = Attribute(get_col)
+    ...
+    >>> b = Bla()
+    >>> b.p
+    'test'
 
-  - As a shortcut, a tuple (col_name, callable) can be passed. The result will be callable(_model.col_name)
+    - As a shortcut, a tuple (col_name, callable) can be passed. The result will be callable(_model.col_name)
 
-  >>> import datetime
-  >>> class Bla:
-  ...  _model = SN(date='2012')
-  ...  p = Attribute(('date', int))
-  ...
-  >>> b = Bla()
-  >>> b.p
-  2012
+    >>> import datetime
+    >>> class Bla:
+    ...  _model = SN(date='2012')
+    ...  p = Attribute(('date', int))
+    ...
+    >>> b = Bla()
+    >>> b.p
+    2012
 
-  Setting values
-  --------------
+    Setting values
+    --------------
 
-  The setter parameter can be a string, a tuple, a callable or type const.
+    The setter parameter can be a string, a tuple, a callable or type const.
 
-  - Using a string:
+    - Using a string:
 
-  >>> class Bla:
-  ...  _model = SN(date='2012')
-  ...  p = Attribute(setter='date')
-  ...
-  >>> b = Bla()
-  >>> b.p = '2013'
-  >>> b._model.date
-  '2013'
+    >>> class Bla:
+    ...  _model = SN(date='2012')
+    ...  p = Attribute(setter='date')
+    ...
+    >>> b = Bla()
+    >>> b.p = '2013'
+    >>> b._model.date
+    '2013'
 
-  - Again, the string can point to a property with a setter:
+    - Again, the string can point to a property with a setter:
 
-  >>> class Model:
-  ...  b = 12
-  ...  def set_b(self, value):
-  ...    self.b = value
-  ...  column_name = property(lambda self: self.b, set_b)
-  >>> class Bla:
-  ...   _model = Model()
-  ...   p = Attribute(getter='column_name', setter='column_name')
-  ...
-  >>> b = Bla()
-  >>> b.p = 13
-  >>> b.p == b._model.b == 13
-  True
+    >>> class Model:
+    ...  b = 12
+    ...  def set_b(self, value):
+    ...    self.b = value
+    ...  column_name = property(lambda self: self.b, set_b)
+    >>> class Bla:
+    ...   _model = Model()
+    ...   p = Attribute(getter='column_name', setter='column_name')
+    ...
+    >>> b = Bla()
+    >>> b.p = 13
+    >>> b.p == b._model.b == 13
+    True
 
-  - Callables will be called:
+    - Callables will be called:
 
-  >>> class Bla:
-  ...   _model = SN(column_name=12)
-  ...   def set_col(self, value):
-  ...     self._model.column_name = value
-  ...   p = Attribute(setter=set_col)
-  ...
-  >>> b = Bla()
-  >>> b.p = 'test'
-  >>> b._model.column_name
-  'test'
+    >>> class Bla:
+    ...   _model = SN(column_name=12)
+    ...   def set_col(self, value):
+    ...     self._model.column_name = value
+    ...   p = Attribute(setter=set_col)
+    ...
+    >>> b = Bla()
+    >>> b.p = 'test'
+    >>> b._model.column_name
+    'test'
 
-  - Two-tuples contain a column name and a callable or const. Set the column to the result of the callable or const
+    - Two-tuples contain a column name and a callable or const. Set the column to the result of the callable or const
 
-  >>> def add(column, value):
-  ...  return column + value
+    >>> def add(column, value):
+    ...  return column + value
 
-  >>> class Bla:
-  ...   _model = SN(column_name=12)
-  ...   p = Attribute(setter=('column_name', add))
-  ...
-  >>> b = Bla()
-  >>> b.p = 3
-  >>> b._model.column_name
-  15
-  """
+    >>> class Bla:
+    ...   _model = SN(column_name=12)
+    ...   p = Attribute(setter=('column_name', add))
+    ...
+    >>> b = Bla()
+    >>> b.p = 3
+    >>> b._model.column_name
+    15
+    """
 
     def __init__(self, getter=None, setter=None, searcher=None, search_regex=None):
         self.getter = getter
