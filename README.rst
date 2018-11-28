@@ -1,7 +1,7 @@
 FHIRBALL
 --------
 
-Fhirball is a full-featured `fhir`_ server for python. It is intended to be very easy to set up and configure and be flexible when it comes to the rest of tools used, like web frameworks and database interfaces. In most simple cases, very little code has to be written apart from field mappings (see `examples`_).
+Fhirball is a full-featured `fhir`_ server for python. It is intended to be very easy to set up and configure and be flexible when it comes to the rest of tools it is combined with, like web frameworks and database interfaces. In most simple cases, very little code has to be written apart from field mappings (see `examples`_). 
 
 Fhirball has out-of-the-box support for SQLAlchemy and DjangoORM and has been tested with both `django`_ and `flask`_.
 However, one can use just the field-mapping part of fhirball to convert database entries to Fhir resources and handle everything else any way you want.
