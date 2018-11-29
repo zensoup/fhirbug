@@ -15,7 +15,7 @@ class AMKA(identifier.Identifier):
   {'system': 'AMKA', 'use': 'official', 'value': '123'}
   '''
 
-  def __init__(self, jsondict, *args, **kwargs):
+  def __init__(self, jsondict=None, *args, **kwargs):
     # TODO: validate
 
     amka_dict = {
@@ -38,7 +38,7 @@ class EAMA(identifier.Identifier):
   {'system': 'EAMA', 'use': 'usual', 'value': '123'}
   '''
 
-  def __init__(self, jsondict, *args, **kwargs):
+  def __init__(self, jsondict=None, *args, **kwargs):
     # TODO: validate
 
     amka_dict = {
@@ -54,6 +54,7 @@ class PaginatedBundle(bundle.Bundle):
     '''
     Override to accept a Pagination dict instead of a jsondict.
     '''
+    jsondict={}
     if 'jsondict' not in args and pagination:
 
       jsondict = {
