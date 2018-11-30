@@ -54,7 +54,7 @@ class PaginatedBundle(bundle.Bundle):
     '''
     Override to accept a Pagination dict instead of a jsondict.
     '''
-    jsondict={}
+    jsondict = None
     if 'jsondict' not in args and pagination:
 
       jsondict = {
