@@ -1,10 +1,11 @@
+from importlib import import_module
 from fhirball.exceptions import (
     MappingValidationError,
     UnsupportedOperationError,
     MappingException,
 )
 from fhirball.Fhir import resources as fhir
-from fhirball.config import import_searches, settings
+from fhirball.config import import_searches, import_models, settings
 
 
 class Attribute:
@@ -388,3 +389,38 @@ class NameAttribute(Attribute):
         self.setter = setter or _setter
         self.searcher = searcher or _searcher
         self.search_regex = r"(family|given|name)(:\w*)?"
+
+
+class EmbeddedAttribute(Attribute):
+    def __init__(self, *args, type=None, **kwargs):
+        if type is None:
+            raise MappingValidationError('You hane defined an EmbeddedAttribute without specifying the type.')
+
+        self.type = type
+        return super(EmbeddedAttribute, self).__init__(*args, **kwargs)
+
+    def __get__(self, instance, owner):
+        embedded_resource = super(EmbeddedAttribute, self).__get__(instance, owner)
+        if embedded_resource is None:
+            return None
+        if type(embedded_resource) is list:
+            return [r.to_fhir() for r in embedded_resource]
+        return embedded_resource.to_fhir()
+
+    def __set__(self, instance, value):
+        def dict_to_resource(resource_type, dict):
+            if type(resource_type) is type:
+                ResourceClass = resource_type
+            else:
+                models = import_module(instance.__module__)
+                ResourceClass = getattr(models, resource_type)
+            embedded_resource = ResourceClass(**dict)
+            return embedded_resource
+
+        if type(value) is dict:
+            embedded_resource = dict_to_resource(self.type, value)
+        elif type(value) is list:
+            embedded_resource = map(lambda v: dict_to_resource(self.type, v.as_json()), value)
+        else:
+            embedded_resource = value
+        return super(EmbeddedAttribute, self).__set__(instance, embedded_resource)

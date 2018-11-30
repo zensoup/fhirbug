@@ -25,8 +25,10 @@ class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
 
   @classmethod
   def _after_create(cls, instance):
+    instance.save()
     return instance
 
   @classmethod
   def _after_update(cls, instance):
+    instance.save()
     return instance
