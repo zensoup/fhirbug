@@ -36,6 +36,9 @@ class AbstractBaseModel(Base, FhirAbstractBaseMixin):
   def _get_orm_query(cls):
     return cls.query
 
+  @classmethod
+  def _get_item_from_pk(cls, pk):
+      return cls.query.get(pk)
 
 
 class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):

@@ -1,3 +1,4 @@
+from bson.objectid import ObjectId
 from fhirball.db.backends.pymodm.pagination import paginate
 from fhirball.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
 
@@ -13,6 +14,10 @@ class AbstractBaseModel(FhirAbstractBaseMixin):
   @classmethod
   def _get_orm_query(cls):
     return cls.objects
+
+  @classmethod
+  def _get_item_from_pk(cls, pk):
+      return cls.objects.get({"_id": ObjectId(pk)})
 
 
 class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):

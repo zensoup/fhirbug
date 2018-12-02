@@ -152,7 +152,8 @@ class FhirBaseModelMixin:
       Handle a GET request
       """
         if query.resourceId:
-            item = cls._get_orm_query().get(query.resourceId)
+            # item = cls._get_orm_query().get(query.resourceId)
+            item = cls._get_item_from_pk(query.resourceId)
             if not item:
                 raise MappingValidationError(
                     f'Resource "{query.resource}/{query.resourceId}" does not exist.'

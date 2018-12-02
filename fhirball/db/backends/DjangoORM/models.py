@@ -16,6 +16,10 @@ class AbstractBaseModel(models.Model, FhirAbstractBaseMixin):
   def _get_orm_query(cls):
     return cls.objects
 
+  @classmethod
+  def _get_item_from_pk(cls, pk):
+      return cls.objects.get(pk)
+
 
 class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
   class Meta:
