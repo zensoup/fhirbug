@@ -227,13 +227,14 @@ class BooleanAttribute(Attribute):
 
 class ContainableAttribute(Attribute):
     """
-  A Reference to some other Resource that may be contained.
-  """
+    A Reference to some other Resource that may be contained.
+    """
 
-    def __init__(self, cls, id, name, force_display=False, searcher=None):
+    def __init__(self, cls, id, name, setter=None, force_display=False, searcher=None):
         self.cls = cls
         self.id = id
         self.name = name
+        self.setter = setter
         self.force_display = force_display
         self.searcher = searcher
 
@@ -302,7 +303,8 @@ class ContainableAttribute(Attribute):
         if value is None:
             raise MappingValidationError("Invalid subject")
 
-        setattr(instance._model, self.id, value)
+        if self.setter:
+            Attribute(setter=self.setter).__set__(instance, value)
 
 
 class DateAttribute(Attribute):
