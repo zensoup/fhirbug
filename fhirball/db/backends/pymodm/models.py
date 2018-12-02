@@ -1,6 +1,9 @@
+from pymodm.errors import DoesNotExist
 from bson.objectid import ObjectId
+from bson.errors import InvalidId
 from fhirball.db.backends.pymodm.pagination import paginate
 from fhirball.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
+from fhirball.exceptions import DoesNotExistError
 
 
 class AbstractBaseModel(FhirAbstractBaseMixin):
@@ -17,7 +20,10 @@ class AbstractBaseModel(FhirAbstractBaseMixin):
 
   @classmethod
   def _get_item_from_pk(cls, pk):
-      return cls.objects.get({"_id": ObjectId(pk)})
+      try:
+          return cls.objects.get({"_id": ObjectId(pk)})
+      except (DoesNotExist, InvalidId):
+          raise DoesNotExistError(resource_type=cls.__name__, pk=pk)
 
 
 class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):

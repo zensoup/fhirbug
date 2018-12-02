@@ -1,3 +1,13 @@
+class DoesNotExistError(Exception):
+    """
+    A http request query was malformed or not understood by the server
+    """
+
+    def __init__(self, pk=None, resource_type=None):
+        self.pk = pk
+        self.resource_type = resource_type
+
+
 class QueryValidationError(Exception):
     """
     A http request query was malformed or not understood by the server

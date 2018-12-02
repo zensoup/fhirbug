@@ -4,6 +4,7 @@ from fhirball.exceptions import (
     QueryValidationError,
     ConfigurationError,
     OperationError,
+    DoesNotExistError
 )
 
 from fhirball.Fhir.resources import OperationOutcome, FHIRValidationError
@@ -210,8 +211,15 @@ class PutRequestHandler(PostRequestHandler):
             # Get the Model class
             Model = self.get_resource(models)
 
-            instance = Model.query.get(self.query.resourceId)
-            print(instance, type(instance))
+            try:
+                instance = Model._get_item_from_pk(self.query.resourceId)
+            except DoesNotExistError as e:
+                raise OperationError(
+                    severity="error",
+                    code="not-found",
+                    diagnostics="{}/{} was not found.".format(e.resource_type, e.pk),
+                    status_code=404,
+                )
 
             from fhirball.Fhir import resources
 

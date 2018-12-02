@@ -1,6 +1,7 @@
 from django.db import models
 from fhirball.db.backends.DjangoORM.pagination import paginate
 from fhirball.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
+from fhirball.exceptions import DoesNotExistError
 
 
 
@@ -18,7 +19,10 @@ class AbstractBaseModel(models.Model, FhirAbstractBaseMixin):
 
   @classmethod
   def _get_item_from_pk(cls, pk):
-      return cls.objects.get(pk)
+      try:
+          return cls.objects.get(pk=pk)
+      except cls.DoesNotExist:
+          raise DoesNotExistError(resource_type=cls.__name__, pk=pk)
 
 
 class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
