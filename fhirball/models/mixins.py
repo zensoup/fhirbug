@@ -3,7 +3,7 @@ import re
 from fhirball.Fhir import resources
 from fhirball.models.attributes import Attribute
 from fhirball.config import import_models
-from fhirball.exceptions import MappingValidationError
+from fhirball.exceptions import MappingValidationError, AuthorizationError
 from fhirball.Fhir.resources import PaginatedBundle
 
 from fhirball.config import settings
@@ -29,11 +29,10 @@ class FhirAbstractBaseMixin:
         resource_name = getattr(self, "__Resource__", self.__class__.__name__)
         Resource = getattr(resources, resource_name)
 
-        # TODO: remove this if nothing breaks
-        # self._Fhir._query = query
-
         # Filter the matching fields
         param_dict = self.get_params_dict(Resource, elements=self._elements)
+
+
 
         # Cast to a resource
         resource = Resource(param_dict, strict=kwargs.get("strict", True))
@@ -67,11 +66,16 @@ class FhirAbstractBaseMixin:
         if elements:
             attributes = [attr for attr in attributes if attr in elements]
 
+        visible_fields = getattr(self, '_visible_fields', attributes)
+        hidden_fields = getattr(self, '_hidden_fields', [])
+
         # Evaluate the common attributes. This is where all the getters are called
         param_dict = {
             attribute: getattr(self.Fhir, attribute)
             for attribute in attributes
             if hasattr(mock, attribute)
+            and attribute not in hidden_fields
+            and attribute in visible_fields
         }
         return param_dict
 
@@ -158,6 +162,10 @@ class FhirBaseModelMixin:
                 raise MappingValidationError(
                     f'Resource "{query.resource}/{query.resourceId}" does not exist.'
                 )
+            if hasattr(item, "audit_read"):
+                auditEvent = item.audit_read(query)
+                if auditEvent.outcome != "0":
+                    raise AuthorizationError(auditEvent=auditEvent)
             res = item.to_fhir(*args, query=query, **kwargs)
             return res.as_json()
 
@@ -202,6 +210,8 @@ class FhirBaseModelMixin:
                 "items": [
                     item.to_fhir(*args, query=query, **kwargs)
                     for item in pagination.items
+                    if not hasattr(item, "audit_read")
+                    or item.audit_read(query).outcome == "0"
                 ],
                 "total": pagination.total,
                 "pages": pagination.pages,

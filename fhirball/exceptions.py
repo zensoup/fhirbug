@@ -88,3 +88,8 @@ class OperationError(Exception):
                 ]
             }
         )
+
+class AuthorizationError(Exception):
+    def __init__(self, auditEvent, query=None):
+        self.auditEvent = auditEvent
+        self.query = query
