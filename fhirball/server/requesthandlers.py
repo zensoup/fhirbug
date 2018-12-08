@@ -4,7 +4,8 @@ from fhirball.exceptions import (
     QueryValidationError,
     ConfigurationError,
     OperationError,
-    DoesNotExistError
+    DoesNotExistError,
+    AuthorizationError,
 )
 
 from fhirball.Fhir.resources import OperationOutcome, FHIRValidationError
@@ -16,9 +17,10 @@ class RequestHandler:
     Base class for request handlers
     """
 
-    def parse_url(self, url):
+    def parse_url(self, url, context=None):
         try:
             self.query = parse_url(url)
+            self.query.context = context
         except QueryValidationError as e:
             raise OperationError(
                 severity="error",
@@ -42,6 +44,8 @@ class RequestHandler:
     def get_resource(self, models):
         resource_name = self.query.resource
         try:
+            # TODO: handle mapper names different then the resource
+            # Maybe a dict in the settings?
             Resource = getattr(models, resource_name)
         except AttributeError:
             raise OperationError(
@@ -51,6 +55,17 @@ class RequestHandler:
                 status_code=404,
             )
         return Resource
+
+    def _audit_request(self, query):
+        if hasattr(self, "audit_request"):
+            auditEvent = self.audit_request(query)
+            if auditEvent.outcome != "0":
+                raise OperationError(
+                    severity="error",
+                    code="security",
+                    diagnostics=auditEvent.outcomeDesc,
+                    status_code=403,
+                )
 
 
 class GetRequestHandler(RequestHandler):
@@ -68,14 +83,20 @@ class GetRequestHandler(RequestHandler):
 
     """
 
-    def handle(self, url):
+    def handle(self, url, query_context=None):
         try:
-            self.parse_url(url)
+            self.parse_url(url, query_context)
+            if query_context:
+                self.query.context = query_context
+            # Authorize the request if implemented
+            self._audit_request(self.query)
             # Import the model mappings
             models = self.import_models()
             # Get the Resource
             Model = self.get_resource(models)
-            # Validate the incoming json and instantiate the Fhir resource
+
+            # Audit the request if needed
+
             return self.fetch_items(Model)
 
         except OperationError as e:
@@ -92,6 +113,13 @@ class GetRequestHandler(RequestHandler):
                 code="not-found",
                 diagnostics="{}".format(e),
                 status_code=404,
+            )
+        except AuthorizationError as e:
+            raise OperationError(
+                severity="error",
+                code="security",
+                diagnostics="{}".format(e.auditEvent.as_json()),
+                status_code=500,
             )
         except Exception as e:
             diag = "{}".format(e)
