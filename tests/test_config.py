@@ -30,6 +30,6 @@ class TestLazySettings(unittest.TestCase):
 
         test_settings = {'TEST': 5, 'SOME': 'OTHER', 'ignored': True}
         lazy_setting.configure(test_settings)
-        lazy_setting._configure_from_dict.assertNotCalled()
-        lazy_setting._configure_from_path.assertNotCalled()
-        lazy_setting._configure_from_defaults.assertNotCalled()
+        lazy_setting._configure_from_dict.assert_called_once_with(test_settings)
+        lazy_setting._configure_from_path.assert_not_called()
+        lazy_setting._configure_from_defaults.assert_not_called()

@@ -326,15 +326,15 @@ class DateAttribute(Attribute):
 
 class NameAttribute(Attribute):
     """
-  NameAttribute is for used on fields that represnt a HumanName resource.
-  The parameters can be any of the valid getter and setter types for
-  simple :class:`Attribute`
+    NameAttribute is for used on fields that represnt a HumanName resource.
+    The parameters can be any of the valid getter and setter types for
+    simple :class:`Attribute`
 
-  :param family_getter: A getter type parameter for the family name.
-  :param given_getter: A getter type parameter for the given name
-  :param family_setter: A setter type parameter for the family name
-  :param given_setter: A getter type parameter for the given name
-  """
+    :param family_getter: A getter type parameter for the family name.
+    :param given_getter: A getter type parameter for the given name
+    :param family_setter: A setter type parameter for the family name
+    :param given_setter: A getter type parameter for the given name
+    """
 
     def __init__(
         self,
