@@ -36,7 +36,7 @@ class LazySettings:
         if isinstance(config, dict):
             return self._configure_from_dict(config)
         raise ConfigurationError(
-            "Invlid configuration object, you must provide a dict or string representing the path to a configuration file"
+            "Invalid configuration object, you must provide a dict or string representing the path to a configuration file"
         )
 
     def __getattr__(self, name):
