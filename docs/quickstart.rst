@@ -218,6 +218,37 @@ The change is applied to the actual database model!
     datetime.datetime(1970, 11, 11, 0, 0)
 
 
+Handling requests
+-----------------
+
+We will finish this quick introduction to fhirball with a look on how requests
+are handled. First, let's create a couple more entries:
+
+    >>> from datetime import datetime
+    >>> from fhirball.config import settings
+    >>> settings.configure({
+    ...     'DB_BACKEND': 'SQLAlchemy',
+    ...     'SQLALCHEMY_CONFIG': {
+    ...         'URI': 'sqlite:///:memory:'
+    ...     }
+    ... })
+    >>> from mappings import Patient
+    >>> Patient.session.add_all([
+    ...     Patient(first_name='Some', last_name='Guy', dob=datetime(1990, 10, 10)),
+    ...     Patient(first_name='Someone', last_name='Else', dob=datetime(1993, 12, 18)),
+    ...     Patient(first_name='Not', last_name='Me', dob=datetime(1985, 6, 6)),
+    ... ])
+    >>> Patient.session.commit()
+
+Great! Now we can simulate some requests. The mapper class we defined earlier
+is enough for us to get some nice FHIR functionality like searches.
+
+Let's start by saking for all Patient entries:
+
+    >>> from fhirball.server.requestparser import parse_url
+    >>> query = parse_url('Patient')
+    >>> Patient.get(query)
+
 
 .. _sqlite3: https://docs.python.org/3/library/sqlite3.html
 .. _Patient: https://www.hl7.org/fhir/patient.html
