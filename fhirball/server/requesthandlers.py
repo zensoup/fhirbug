@@ -12,7 +12,7 @@ from fhirball.Fhir.resources import OperationOutcome, FHIRValidationError
 from fhirball.config import import_models, settings
 
 
-class RequestHandler:
+class AbstractRequestHandler:
     """
     Base class for request handlers
     """
@@ -68,7 +68,7 @@ class RequestHandler:
                 )
 
 
-class GetRequestHandler(RequestHandler):
+class GetRequestHandler(AbstractRequestHandler):
     """
     Receive a request url as a string and handle it. This includes parsing the string into a
     :class:`fhirball.server.requestparser.FhirRequestQuery`, finding the model for the requested
@@ -136,7 +136,7 @@ class GetRequestHandler(RequestHandler):
             )
 
 
-class PostRequestHandler(RequestHandler):
+class PostRequestHandler(AbstractRequestHandler):
     """
     Receive a request url and the request body of a POST request and handle it. This includes parsing the string into a
     :class:`fhirball.server.requestparser.FhirRequestQuery`, finding the model for the requested

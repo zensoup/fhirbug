@@ -96,10 +96,11 @@ class FhirAbstractBaseMixin:
                 resource_name, field, *_ = rev.split(":")
                 Resource = getattr(models, resource_name)
                 # sql_query = cls.searchables()[search](cls, search, value, sql_query, query)
-                items = Resource.searchables()[field](
-                    Resource, field, self.Fhir.id, Resource._get_orm_query(), query
-                ).all()
-                self._contained_items += list(map(lambda i: i.to_fhir(), items))
+                if field in Resource.searchables():
+                    items = Resource.searchables()[field](
+                        Resource, field, self.Fhir.id, Resource._get_orm_query(), query
+                    ).all()
+                    self._contained_items += list(map(lambda i: i.to_fhir(), items))
 
     @classmethod
     def create_from_resource(cls, resource, query=None):
@@ -195,7 +196,6 @@ class FhirBaseModelMixin:
             offset = query.search_params.get("search-offset", ["1"])
             offset = int(offset[0])
             page = offset // count + 1
-            ## TODO: We skip one result between pages here
             pagination = cls.paginate(sql_query, page, count)
             url_queries = "&".join(
                 [
