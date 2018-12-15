@@ -10,7 +10,6 @@ from fhirball.db.backends import SQLAlchemy
 from fhirball.models import attributes, pagination
 
 def testResourceContructor(verbose=False):
-  from fhirball.Fhir import resources
 
   # Create the extra globals
   context = {

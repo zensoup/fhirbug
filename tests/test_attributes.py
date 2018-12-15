@@ -1,5 +1,6 @@
 import unittest
 from fhirball.config import settings
+settings._reset()
 settings.configure({'DB_BACKEND': 'SQLAlchemy', 'SQLALCHEMY_CONFIG': {'URI': 'sqlite:///memory'}})
 from . import models
 
