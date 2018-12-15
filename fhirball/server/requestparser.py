@@ -22,7 +22,7 @@ class FhirRequestQuery:
     #: The id of the requested resource if a specific resource was requested else ``None``
     self.resourceId = resourceId
 
-    #: A string holding the requested `operation <http://google.com>`_ such as ``$meta`` or ``$validate``
+    #: A string holding the requested `operation <https://www.hl7.org/fhir/search.html>`_ such as ``$meta`` or ``$validate``
     self.operation = operation
 
     #: Extra parameters passed after the operation. For example if ``Patient/123/_history/2`` was requested,

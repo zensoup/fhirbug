@@ -75,6 +75,10 @@ class OperationError(Exception):
         self.status_code = status_code
 
     def to_fhir(self):
+        """
+        Express the exception as an OperationOutcome resource.
+        This allows us to catch it and immediately return it to the user.
+        """
         from fhirball.Fhir.resources import OperationOutcome
 
         return OperationOutcome(
@@ -90,6 +94,11 @@ class OperationError(Exception):
         )
 
 class AuthorizationError(Exception):
+    """
+    The request could not be authorized.
+    """
     def __init__(self, auditEvent, query=None):
+        #: This exception carries an auditEvent resource describing why authorization failed
+        #: It can be thrown anywhere in a mappings ``.get()`` method.
         self.auditEvent = auditEvent
         self.query = query

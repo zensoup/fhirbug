@@ -1,11 +1,11 @@
 FHIRBALL
 --------
 
-Fhirball intends to be a full-featured `FHIR`_ server for python. It cas been
+Fhirball intends to be a full-featured `FHIR`_ server for python. It has been
 designed to be easy to set up and configure and be flexible when it comes to
 the rest of tools it is combined with, like web frameworks and database interfaces.
 In most simple cases, very little code has to be written apart from field
-mappings (see `examples`_).
+mappings.
 
 **Fhirball is still under development!** The API may still change at any time,
 it probably contains heaps of bugs and has never been tested in production. If
@@ -157,37 +157,39 @@ Roadmap
 ___________________
 
 
-| [ ] Complete unit test coverage
-|     [ ] pagination
-|     [ ] request handlers
-| [ ] Integration tests
-| [ ] Complete documendation coverage
-| [ ] Add DELETE functionality
-| [ ] Support all `search parameters`_
-|     [ ] _content
-|     [ ] _lastUpdated
-|     [ ] _profile
-|     [ ] _security
-|     [ ] _tag
-|     [ ] _text
-|     [ ] _list
-|     [ ] _has
-|     [ ] _summary
-|     [ ] _sort
-|     [ ] _count
-|     [ ] `_at`_
-|     [ ] _since
-| [ ] logging
-| [ ] `Documents`_
-| [ ] More Searches
-| [ ] More attributes
-| [ ] If-Modified-Since header
-| [ ] Support application/fhir+json and _format
-| [ ] Html serving (?)
-| [ ] Versions
-| [ ] Versioned updates
-| [ ] Auto-generate Capability Statement
-| [ ] Auto-generate Strtucture Definition
+::
+
+    [ ] Complete unit test coverage
+        [ ] pagination
+        [ ] request handlers
+    [ ] Integration tests
+    [ ] Complete documendation coverage
+    [ ] Add DELETE functionality
+    [ ] Support all `search parameters`_
+        [ ] _content
+        [ ] _lastUpdated
+        [ ] _profile
+        [ ] _security
+        [ ] _tag
+        [ ] _text
+        [ ] _list
+        [ ] _has
+        [ ] _summary
+        [ ] _sort
+        [ ] _count
+        [ ] `_at`_
+        [ ] _since
+    [ ] logging
+    [ ] `Documents`_
+    [ ] More Searches
+    [ ] More attributes
+    [ ] If-Modified-Since header
+    [ ] Support application/fhir+json and _format
+    [ ] Html serving (?)
+    [ ] Versions
+    [ ] Versioned updates
+    [ ] Auto-generate Capability Statement
+    [ ] Auto-generate Strtucture Definition
 
 
 
