@@ -1,20 +1,161 @@
 FHIRBALL
 --------
 
-Fhirball is a full-featured `fhir`_ server for python. It is intended to be very easy to set up and configure and be flexible when it comes to the rest of tools it is combined with, like web frameworks and database interfaces. In most simple cases, very little code has to be written apart from field mappings (see `examples`_).
+Fhirball intends to be a full-featured `FHIR`_ server for python. It cas been
+designed to be easy to set up and configure and be flexible when it comes to
+the rest of tools it is combined with, like web frameworks and database interfaces.
+In most simple cases, very little code has to be written apart from field
+mappings (see `examples`_).
 
-Fhirball has out-of-the-box support for SQLAlchemy and DjangoORM and has been tested with both `django`_ and `flask`_.
-However, one can use just the field-mapping part of fhirball to convert database entries to Fhir resources and handle everything else any way you want.
+**Fhirball is still under development!** The API may still change at any time,
+it probably contains heaps of bugs and has never been tested in production. If
+you are interested in making it better, you are very welcome to contribute!
 
-Please note: **Fhirball is still under development. It currently lacks several features and is probably buggy.**
+**What fhirball does:**
 
+    - It provides the ability to create "real time" transformations between your
+     ORM models to valid FHIR resources through an extensive mapping API.
+    - Has been designed to work with existing data-sets and database schemas
+    but can of course be used with its own database.
+    - It's compatible with the SQLAlchemy, DjangoORM and PyMODM ORMs, so if you
+    can describe your database in one of them, you are good to go. It should also
+    be pretty easy to extend to support any other ORM, feel free to submit a pull
+    request!
+    - Handles many of the FHIR REST operations and searches like creating and
+    updating resources, performing advanced queries such as reverse includes,
+    paginated bundles, contained or referenced resources, and more.
+    - Provides the ability to audit each request, at the granularity that you
+    desire, all the way down to limiting which of the attributes for each model
+    should be accessible for each user.
+
+**What fhirball does not do:**
+
+    - Provide a ready to use solution for a Fhir server. Fhirball is a framework,
+    we want things to be as easy as possible but you will still have to write code.
+    - Contain a web server. Fhirball takes over once there is a request string
+    and request body and returns a json object. You have to handle the actual
+    requests and responses.
+    - Handle authentication and authorization. It supports it, but you must write
+    the implementation.
+    - A ton of smaller stuff, which you can find in the _Roadmap_.
+
+___________________
+Quick Overview
+___________________
+
+============
+Writing Maps
+============
+
+Mapping from a database model to a Fhir resource is pretty simple.
+Begin by declaring your models using the ORM of your choice. Subclass or extend your models to use fhirball's mixins and declare a class called FhirMap.
+
+Inside FhirMap, use Attributes to declare properties using the name of the corresponding Fhir resource.
+
+Here's a simple example for SQLAlchemy:
+::
+
+    from sqlalchemy import Column, Integet, String
+    from fhirball.db.backends.SQLAlchemy.base import Base, engine
+    from fhirball.db.backends.SQLAlchemy import FhirBaseModel
+
+
+    class Location(FhirBaseModel):
+        """
+        Suppose we have a database table called `HospitalLocations`
+        that we want to map to the FHIR resource type `Location`
+        """
+
+        __tablename__ = "HospitalLocations"
+
+        location_id = Column(Integer, primary_key=True)
+        location_name = Column(String)
+
+        # So far we fad a normal SQLAlchemy model definition
+        # Now we define the mapping:
+        class FhirMap:
+            id = Attribute(
+                getter="location_id", setter=None, searcher=NumericSearch("patient_id")
+            )
+            name = Attribute(
+                getter="location_name",
+                setter="location_name",
+                searcher=StringSearch("location_name"),
+            )
+
+The mapping we defined is as simple as it gets but lets see what it can do. The class we defined is still a normal SQLAlchemy class
+and we can use it the way we would any other:
+::
+
+    >>> location = Location.query.first()
+    >>> location.location_name
+    'Ward-1'
+
+But it also has FHIR superpowers:
+::
+
+    >>> from fhirball.server.requestparser import parse_url
+    >>> request = parse_url('Location?name:contains=storage')
+    >>> Location.get(request)
+    {
+        'resourceType': 'Bundle',
+        'total': 2,
+        'entry': [
+            {
+                'resource': {
+                    'resourceType': 'Location',
+                    'id': 375,
+                    'name': 'storage-1'
+                }
+            },
+            {
+                'resource': {
+                    'resourceType': 'Location',
+                    'id': 623,
+                    'name': 'temp-storage'
+                }
+            }
+        ]
+    }
+
+That probably seemed a bit magic, so let's dive a bit deeper in how fhirball works.
+
+By making a database model inherit from our base class instead of declarative_base
+and defining a FhirMap, we gain the ability to handle it ad both a model and a
+Fhir resource.
+
+We we can interchangeably get and set attributes through the `.Fhir` magic property:
+::
+
+    >>> location = Location.query.first()
+    >>> location.location_name
+    'Ward-1'
+
+    >>> location.Fhir.name
+    'Ward-1'
+
+    >>> location.Fhir.name = 'Ward-2'
+    >>> location.location_name
+    'Ward-2'
+
+And get the JSON representation:
+::
+
+    >>> location.to_fhir()
+    <fhirball.Fhir.Resources.location.Location at 0x7fb2445c6080>
+    >>> location.as_json()
+    {
+        'resourceType': 'Location',
+        'id': 1,
+        'name': 'Ward_1'
+    }
+
+    
+.. _Roadmap:
 ___________________
 Roadmap
 ___________________
 
-   [ ] Refactoring
-
-      [ ] Configuration
 
    [ ] Complete unit test coverage
 
@@ -22,19 +163,11 @@ ___________________
 
       [ ] request handlers
 
-      [ ] DB models (?)
-
    [ ] Integration tests
-
-   [ ] Authorization / Auditing ?
 
    [ ] Complete documendation coverage
 
-   [ ] Complete README.rst
-
-   [ ] Add Mongodb backend
-
-   [ ] Complete POST / PUT / DELETE
+   [ ] Add DELETE functionality
 
    [ ] Support all `search parameters`_
 
@@ -82,150 +215,11 @@ ___________________
 
    [ ] Versioned updates
 
-   [ ] Generate Capability Statement
+   [ ] Auto-generate Capability Statement
 
-   [ ] Generate Strtucture Definition
-
-
-___________________
-Quick Overview
-___________________
+   [ ] Auto-generate Strtucture Definition
 
 
-============
-Writing Maps
-============
-
-Mapping from a database model to a Fhir resource is pretty simple.
-Begin by declaring your models using the ORM of your choice. Subclass or extend your models to use fhirball's mixins and declare a class called FhirMap.
-
-Inside FhirMap, use Attributes to declare properties using the name of the corresponding Fhir resource.
-
-Here's a simple example for SQLAlchemy:
-::
-
-  from fhirball.db.backends.SQLAlchemy.base import Base, engine
-   from fhirball.db.backends.SQLAlchemy import FhirBaseModel
-
-    class Location(FhirBaseModel):
-        __table__ = Table('HospitalLocations', Base.metadata,
-                    autoload=True, autoload_with=engine)
-
-        class FhirMap:
-            id = Attribute(getter='location_id', setter=None, searcher=NumericSearch('patient_id'))
-            name = Attribute()
-
-___________________
-Package Description
-___________________
-
-==============================================
-`db.backends` -- Database specific stuff
-==============================================
-
-+++++++++++++++++++++++++++++++++++++++++
-`SQLALchemy` - SqlAlchemy backend
-+++++++++++++++++++++++++++++++++++++++++
-
-* ``abstractbasemodel.AbstractBaseModel``
-    A subclass of SQLAlchemy's declarative_base.
-
-    Adds additional fhir related functionality to all models.
-    Most importantly, it provides the  ``.to_fhir()`` method that
-    handles the transformation from an SQLAlchemy model to a Fhir resource.
-    User-defined models subclassing this class **must** implement the ``_map_()`` method that has access to all of the related table's columns and must return a Fhir Resource instance.
-
-
-    ``to_fhir(query=None)``
-        Converts a model to a Fhir Resource. Accepts a ``query`` parameter of type ``server.FhirRequestQuery`` that may alter
-        functionality based on the request.
-
-    ``ContainableResource(cls, id, name, force_display=False)``
-
-      A shortcut for defining external resources that may or may not be included based on the request. It will produce a Reference containing either an endpoint link to the resource or an internal link to the contained data.
-
-      **cls**: The class of the model we are referring to (eg Patient)
-
-      **id**: the system id of the resource
-
-      **name**: the name of the field this reference occupies in the parent's Resources
-
-      **force_display**: If left to False, resources that are not contained will not include the `display` property since it requires an extra query.
-
-      :returns: A dict representing a reference object
-
-
-* ``fhirbasemodel.FhirBaseModel``
-    Another abstract base class iheriting AbstractBaseModel.
-
-    Implements fhir functionality like querying, searching, etc
-
-
-
-    *\@classmethod*  ``get(cls, query)``
-
-        Handle get requests. Uses the information contained in `query` to determine how many and which resources should be returned. Pagination happens here.
-
-        **cls**: The class of the resource that gas been requested
-
-        **query**: An instance of ``server.FhirRequestQuery`` representing the current query
-
-        :returns: A Json dict containing the response. The responce may be a single Resource or a Bundle
-
-
-==============================================
-`Fhir` -- Fhir resource models
-==============================================
-
-Auto-generated classes for Resource models.
-
-These classes handle (de-)serialization and validation and they are the building blocks for models' ``_map_`` method. Many additions have
-been made to make it as easy as possible to create Resource objects. See `Writing maps`_ for more.
-
-**Warning**: Do not edit any of the files in the Fhir/Resources folder. They will be overwritten at the next generation. See Fhir.base_ for details.
-
-* ``Fhir.resources`` <-- Use this to import stuff!
-    An empty module that is dynamically populated by Fhir/`__init__`.py that allows easier imports of Resources like::
-
-    >>> from fhir import resources
-    >>> p = resources.Patient()
-    >>> from fhir.resources import Patient
-
-* ``Fhir.Resources.extensions`` <-- Write here to extend stuff
-     This module is imported by Fhir/`__init__`.py after the root
-     Resources folder so classes defined here will overwrite the
-     generated ones with the same name.
-
-     Contains shortcut wrapper classes like ``AMKA`` and ``HumanName``
-
-.. _Fhir.base:
-
-* ``Fhir.base`` <-- This is where the actual magic happens
-    Contains all resources deeded for Resource generation.
-
-    ``fhirabstractbase`` and ``fhirabstractresource`` contain the two
-    abstract classes that all Resources inherit. This is where the
-    actual functionality is implemented.
-
-
-==============================================
-`server` -- Server related
-==============================================
-
-* ``FhirRequestQuery``
-    A class that holds information contained in the request querystring
-
-    Has the followng properties:
-
-        ``resource``: The name of the requested Resource
-
-        ``resourceId``: The id following the reource if any
-
-        ``operation``: $operation string
-
-        ``modifiers``: dict of key, value pairs for all _reserved parameters
-
-        ``search_params``: dict of key, value pairs for all non _reserved parameters
 
 .. _fhir: https://www.hl7.org/fhir/
 .. _flask: http://flask.pocoo.org/

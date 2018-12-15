@@ -10,6 +10,13 @@ from fhirball.config import settings
 
 
 class FhirAbstractBaseMixin:
+    """
+    Adds additional fhir related functionality to all models.
+    Most importantly, it provides the  ``.to_fhir()`` method that
+    handles the transformation from an SQLAlchemy model to a Fhir resource.
+    User-defined models subclassing this class **must** implement a ``FhirMap``
+    nested class. 
+    """
     def to_fhir(self, *args, query=None, **kwargs):
         """
         Convert from a BaseModel to a Fhir Resource and return it.
