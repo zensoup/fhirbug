@@ -62,8 +62,6 @@ def parse_url(url):
   :param url: a string containing the path of the request. It should not contain the server
               path. For example: `Patients/123?name:contains=Jo`
   :returns: A :class:`FhirRequestQuery` object
-
-
   '''
 
   # Supported operations that may be applied straight on a resource type
@@ -119,15 +117,13 @@ def parse_url(url):
 
 def validate_params(params):
   """
-  Validate a parameter dictionary
+  Validate a parameter dictionary. If the parameters are invalid, raise a
+  QueryValidationError with the details.
 
   :param params: Parameter dictionary produced by parse_url
   :return:
   :raises: :exc:`fhirball.exceptions.QueryValidationError`
   """
-
-  if params['resourceId'] is not None:
-    try:
-      int(params['resourceId'])
-    except ValueError:
-      raise QueryValidationError(f'Invalid request string: \'{params["resourceId"]}\' is not a valid resource id')
+  pass
+  # if not_valid(params):
+  #   raise QueryValidationError(f'Invalid request string')

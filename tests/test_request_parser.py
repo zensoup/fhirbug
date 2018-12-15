@@ -39,9 +39,6 @@ class TestUrlParsing(unittest.TestCase):
         self.assertEquals(query.resource, "Patient")
         self.assertEquals(query.resourceId, "123")
 
-        url = "Patient/asd"
-        self.assertRaises(QueryValidationError, parse_url, url)
-
     def test_operation(self):
         url = "Patient/123/_history"
         query = parse_url(url)
