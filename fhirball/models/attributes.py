@@ -383,7 +383,7 @@ class NameAttribute(Attribute):
                 return searches.StringSearch(given_getter)(
                     cls, field_name, value, sql_query, query
                 )
-            return searches.StringSearch(family_getter, family_getter)(
+            return searches.StringSearch(family_getter, given_getter)(
                 cls, field_name, value, sql_query, query
             )
 
