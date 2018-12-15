@@ -60,11 +60,11 @@ class FhirAbstractBaseMixin:
         # Create a mock resource for comparison
         mock = resource()
 
-        # If the _eelements paramater has been passed, return the elements specified there,
+        # If the _elements paramater has been passed, return the elements specified there,
         # along with all mandatory ones
         # TODO: toggle inclusion of mandatory based on a setting
         if elements:
-            attributes = [attr for attr in attributes if attr in elements]
+            attributes = [attr for attr in attributes if attr in elements + mock.getMandatoryFields() + ['id']]
 
         visible_fields = getattr(self, '_visible_fields', attributes)
         hidden_fields = getattr(self, '_hidden_fields', [])
