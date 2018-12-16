@@ -12,15 +12,16 @@ For a more detailed guide check out the :ref:`overview` and the :ref:`api` docs.
 Preparation
 -----------
 
-In this example we will use an sqlite3_ database with SQLAlchemy. The first is
-in the standard library, you can install SQLAlchemy using `pip`:
+In this example we will use an sqlite3_ database with SQLAlchemy and flask.
+The first is in the standard library, you can install SQLAlchemy and flask
+using `pip`:
 
 .. code-block:: bash
 
-    $ pip install sqlalchemy
+    $ pip install sqlalchemy flask
 
-Let's say we have a very simple database schema, containing a table for Patients
-and one for hospital admissions. The SQLAlchemy models look like this:
+Let's say we have a very simple database schema, for now only containing a table
+for Patients and one for hospital admissions. The SQLAlchemy models look like this:
 
 .. code-block:: python
     :caption: models.py
@@ -30,10 +31,9 @@ and one for hospital admissions. The SQLAlchemy models look like this:
     from sqlalchemy.orm import relationship
 
     Base = declarative_base()
-    metadata = Base.metadata
 
 
-    class Patient(Base):
+    class PatientModel(Base):
         __tablename__ = 'patients'
 
         patient_id = Column(Integer, primary_key=True)
@@ -43,7 +43,7 @@ and one for hospital admissions. The SQLAlchemy models look like this:
         gender = Column(Integer)  # 0: female, 1: male, 2: other, 3: unknown
 
 
-    class Admission(Base):
+    class AdmissionModel(Base):
         __tablename__ = 'admissions'
 
         id = Column(Integer, primary_key=True)
@@ -52,7 +52,7 @@ and one for hospital admissions. The SQLAlchemy models look like this:
         date_start = Column(DateTime)  # date and time of admission
         date_end = Column(DateTime)    # date and time of release
 
-        patient = relationship("patient", back_populates="admissions")
+        patient = relationship("patientmodel", back_populates="admissions")
 
 
 To create the database and tables, open an interactive python shell and
@@ -63,7 +63,7 @@ type the following:
     >>> from sqlalchemy import create_engine
     >>> from models import Base
 
-    >>> engine = create_engine('sqlite:///fhirball_demo.db')
+    >>> engine = create_engine('sqlite:///:memory:')
     >>> Base.metadata.create_all(engine)
 
 
@@ -80,11 +80,11 @@ we want to create looks something like this:
     =====================   ==============      ==================
     DB column               FHIR attribute      notes
     =====================   ==============      ==================
-    patient_id              id
+    patient_id              id                  read-only
     first_name, last_name   name                first and last
                                                 name must be combined
                                                 into a HumanName resource
-    dob                     birthDate           must be converted to
+    dob                     birthDate           must be converted to type
                                                 FHIRDate
     gender                  gender              values must be translated
                                                 between the two systems
@@ -107,6 +107,13 @@ module, and more specifically inherit our Mappings from
 
 So, we start describing our mapping for the Patient resource from the id field
 which is the simplest:
+
+.. warning:: Fhirball needs to know which ORM the mappings we create are for.
+             Therefore, before importing FhirBaseModel, we must have configured
+             the fhirball settings. If you write the following code in an
+             interactive session instead of a file, you will get an error unless
+             you configure fhirball first. To do so, just paste the code described
+             :ref:`below <config>`.
 
 .. code-block:: python
     :caption: mappings.py
@@ -157,6 +164,8 @@ the given name from ``first_name``
 
 Letting the magic happen
 ------------------------
+
+.. _config:
 
 Let's test what we have so far. First, we must provide fhirball with some
 basic configuration:
@@ -243,7 +252,7 @@ are handled. First, let's create a couple more entries:
 Great! Now we can simulate some requests. The mapper class we defined earlier
 is enough for us to get some nice FHIR functionality like searches.
 
-Let's start by saking for all Patient entries:
+Let's start by asking for all Patient entries:
 
     >>> from fhirball.server.requestparser import parse_url
     >>> query = parse_url('Patient')
