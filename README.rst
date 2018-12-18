@@ -163,7 +163,7 @@ ___________________
         [ ] pagination
         [ ] request handlers
     [ ] Integration tests
-    [ ] Complete documendation coverage
+    [ ] Complete documentation coverage
     [ ] Add DELETE functionality
     [ ] Support all `search parameters`_
         [ ] _content
@@ -189,7 +189,8 @@ ___________________
     [ ] Versions
     [ ] Versioned updates
     [ ] Auto-generate Capability Statement
-    [ ] Auto-generate Strtucture Definition
+    [ ] Auto-generate Structure Definition
+    [ ] DateSearch should handle partial dates better (i.e. 1990 should mean > 1990-01-01 & < 1990-12-31)
 
 
 
