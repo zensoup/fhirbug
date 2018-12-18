@@ -28,7 +28,6 @@ Base = declarative_base(metaclass=AbstractModelMeta)
 # Base = declarative_base()
 
 # Create the db connection
-os.environ["NLS_LANG"] = "GREEK_GREECE.AL32UTF8"
 engine = create_engine(settings.SQLALCHEMY_CONFIG["URI"])
 session = scoped_session(sessionmaker(bind=engine))
 
@@ -36,16 +35,3 @@ session = scoped_session(sessionmaker(bind=engine))
 # You must do this BEFORE importing any models
 Base.query = session.query_property()
 Base.session = property(lambda instance: session.object_session(instance))
-
-
-def get_base(connection_str="sqlite:///sqlite.db"):
-    Base = declarative_base(metaclass=AbstractModelMeta)
-    # Create the db connection
-    engine = create_engine(connection_str)
-    session = scoped_session(sessionmaker(bind=engine))
-
-    # Provide the base class for AbstractBaseClass to inherit
-    # You must do this BEFORE importing any models
-    Base.query = session.query_property()
-    Base.session = property(lambda instance: session.object_session(instance))
-    return Base
