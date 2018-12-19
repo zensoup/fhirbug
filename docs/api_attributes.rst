@@ -3,7 +3,7 @@
 Attributes
 ==========
 
-.. automodule:: fhirball.models.attributes
+.. automodule:: fhirbug.models.attributes
     :members:
     :inherited-members:
 

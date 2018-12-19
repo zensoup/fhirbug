@@ -1,5 +1,5 @@
-from fhirball.server.requestparser import parse_url
-from fhirball.exceptions import (
+from fhirbug.server.requestparser import parse_url
+from fhirbug.exceptions import (
     MappingValidationError,
     QueryValidationError,
     ConfigurationError,
@@ -8,8 +8,8 @@ from fhirball.exceptions import (
     AuthorizationError,
 )
 
-from fhirball.Fhir.resources import OperationOutcome, FHIRValidationError
-from fhirball.config import import_models, settings
+from fhirbug.Fhir.resources import OperationOutcome, FHIRValidationError
+from fhirbug.config import import_models, settings
 
 
 class AbstractRequestHandler:
@@ -71,7 +71,7 @@ class AbstractRequestHandler:
 class GetRequestHandler(AbstractRequestHandler):
     """
     Receive a request url as a string and handle it. This includes parsing the string into a
-    :class:`fhirball.server.requestparser.FhirRequestQuery`, finding the model for the requested
+    :class:`fhirbug.server.requestparser.FhirRequestQuery`, finding the model for the requested
     resource and calling `Resource.get` on it.
     It returns a tuple (response json, status code).
     If an error occurs during the process, an OperationOutcome is returned.
@@ -139,7 +139,7 @@ class GetRequestHandler(AbstractRequestHandler):
 class PostRequestHandler(AbstractRequestHandler):
     """
     Receive a request url and the request body of a POST request and handle it. This includes parsing the string into a
-    :class:`fhirball.server.requestparser.FhirRequestQuery`, finding the model for the requested
+    :class:`fhirbug.server.requestparser.FhirRequestQuery`, finding the model for the requested
     resource and creating a new instance.
     It returns a tuple (response json, status code).
     If an error occurs during the process, an OperationOutcome is returned.
@@ -165,7 +165,7 @@ class PostRequestHandler(AbstractRequestHandler):
             # Get the Model class
             Model = self.get_resource(models)
 
-            from fhirball.Fhir import resources
+            from fhirbug.Fhir import resources
 
             # Get the Resource class
             Resource = self.get_resource(resources)
@@ -213,7 +213,7 @@ class PostRequestHandler(AbstractRequestHandler):
 class PutRequestHandler(PostRequestHandler):
     """
     Receive a request url and the request body of a POST request and handle it. This includes parsing the string into a
-    :class:`fhirball.server.requestparser.FhirRequestQuery`, finding the model for the requested
+    :class:`fhirbug.server.requestparser.FhirRequestQuery`, finding the model for the requested
     resource and creating a new instance.
     It returns a tuple (response json, status code).
     If an error occurs during the process, an OperationOutcome is returned.
@@ -249,7 +249,7 @@ class PutRequestHandler(PostRequestHandler):
                     status_code=404,
                 )
 
-            from fhirball.Fhir import resources
+            from fhirbug.Fhir import resources
 
             # Get the Resource class
             Resource = self.get_resource(resources)

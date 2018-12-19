@@ -1,7 +1,7 @@
 import importlib
 
-from fhirball.exceptions import ConfigurationError
-from fhirball.config import default_settings
+from fhirbug.exceptions import ConfigurationError
+from fhirbug.config import default_settings
 
 
 class FhirSettings:
@@ -64,7 +64,7 @@ class LazySettings:
 
     def _configure_from_defaults(self):
         """
-        Load the default settings defined in :module:`fhirball.config.default_settings`.
+        Load the default settings defined in :module:`fhirbug.config.default_settings`.
         This method does not set the ``_wrapped`` attribute because is also called from
         the other configuration methods, so the returned objects must be assigned to
         ``self_wrapped`` manually.

@@ -1,6 +1,6 @@
 import importlib
-from fhirball.exceptions import ConfigurationError
-from fhirball.config.utils import LazySettings
+from fhirbug.exceptions import ConfigurationError
+from fhirbug.config.utils import LazySettings
 
 
 settings = LazySettings()
@@ -11,7 +11,7 @@ def import_models():
     """
     global settings
     if not settings:
-        raise ConfigurationError('Fhirball settings have not been initialized. Use fhirball.config.configure before using fhirball.')
+        raise ConfigurationError('Fhirbug settings have not been initialized. Use fhirbug.config.configure before using fhirbug.')
     try:
         models_path = getattr(settings, 'MODELS_PATH')
     except AttributeError:
@@ -24,15 +24,15 @@ def import_searches():
     """
     global settings
     if not settings:
-        raise ConfigurationError('Fhirball settings have not been initialized. Use fhirball.config.configure before using fhirball.')
+        raise ConfigurationError('Fhirbug settings have not been initialized. Use fhirbug.config.configure before using fhirbug.')
     try:
         db_backend = getattr(settings, 'DB_BACKEND')
     except AttributeError:
         raise ConfigurationError('settings.DB_BACKEND has not been defined.')
 
     if db_backend.lower() == 'sqlalchemy':
-          return importlib.import_module('fhirball.db.backends.SQLAlchemy.searches')
+          return importlib.import_module('fhirbug.db.backends.SQLAlchemy.searches')
     elif db_backend.lower() == 'djangoorm':
-        return importlib.import_module('fhirball.db.backends.DjangoORM.searches')
+        return importlib.import_module('fhirbug.db.backends.DjangoORM.searches')
     elif db_backend.lower() == 'pymodm':
-        return importlib.import_module('fhirball.db.backends.pymodm.searches')
+        return importlib.import_module('fhirbug.db.backends.pymodm.searches')

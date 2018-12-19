@@ -1,11 +1,11 @@
-fhirball.server
+fhirbug.server
 ===============
 
 
 Request Parsing
 ---------------
 
-.. automodule:: fhirball.server.requestparser
+.. automodule:: fhirbug.server.requestparser
     :members:
     :inherited-members:
 
@@ -13,7 +13,7 @@ Request Parsing
 Request Handling
 ----------------
 
-.. automodule:: fhirball.server.requesthandlers
+.. automodule:: fhirbug.server.requesthandlers
     :members:
     :inherited-members:
 
@@ -21,6 +21,6 @@ Request Handling
 Auth
 ----
 
-.. automodule:: fhirball.server.auth
+.. automodule:: fhirbug.server.auth
     :members:
     :inherited-members:

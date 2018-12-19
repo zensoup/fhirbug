@@ -4,7 +4,7 @@ Quickstart
 ==========
 
 This section contains a brief example of creating a simple application using
-fhirball. It's goal is to give the reader a general idea of how fhirball
+fhirbug. It's goal is to give the reader a general idea of how fhirbug
 works, not to provide them with in-depth knowledge about it.
 
 For a more detailed guide check out the :ref:`overview` and the :ref:`api` docs.
@@ -92,7 +92,7 @@ we want to create looks something like this:
     =====================   ==============      ==================
 
 
-Mapping in fhirball is pretty straightforward. All we need to do is:
+Mapping in fhirbug is pretty straightforward. All we need to do is:
 
 1. Subclass the model class, inheriting from FhirBaseModel
 2. Add a member class called **FhirMap**
@@ -101,26 +101,26 @@ Mapping in fhirball is pretty straightforward. All we need to do is:
 4. Use :ref:`Attributes <attributes>` to describe how the conversion between
    db columns and FHIR attributes should happen
 
-Since we are using SQLAlchemy, we will use the :mod:`fhirball.db.backends.SQLAlchemy`
+Since we are using SQLAlchemy, we will use the :mod:`fhirbug.db.backends.SQLAlchemy`
 module, and more specifically inherit our Mappings from
-:class:`fhirball.db.backends.SQLAlchemy.models.FhirBaseModel`
+:class:`fhirbug.db.backends.SQLAlchemy.models.FhirBaseModel`
 
 So, we start describing our mapping for the Patient resource from the id field
 which is the simplest:
 
-.. warning:: Fhirball needs to know which ORM the mappings we create are for.
+.. warning:: Fhirbug needs to know which ORM the mappings we create are for.
              Therefore, before importing FhirBaseModel, we must have configured
-             the fhirball settings. If you write the following code in an
+             the fhirbug settings. If you write the following code in an
              interactive session instead of a file, you will get an error unless
-             you configure fhirball first. To do so, just paste the code described
+             you configure fhirbug first. To do so, just paste the code described
              :ref:`below <config>`.
 
 .. code-block:: python
     :caption: mappings.py
 
     from models import Patient as PatientModel
-    from fhirball.db.backends.SQLAlchemy.models import FhirBaseModel
-    from fhirball.models.attributes import Attribute
+    from fhirbug.db.backends.SQLAlchemy.models import FhirBaseModel
+    from fhirbug.models.attributes import Attribute
 
     class Patient(PatientModel, FhirBaseModel):
         class FhirMap:
@@ -128,19 +128,19 @@ which is the simplest:
 
 
 .. note:: The fact that we named the mapper class `Patient` is important, since
-         when fhirball looks for a mapper, it looks by default for a class
+         when fhirbug looks for a mapper, it looks by default for a class
          with the same name as the fhir resource.
 
-By passing the column name as a string to the ``Attribute`` we tell fhirball
+By passing the column name as a string to the ``Attribute`` we tell fhirbug
 that the id attribute of the Patient FHIR resource should be retrieved from the
 ``patient_id`` column.
 
 For the ``birthDate`` attribute we get the information from a single database column,
 but it must be converted to and from a FHIR DateTime datatype. So, we will use the
-:class:`~fhirball.models.attributes.DateAttribute` helper and let it handle
+:class:`~fhirbug.models.attributes.DateAttribute` helper and let it handle
 conversions automatically.
 
-We will also add the name attribute, using the :class:`~fhirball.models.attributes.NameAttribute`
+We will also add the name attribute, using the :class:`~fhirbug.models.attributes.NameAttribute`
 helper. We tell it that we get and set the family name from the column ``last_name`` and
 the given name from ``first_name``
 
@@ -149,8 +149,8 @@ the given name from ``first_name``
     :emphasize-lines: 3,8-12
 
     from models import Patient as PatientModel
-    from fhirball.db.backends.SQLAlchemy.models import FhirBaseModel
-    from fhirball.models.attributes import Attribute, DateAttribute, NameAttribute
+    from fhirbug.db.backends.SQLAlchemy.models import FhirBaseModel
+    from fhirbug.models.attributes import Attribute, DateAttribute, NameAttribute
 
     class Patient(PatientModel, FhirBaseModel):
         class FhirMap:
@@ -167,10 +167,10 @@ Letting the magic happen
 
 .. _config:
 
-Let's test what we have so far. First, we must provide fhirball with some
+Let's test what we have so far. First, we must provide fhirbug with some
 basic configuration:
 
-    >>> from fhirball.config import settings
+    >>> from fhirbug.config import settings
     >>> settings.configure({
     ...     'DB_BACKEND': 'SQLAlchemy',
     ...     'SQLALCHEMY_CONFIG': {
@@ -189,7 +189,7 @@ simple SQLAlchemy model:
 
 This ``patient`` object we have created here is a classic SQLAlchemy model.
 We can save it, delete it, change values for its columns, etc. **But** it has
-also been enhanced by fhirball.
+also been enhanced by fhirbug.
 
 Here's some stuff that we can do with it:
 
@@ -205,7 +205,7 @@ The same way that all model attributes are accessible from the ``patient`` insta
 all FHIR attributes are accessible from ``patient.Fhir``:
 
     >>> patient.Fhir.name
-    <fhirball.Fhir.Resources.humanname.HumanName at 0x7fc62e1cbcf8>
+    <fhirbug.Fhir.Resources.humanname.HumanName at 0x7fc62e1cbcf8>
     >>> patient.Fhir.name.as_json()
     {'family': 'Alison', 'given': ['Alice']}
     >>> patient.Fhir.name.family
@@ -230,11 +230,11 @@ The change is applied to the actual database model!
 Handling requests
 -----------------
 
-We will finish this quick introduction to fhirball with a look on how requests
+We will finish this quick introduction to fhirbug with a look on how requests
 are handled. First, let's create a couple more entries:
 
     >>> from datetime import datetime
-    >>> from fhirball.config import settings
+    >>> from fhirbug.config import settings
     >>> settings.configure({
     ...     'DB_BACKEND': 'SQLAlchemy',
     ...     'SQLALCHEMY_CONFIG': {
@@ -254,7 +254,7 @@ is enough for us to get some nice FHIR functionality like searches.
 
 Let's start by asking for all Patient entries:
 
-    >>> from fhirball.server.requestparser import parse_url
+    >>> from fhirbug.server.requestparser import parse_url
     >>> query = parse_url('Patient')
     >>> Patient.get(query)
 

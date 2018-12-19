@@ -6,14 +6,14 @@ Overview
 Creating Mappings
 -----------------
 
-Fhirball offers a simple declarative way to map your database tables to
+Fhirbug offers a simple declarative way to map your database tables to
 `Fhir Resources`_. You need to have created models for your tables using one of
 the supported ORMs.
 
 Let's see an example using SQLAlchemy. Suppose we have this model of our database
 table where patient personal infrormation is stored.
 
-(Note that we have named the model Patient. This allows Fhirball to match it to the corresponding resource automatically. If we wanted to give it a different name, we would then have to define `__Resource__ = 'Patient'` after the `__tablename__`)
+(Note that we have named the model Patient. This allows Fhirbug to match it to the corresponding resource automatically. If we wanted to give it a different name, we would then have to define `__Resource__ = 'Patient'` after the `__tablename__`)
 
 ::
 
@@ -28,7 +28,7 @@ table where patient personal infrormation is stored.
         gender = Column(Integer)  # 0: unknown, 1:female, 2:male
         ssn = Column(Integer)
 
-To map this table to the `Patient`_ resource, we will make it inherit it :class:`fhirball.db.backends.SQLAlchemy.FhirBaseModel` instead of Base.
+To map this table to the `Patient`_ resource, we will make it inherit it :class:`fhirbug.db.backends.SQLAlchemy.FhirBaseModel` instead of Base.
 Then we add a class named **FhirMap** as a member and add all fhir fields we want to support using :mod:`Attributes`:
 
 .. note::
@@ -37,9 +37,9 @@ Then we add a class named **FhirMap** as a member and add all fhir fields we wan
 ::
 
     from sqlalchemy import Column, Integer, String
-    from fhirball.db.backends.SQLAlchemy import FhirBaseModel
-    from fhirball.models import Attribute, NameAttribute
-    from fhirball.db.backends.SQLAlchemy.searches import NumericSearch
+    from fhirbug.db.backends.SQLAlchemy import FhirBaseModel
+    from fhirbug.models import Attribute, NameAttribute
+    from fhirbug.db.backends.SQLAlchemy.searches import NumericSearch
 
     class Patient(FhirBaseModel):
         __tablename__ = "PatientEntries"

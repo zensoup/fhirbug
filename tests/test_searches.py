@@ -2,16 +2,16 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock, patch, call
 
-from fhirball.exceptions import QueryValidationError
-from fhirball.db.backends.SQLAlchemy import searches as searches_sqla
-from fhirball.db.backends.DjangoORM import searches as searches_django
+from fhirbug.exceptions import QueryValidationError
+from fhirbug.db.backends.SQLAlchemy import searches as searches_sqla
+from fhirbug.db.backends.DjangoORM import searches as searches_django
 
 
 class TestSQLAlchemyNumeric(unittest.TestCase):
     def setUp(self):
         self.NumericSearch = searches_sqla.NumericSearch
         self.NumericSearchWithQuantity = searches_sqla.NumericSearchWithQuantity
-        self.MockPath = "fhirball.db.backends.SQLAlchemy.searches.NumericSearch"
+        self.MockPath = "fhirbug.db.backends.SQLAlchemy.searches.NumericSearch"
         column = Mock()
         column.__lt__ = Mock()
         column.__gt__ = Mock()
@@ -109,7 +109,7 @@ class TestSQLAlchemyNumeric(unittest.TestCase):
 class TestSQLAlchemyString(unittest.TestCase):
     def setUp(self):
         self.StringSearch = searches_sqla.StringSearch
-        self.MockPath = "fhirball.db.backends.SQLAlchemy.searches.or_"
+        self.MockPath = "fhirbug.db.backends.SQLAlchemy.searches.or_"
         column = Mock()
         column.__eq__ = Mock()
         self.column = column
@@ -131,7 +131,7 @@ class TestSQLAlchemyString(unittest.TestCase):
             self.search(self.cls, "name", "bob", self.sql_query, None)
             self.sql_query.filter.assert_called_with(or_())
             args = next(or_.call_args_list[0][0][0])
-            self.column.startswith.assert_called_with("bob")
+            self.column.ilike.assert_called_with("bob%")
             self.assertEquals(args, self.column.startswith())
 
     def test_search_contains(self):
@@ -178,7 +178,7 @@ class TestDjangoORMNumeric(TestSQLAlchemyNumeric):
     def setUp(self):
         self.NumericSearch = searches_django.NumericSearch
         self.NumericSearchWithQuantity = searches_django.NumericSearchWithQuantity
-        self.MockPath = "fhirball.db.backends.DjangoORM.searches.NumericSearch"
+        self.MockPath = "fhirbug.db.backends.DjangoORM.searches.NumericSearch"
         column = Mock()
         self.column = column
         self.cls = SimpleNamespace(name=column)

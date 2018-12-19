@@ -1,10 +1,10 @@
 import unittest
-from fhirball.config import settings
+from fhirbug.config import settings
 if settings.is_configured():
     settings._reset()
 settings.configure({'DB_BACKEND': 'SQLAlchemy', 'SQLALCHEMY_CONFIG': {'URI': 'sqlite:///memory'}})
 from . import models
-from fhirball.Fhir.resources import Patient, Observation
+from fhirbug.Fhir.resources import Patient, Observation
 
 
 class TestAbstractBaseMixin(unittest.TestCase):
@@ -55,7 +55,7 @@ class TestAbstractBaseMixin(unittest.TestCase):
         """
         to_fhir should convert to a Fhir Resource, containing only the attributes specified in elements
         """
-        from fhirball.server.requestparser import parse_url
+        from fhirbug.server.requestparser import parse_url
         q = parse_url('Patient?_elements=active,name')
 
         inst = models.BetterBaseMixinModel()

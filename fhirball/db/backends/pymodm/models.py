@@ -1,9 +1,9 @@
 from pymodm.errors import DoesNotExist
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
-from fhirball.db.backends.pymodm.pagination import paginate
-from fhirball.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
-from fhirball.exceptions import DoesNotExistError
+from fhirbug.db.backends.pymodm.pagination import paginate
+from fhirbug.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
+from fhirbug.exceptions import DoesNotExistError
 
 
 class AbstractBaseModel(FhirAbstractBaseMixin):

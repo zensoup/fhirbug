@@ -1,7 +1,7 @@
 Mixins
 ======
 
-.. module:: fhirball.models.mixins
+.. module:: fhirbug.models.mixins
 
 .. autoclass:: FhirAbstractBaseMixin
     :members:

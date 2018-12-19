@@ -1,7 +1,7 @@
 from django.db import models
-from fhirball.db.backends.DjangoORM.pagination import paginate
-from fhirball.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
-from fhirball.exceptions import DoesNotExistError
+from fhirbug.db.backends.DjangoORM.pagination import paginate
+from fhirbug.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
+from fhirbug.exceptions import DoesNotExistError
 
 
 

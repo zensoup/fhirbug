@@ -1,5 +1,5 @@
-from fhirball.models.mixins import FhirBaseModelMixin, FhirAbstractBaseMixin
-from fhirball.models.attributes import Attribute, const, DateAttribute
+from fhirbug.models.mixins import FhirBaseModelMixin, FhirAbstractBaseMixin
+from fhirbug.models.attributes import Attribute, const, DateAttribute
 from types import SimpleNamespace as SN
 
 
@@ -95,7 +95,7 @@ class BaseMixinModel(FhirAbstractBaseMixin, FhirBaseModelMixin):
 
 
 class BetterBaseMixinModel(FhirAbstractBaseMixin, FhirBaseModelMixin):
-    from fhirball.Fhir.resources import HumanName
+    from fhirbug.Fhir.resources import HumanName
     _name = HumanName(family="sponge", given="bob")
     _age = 12
     __Resource__ = 'Patient'

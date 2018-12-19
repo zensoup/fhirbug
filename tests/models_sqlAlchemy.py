@@ -1,4 +1,4 @@
-from fhirball.models.mixins import FhirBaseModelMixin, FhirAbstractBaseMixin
+from fhirbug.models.mixins import FhirBaseModelMixin, FhirAbstractBaseMixin
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, ForeignKey
 

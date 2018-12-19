@@ -1,6 +1,6 @@
 import isodate
 from datetime import timedelta
-from fhirball.exceptions import QueryValidationError
+from fhirbug.exceptions import QueryValidationError
 
 
 def to_float(str):

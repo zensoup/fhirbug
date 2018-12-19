@@ -1,6 +1,6 @@
 from urllib.parse import urlparse, parse_qs
 
-from fhirball.exceptions import QueryValidationError
+from fhirbug.exceptions import QueryValidationError
 
 def split_join(lst):
     """
@@ -122,7 +122,7 @@ def validate_params(params):
 
   :param params: Parameter dictionary produced by parse_url
   :return:
-  :raises: :exc:`fhirball.exceptions.QueryValidationError`
+  :raises: :exc:`fhirbug.exceptions.QueryValidationError`
   """
   pass
   # if not_valid(params):

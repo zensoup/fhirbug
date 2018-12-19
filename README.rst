@@ -1,17 +1,17 @@
 FHIRBALL
 --------
 
-Fhirball intends to be a full-featured `FHIR`_ server for python. It has been
+Fhirbug intends to be a full-featured `FHIR`_ server for python. It has been
 designed to be easy to set up and configure and be flexible when it comes to
 the rest of tools it is combined with, like web frameworks and database interfaces.
 In most simple cases, very little code has to be written apart from field
 mappings.
 
-**Fhirball is still under development!** The API may still change at any time,
+**Fhirbug is still under development!** The API may still change at any time,
 it probably contains heaps of bugs and has never been tested in production. If
 you are interested in making it better, you are very welcome to contribute!
 
-**What fhirball does:**
+**What fhirbug does:**
 
 
 - It provides the ability to create "real time" transformations between your ORM models to valid FHIR resources through an extensive mapping API.
@@ -24,11 +24,11 @@ you are interested in making it better, you are very welcome to contribute!
 
 - Provides the ability to audit each request, at the granularity that you desire, all the way down to limiting which of the attributes for each model should be accessible for each user.
 
-**What fhirball does not do:**
+**What fhirbug does not do:**
 
-- Provide a ready to use solution for a Fhir server. Fhirball is a framework, we want things to be as easy as possible but you will still have to write code.
+- Provide a ready to use solution for a Fhir server. Fhirbug is a framework, we want things to be as easy as possible but you will still have to write code.
 
-- Contain a web server. Fhirball takes over once there is a request string and request body and returns a json object. You have to handle the actual requests and responses.
+- Contain a web server. Fhirbug takes over once there is a request string and request body and returns a json object. You have to handle the actual requests and responses.
 
 - Handle authentication and authorization. It supports it, but you must write the implementation.
 
@@ -43,7 +43,7 @@ Writing Maps
 ============
 
 Mapping from a database model to a Fhir resource is pretty simple.
-Begin by declaring your models using the ORM of your choice. Subclass or extend your models to use fhirball's mixins and declare a class called FhirMap.
+Begin by declaring your models using the ORM of your choice. Subclass or extend your models to use fhirbug's mixins and declare a class called FhirMap.
 
 Inside FhirMap, use Attributes to declare properties using the name of the corresponding Fhir resource.
 
@@ -52,8 +52,8 @@ Here's a simple example for SQLAlchemy:
 .. code-block:: python
 
     from sqlalchemy import Column, Integet, String
-    from fhirball.db.backends.SQLAlchemy.base import Base, engine
-    from fhirball.db.backends.SQLAlchemy import FhirBaseModel
+    from fhirbug.db.backends.SQLAlchemy.base import Base, engine
+    from fhirbug.db.backends.SQLAlchemy import FhirBaseModel
 
 
     class Location(FhirBaseModel):
@@ -92,7 +92,7 @@ But it also has FHIR superpowers:
 
 .. code-block:: python
 
-    >>> from fhirball.server.requestparser import parse_url
+    >>> from fhirbug.server.requestparser import parse_url
     >>> request = parse_url('Location?name:contains=storage')
     >>> Location.get(request)
     {
@@ -116,7 +116,7 @@ But it also has FHIR superpowers:
         ]
     }
 
-That probably seemed a bit magic, so let's dive a bit deeper in how fhirball works.
+That probably seemed a bit magic, so let's dive a bit deeper in how fhirbug works.
 
 By making a database model inherit from our base class instead of declarative_base
 and defining a FhirMap, we gain the ability to handle it ad both a model and a
@@ -142,7 +142,7 @@ And get the JSON representation:
 .. code-block:: python
 
     >>> location.to_fhir()
-    <fhirball.Fhir.Resources.location.Location at 0x7fb2445c6080>
+    <fhirbug.Fhir.Resources.location.Location at 0x7fb2445c6080>
     >>> location.as_json()
     {
         'resourceType': 'Location',

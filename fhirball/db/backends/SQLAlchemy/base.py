@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
-from fhirball.config import settings
+from fhirbug.config import settings
 
 
 class AbstractModelMeta(DeclarativeMeta):

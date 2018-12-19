@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import Mock
-from fhirball.config import utils
+from fhirbug.config import utils
 from .resources import sample_settings
 
 utils.default_settings = sample_settings

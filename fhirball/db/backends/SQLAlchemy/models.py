@@ -18,10 +18,10 @@
 '''
 
 
-from fhirball.db.backends.SQLAlchemy.pagination import paginate
-from fhirball.db.backends.SQLAlchemy.base import Base, session
+from fhirbug.db.backends.SQLAlchemy.pagination import paginate
+from fhirbug.db.backends.SQLAlchemy.base import Base, session
 
-from fhirball.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
+from fhirbug.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
 
 
 

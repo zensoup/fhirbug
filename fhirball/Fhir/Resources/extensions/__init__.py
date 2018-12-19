@@ -2,7 +2,7 @@
 Subclasses of Fhir Resources that provide som functionality shortcuts.
 '''
 
-from fhirball.Fhir.Resources import identifier, humanname, bundle
+from fhirbug.Fhir.Resources import identifier, humanname, bundle
 class AMKA(identifier.Identifier):
   '''
   Create an Identifier Resource representing the AMKA coding from a string

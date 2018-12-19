@@ -79,7 +79,7 @@ class OperationError(Exception):
         Express the exception as an OperationOutcome resource.
         This allows us to catch it and immediately return it to the user.
         """
-        from fhirball.Fhir.resources import OperationOutcome
+        from fhirbug.Fhir.resources import OperationOutcome
 
         return OperationOutcome(
             {

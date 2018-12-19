@@ -1,12 +1,12 @@
 import re
 
-from fhirball.Fhir import resources
-from fhirball.models.attributes import Attribute
-from fhirball.config import import_models
-from fhirball.exceptions import MappingValidationError, AuthorizationError
-from fhirball.Fhir.resources import PaginatedBundle
+from fhirbug.Fhir import resources
+from fhirbug.models.attributes import Attribute
+from fhirbug.config import import_models
+from fhirbug.exceptions import MappingValidationError, AuthorizationError
+from fhirbug.Fhir.resources import PaginatedBundle
 
-from fhirball.config import settings
+from fhirbug.config import settings
 
 
 class FhirAbstractBaseMixin:
@@ -15,7 +15,7 @@ class FhirAbstractBaseMixin:
     Most importantly, it provides the  ``.to_fhir()`` method that
     handles the transformation from an SQLAlchemy model to a Fhir resource.
     User-defined models subclassing this class **must** implement a ``FhirMap``
-    nested class. 
+    nested class.
     """
     def to_fhir(self, *args, query=None, **kwargs):
         """
@@ -92,7 +92,7 @@ class FhirAbstractBaseMixin:
         them and add them to the initial resources ``contained`` field.
 
         :param query: A :class:`FhirRequestQuery` object holding the current request.
-        :type query: :class:`fhirball.server.requestparser.FhirRequestQuery`
+        :type query: :class:`fhirbug.server.requestparser.FhirRequestQuery`
 
         :returns: None
         """

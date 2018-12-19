@@ -1,11 +1,11 @@
 from importlib import import_module
-from fhirball.exceptions import (
+from fhirbug.exceptions import (
     MappingValidationError,
     UnsupportedOperationError,
     MappingException,
 )
-from fhirball.Fhir import resources as fhir
-from fhirball.config import import_searches, import_models, settings
+from fhirbug.Fhir import resources as fhir
+from fhirbug.config import import_searches, import_models, settings
 
 
 class Attribute:

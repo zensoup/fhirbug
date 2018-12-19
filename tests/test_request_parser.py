@@ -1,6 +1,6 @@
 import unittest
-from fhirball.server.requestparser import parse_url, split_join
-from fhirball.exceptions import QueryValidationError
+from fhirbug.server.requestparser import parse_url, split_join
+from fhirbug.exceptions import QueryValidationError
 
 
 class TestSplitJoin(unittest.TestCase):

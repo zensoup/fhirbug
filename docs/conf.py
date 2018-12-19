@@ -21,7 +21,7 @@
 import sys
 sys.path.append('..')
 
-project = 'fhirball'
+project = 'fhirbug'
 copyright = '2018, Vangelis Kostalas'
 author = 'Vangelis Kostalas'
 
@@ -108,7 +108,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'fhirballdoc'
+htmlhelp_basename = 'fhirbugdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -135,7 +135,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'fhirball.tex', 'fhirball Documentation',
+    (master_doc, 'fhirbug.tex', 'fhirbug Documentation',
      'Vangelis Kostalas', 'manual'),
 ]
 
@@ -145,7 +145,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'fhirball', 'fhirball Documentation',
+    (master_doc, 'fhirbug', 'fhirbug Documentation',
      [author], 1)
 ]
 
@@ -156,8 +156,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'fhirball', 'fhirball Documentation',
-     author, 'fhirball', 'One line description of project.',
+    (master_doc, 'fhirbug', 'fhirbug Documentation',
+     author, 'fhirbug', 'One line description of project.',
      'Miscellaneous'),
 ]
 

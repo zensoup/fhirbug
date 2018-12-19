@@ -2,12 +2,12 @@ import sys
 import doctest
 
 # The modules to be tested
-from fhirball.Fhir.Resources import fhirabstractbase
-from fhirball.Fhir.Resources import extensions
-from fhirball.Fhir import resources
-from fhirball.server import requestparser
-from fhirball.db.backends import SQLAlchemy
-from fhirball.models import attributes, pagination
+from fhirbug.Fhir.Resources import fhirabstractbase
+from fhirbug.Fhir.Resources import extensions
+from fhirbug.Fhir import resources
+from fhirbug.server import requestparser
+from fhirbug.db.backends import SQLAlchemy
+from fhirbug.models import attributes, pagination
 
 def testResourceContructor(verbose=False):
 

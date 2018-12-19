@@ -1,5 +1,5 @@
 from django.core.paginator import Paginator
-from fhirball.models.pagination import Page
+from fhirbug.models.pagination import Page
 
 
 def paginate(query, page, page_size):

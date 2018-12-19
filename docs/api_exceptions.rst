@@ -1,7 +1,7 @@
-fhirball.exceptions
+fhirbug.exceptions
 ===================
 
 
-.. automodule:: fhirball.exceptions
+.. automodule:: fhirbug.exceptions
     :members:
     :inherited-members:

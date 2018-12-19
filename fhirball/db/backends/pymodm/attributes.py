@@ -1,8 +1,8 @@
 from bson.objectid import ObjectId
 
-from fhirball.models.attributes import Attribute
-from fhirball.config import import_models
-from fhirball.exceptions import MappingValidationError
+from fhirbug.models.attributes import Attribute
+from fhirbug.config import import_models
+from fhirbug.exceptions import MappingValidationError
 
 
 class ReferenceAttribute(Attribute):
