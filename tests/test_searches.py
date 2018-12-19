@@ -131,7 +131,7 @@ class TestSQLAlchemyString(unittest.TestCase):
             self.search(self.cls, "name", "bob", self.sql_query, None)
             self.sql_query.filter.assert_called_with(or_())
             args = next(or_.call_args_list[0][0][0])
-            self.column.ilike.assert_called_with("bob%")
+            self.column.startswith.assert_called_with("bob")
             self.assertEquals(args, self.column.startswith())
 
     def test_search_contains(self):
