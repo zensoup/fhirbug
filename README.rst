@@ -1,7 +1,7 @@
-FHIRBALL
+FHIRBUG
 --------
 
-Fhirbug intends to be a full-featured `FHIR`_ server for python. It has been
+Fhirbug intends to be a full-featured `FHIR`_ server for python >= **3.6**. It has been
 designed to be easy to set up and configure and be flexible when it comes to
 the rest of tools it is combined with, like web frameworks and database interfaces.
 In most simple cases, very little code has to be written apart from field
@@ -20,7 +20,7 @@ you are interested in making it better, you are very welcome to contribute!
 
 - It's compatible with the SQLAlchemy_, DjangoORM_ and PyMODM_ ORMs, so if you can describe your database in one of them, you are good to go. It should also be pretty easy to extend to support any other ORM, feel free to submit a pull request!
 
-- Handles many of the FHIR REST operations and searches like creating and updating resources, performing advanced queries such as reverse includes,paginated bundles, contained or referenced resources, and more.
+- Handles many of the FHIR REST operations and searches like creating and updating resources, performing advanced queries such as reverse includes, paginated bundles, contained or referenced resources, and more.
 
 - Provides the ability to audit each request, at the granularity that you desire, all the way down to limiting which of the attributes for each model should be accessible for each user.
 
@@ -32,7 +32,7 @@ you are interested in making it better, you are very welcome to contribute!
 
 - Handle authentication and authorization. It supports it, but you must write the implementation.
 
-- A ton of smaller stuff, which you can find in the _Roadmap_.
+- A ton of smaller stuff, which you can find in the Roadmap_.
 
 ___________________
 Quick Overview
@@ -116,7 +116,7 @@ But it also has FHIR superpowers:
         ]
     }
 
-That probably seemed a bit magic, so let's dive a bit deeper in how fhirbug works.
+That probably seemed a bit like magic, so let's dive a bit deeper in how fhirbug works.
 
 By making a database model inherit from our base class instead of declarative_base
 and defining a FhirMap, we gain the ability to handle it ad both a model and a

@@ -241,13 +241,14 @@ are handled. First, let's create a couple more entries:
     ...         'URI': 'sqlite:///:memory:'
     ...     }
     ... })
+    >>> from fhirbug.db.backends.SQLAlchemy.base import session
     >>> from mappings import Patient
-    >>> Patient.session.add_all([
+    >>> session.add_all([
     ...     Patient(first_name='Some', last_name='Guy', dob=datetime(1990, 10, 10)),
     ...     Patient(first_name='Someone', last_name='Else', dob=datetime(1993, 12, 18)),
     ...     Patient(first_name='Not', last_name='Me', dob=datetime(1985, 6, 6)),
     ... ])
-    >>> Patient.session.commit()
+    >>> session.commit()
 
 Great! Now we can simulate some requests. The mapper class we defined earlier
 is enough for us to get some nice FHIR functionality like searches.

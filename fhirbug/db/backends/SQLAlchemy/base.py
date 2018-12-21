@@ -8,14 +8,6 @@ from fhirbug.config import settings
 
 
 class AbstractModelMeta(DeclarativeMeta):
-    # def __new__(mcs, name, bases, attrs, **kwargs):
-    #   ret = super().__new__(mcs, name, bases, attrs)
-    #   print(name, 'query' in bases[0].__dict__)
-    #   if '__get_query__' in attrs:
-    #     cc = [cl for cl in bases[0].mro() if 'query' in cl.__dict__]
-    #     import ipdb; ipdb.set_trace()
-    #     ret.query = ret.__get_query__(bases[0].query)
-    #   return ret
     def __getattribute__(self, item):
         if item == "query":
             if hasattr(self, "__get_query__"):
@@ -25,7 +17,6 @@ class AbstractModelMeta(DeclarativeMeta):
 
 
 Base = declarative_base(metaclass=AbstractModelMeta)
-# Base = declarative_base()
 
 # Create the db connection
 engine = create_engine(settings.SQLALCHEMY_CONFIG["URI"])
