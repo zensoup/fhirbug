@@ -8,6 +8,9 @@ FHIRBUG
 .. image:: https://img.shields.io/badge/python-3.6%20%7C%203.7-blue.svg
     :alt: Python Versions
 
+.. image:: https://travis-ci.org/zensoup/fhirbug.svg?branch=master
+    :target: https://travis-ci.org/zensoup/fhirbug
+    
 Fhirbug intends to be a full-featured `FHIR`_ server for python >= **3.6**. It has been
 designed to be easy to set up and configure and be flexible when it comes to
 the rest of tools it is combined with, like web frameworks and database interfaces.
