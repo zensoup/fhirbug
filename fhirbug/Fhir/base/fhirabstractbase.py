@@ -59,29 +59,29 @@ class FHIRAbstractBase(object):
 
     - Pass an other Resource instead of a dict as the value of an attribute
 
-    >>> amka = Identifier({'system': 'AMKA', 'value': '123'})
+    >>> ssn = Identifier({'system': 'SSN', 'value': '123'})
     >>>
-    >>> p = Patient({'identifier': [amka]})
+    >>> p = Patient({'identifier': [ssn]})
     >>> p.as_json() == TARGET
     True
 
     - Pass a single dict or Resource where a list is expected
 
-    >>> p = Patient({'identifier': {'system': 'AMKA', 'value': '123'}})
+    >>> p = Patient({'identifier': {'system': 'SSN', 'value': '123'}})
     >>> p.as_json() == TARGET
     True
 
-    >>> amka = Identifier({'system': 'AMKA', 'value': '123'})
+    >>> ssn = Identifier({'system': 'SSN', 'value': '123'})
     >>>
-    >>> p = Patient({'identifier': amka})
+    >>> p = Patient({'identifier': ssn})
     >>> p.as_json() == TARGET
     True
 
     - Use keyword arguments instead of dicts
 
-    >>> amka = Identifier(system='AMKA', value='123')
+    >>> ssn = Identifier(system='SSN', value='123')
     >>>
-    >>> p = Patient(identifier=amka)
+    >>> p = Patient(identifier=ssn)
     >>> p.as_json() == TARGET
     True
     """
