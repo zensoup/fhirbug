@@ -13,6 +13,7 @@ Welcome to fhirbug's documentation!
 
    quickstart
    overview
+   fhir_resources
    api_index
 
 

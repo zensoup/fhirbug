@@ -1,9 +1,12 @@
 FHIRBUG
---------
-.. image:: https://readthedocs.org/projects/pip/badge/?version=latest&style=plastic
-    :target: https://fhirbug.readthedocs.io
-    :alt: Documentation
+-------
+
+.. image:: https://readthedocs.org/projects/pip/badge/?version=latest
+   :target: https://fhirbug.readthedocs.io
+   :alt: Documentation
+
 .. image:: https://img.shields.io/badge/python-3.6%20%7C%203.7-blue.svg
+    :alt: Python Versions
 
 Fhirbug intends to be a full-featured `FHIR`_ server for python >= **3.6**. It has been
 designed to be easy to set up and configure and be flexible when it comes to
