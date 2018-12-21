@@ -257,9 +257,93 @@ Let's start by asking for all Patient entries:
 
     >>> from fhirbug.server.requestparser import parse_url
     >>> query = parse_url('Patient')
-    >>> Patient.get(query)
+    >>> Patient.get(query, strict=False)
+    {
+        "entry": [
+            {
+                "resource": {
+                    "birthDate": "1990-10-10T00:00:00",
+                    "name": [{"family": "Guy", "given": ["Some"]}],
+                    "resourceType": "Patient",
+                }
+            },
+            {
+                "resource": {
+                    "birthDate": "1993-12-18T00:00:00",
+                    "name": [{"family": "Else", "given": ["Someone"]}],
+                    "resourceType": "Patient",
+                }
+            },
+            {
+                "resource": {
+                    "birthDate": "1985-06-06T00:00:00",
+                    "name": [{"family": "Me", "given": ["Not"]}],
+                    "resourceType": "Patient",
+                }
+            },
+        ],
+        "resourceType": "Bundle",
+        "total": 3,
+        "type": "searchset",
+    }
 
+We get a proper Bundle_ Resource containing all of our Patient records!
+
+Advanced Queries
+----------------
+This quick guide is almost over, but before that let us see some more things Fhirbug can do. We start by asking only one result per page.
+
+    >>> query = parse_url('Patient?_count=1')
+    >>> Patient.get(query, strict=False)
+    {
+        "entry": [
+            {
+                "resource": {
+                    "birthDate": "1990-10-10T00:00:00",
+                    "name": [{"family": "Guy", "given": ["Some"]}],
+                    "resourceType": "Patient",
+                }
+            }
+        ],
+        "link": [
+            {"relation": "next", "url": "Patient/?_count=1&search-offset=2"},
+            {"relation": "previous", "url": "Patient/?_count=1&search-offset=1"},
+        ],
+        "resourceType": "Bundle",
+        "total": 4,
+        "type": "searchset",
+    }
+
+Notice how when defining our mappings we declared ``birthDate`` as a
+:class:`DateAttribute` and name as a :class:`NameAttribute`? This allows us to
+use several automations that Fhirbug provides like advanced searches:
+
+    >>> query = parse_url('Patient?birthDate=gt1990&given:contains=one')
+    >>> Patient.get(query, strict=False)
+    {
+        "entry": [
+            {
+                "resource": {
+                    "birthDate": "1993-12-18T00:00:00",
+                    "name": [{"family": "Else", "given": ["Someone"]}],
+                    "resourceType": "Patient",
+                }
+            }
+        ],
+        "resourceType": "Bundle",
+        "total": 1,
+        "type": "searchset",
+    }
+
+Here, we ask for all ``Patients`` that were born after 1990-01-01 and whose given
+name contains ``one``.
+
+Further Reading
+---------------
+You can dive into the actual documentation starting at the :ref:`Overview` or
+read the docs for the :ref:`Api`.
 
 .. _sqlite3: https://docs.python.org/3/library/sqlite3.html
 .. _Patient: https://www.hl7.org/fhir/patient.html
 .. _Encounter: https://www.hl7.org/fhir/encounter.html
+.. _Bundle: https://www.hl7.org/fhir/bundle.html
