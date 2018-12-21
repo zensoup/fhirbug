@@ -12,7 +12,13 @@ class ReferenceAttribute(Attribute):
     """
 
     def __init__(
-        self, possible_types, pk_getter, name, pk_setter=None, force_display=False, searcher=None
+        self,
+        possible_types,
+        pk_getter,
+        name,
+        pk_setter=None,
+        force_display=False,
+        searcher=None,
     ):
         self.possible_types = possible_types
         self.pk_getter = pk_getter

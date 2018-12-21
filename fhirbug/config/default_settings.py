@@ -9,8 +9,8 @@ DEFAULT_BUNDLE_SIZE = 20
 MAX_BUNDLE_SIZE = 100
 
 # Path to the models module
-MODELS_PATH = 'models'
+MODELS_PATH = "models"
 
 # Which DB backend should be used
 # SQLAlchemy | DjangoORM | PyMODM
-DB_BACKEND = 'SQLAlchemy'
+DB_BACKEND = "SQLAlchemy"

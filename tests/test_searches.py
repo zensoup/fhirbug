@@ -161,7 +161,7 @@ class TestSQLAlchemyString(unittest.TestCase):
         Multiple column names can be passed to the search constructor which will be
         joined together with or in the resulting query.
         """
-        search = self.StringSearch('first_name', 'last_name')
+        search = self.StringSearch("first_name", "last_name")
         column1 = Mock()
         column2 = Mock()
         cls = SimpleNamespace(first_name=column1, last_name=column2)

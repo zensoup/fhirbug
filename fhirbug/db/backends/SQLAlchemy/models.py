@@ -1,4 +1,4 @@
-'''
+"""
   SQLAlchemy backend.
   ==================
 
@@ -15,7 +15,7 @@
   }
 
 
-'''
+"""
 
 
 from fhirbug.db.backends.SQLAlchemy.pagination import paginate
@@ -24,46 +24,45 @@ from fhirbug.db.backends.SQLAlchemy.base import Base, session
 from fhirbug.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
 
 
-
 class AbstractBaseModel(Base, FhirAbstractBaseMixin):
-  """
+    """
   The base class to provide functionality to
   our models.
   """
-  __abstract__ = True
 
-  @classmethod
-  def _get_orm_query(cls):
-    return cls.query
+    __abstract__ = True
 
-  @classmethod
-  def _get_item_from_pk(cls, pk):
-      return cls.query.get(pk)
+    @classmethod
+    def _get_orm_query(cls):
+        return cls.query
+
+    @classmethod
+    def _get_item_from_pk(cls, pk):
+        return cls.query.get(pk)
 
 
 class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
-  __abstract__ = True
+    __abstract__ = True
 
-  @classmethod
-  def _after_create(cls, instance):
-      session.add(instance)
-      try:
-          session.commit()
-      except Exception as e:
-          session.rollback()
-          raise e
-      return instance
+    @classmethod
+    def _after_create(cls, instance):
+        session.add(instance)
+        try:
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise e
+        return instance
 
-  @classmethod
-  def _after_update(cls, instance):
-      try:
-          session.commit()
-      except Exception as e:
-          session.rollback()
-          raise e
-      return instance
+    @classmethod
+    def _after_update(cls, instance):
+        try:
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise e
+        return instance
 
-
-  @classmethod
-  def paginate(cls, *args, **kwargs):
-      return paginate(*args, **kwargs)
+    @classmethod
+    def paginate(cls, *args, **kwargs):
+        return paginate(*args, **kwargs)

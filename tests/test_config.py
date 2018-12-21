@@ -7,12 +7,11 @@ utils.default_settings = sample_settings
 
 
 class TestLazySettings(unittest.TestCase):
-
     def test_config_from_defaults(self):
         lazy_setting = utils.LazySettings()
         settings = lazy_setting._configure_from_defaults()
         self.assertIsInstance(settings, utils.FhirSettings)
-        self.assertEquals(vars(settings), {'DEBUG': True, 'TESTING': True})
+        self.assertEquals(vars(settings), {"DEBUG": True, "TESTING": True})
 
     def test_is_configured(self):
         lazy_setting = utils.LazySettings()
@@ -28,7 +27,7 @@ class TestLazySettings(unittest.TestCase):
 
         lazy_setting = Mocked()
 
-        test_settings = {'TEST': 5, 'SOME': 'OTHER', 'ignored': True}
+        test_settings = {"TEST": 5, "SOME": "OTHER", "ignored": True}
         lazy_setting.configure(test_settings)
         lazy_setting._configure_from_dict.assert_called_once_with(test_settings)
         lazy_setting._configure_from_path.assert_not_called()

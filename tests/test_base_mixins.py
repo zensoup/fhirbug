@@ -1,8 +1,11 @@
 import unittest
 from fhirbug.config import settings
+
 if settings.is_configured():
     settings._reset()
-settings.configure({'DB_BACKEND': 'SQLAlchemy', 'SQLALCHEMY_CONFIG': {'URI': 'sqlite:///memory'}})
+settings.configure(
+    {"DB_BACKEND": "SQLAlchemy", "SQLALCHEMY_CONFIG": {"URI": "sqlite:///memory"}}
+)
 from . import models
 from fhirbug.Fhir.resources import Patient, Observation
 
@@ -24,11 +27,10 @@ class TestAbstractBaseMixin(unittest.TestCase):
         """
         inst = models.BaseMixinModel()
         self.assertEquals(
-            inst.get_params_dict(Patient, ['active', 'name']), {"active": True, "name": "hello"}
+            inst.get_params_dict(Patient, ["active", "name"]),
+            {"active": True, "name": "hello"},
         )
-        self.assertEquals(
-            inst.get_params_dict(Patient, ['active']), {"active": True}
-        )
+        self.assertEquals(inst.get_params_dict(Patient, ["active"]), {"active": True})
         self.assertEquals(inst.get_params_dict(Observation), {})
 
     def test_get_rev_includes(self):
@@ -56,7 +58,8 @@ class TestAbstractBaseMixin(unittest.TestCase):
         to_fhir should convert to a Fhir Resource, containing only the attributes specified in elements
         """
         from fhirbug.server.requestparser import parse_url
-        q = parse_url('Patient?_elements=active,name')
+
+        q = parse_url("Patient?_elements=active,name")
 
         inst = models.BetterBaseMixinModel()
         inst_as_fhir = inst.to_fhir(query=q)
@@ -69,14 +72,10 @@ class TestAbstractBaseMixin(unittest.TestCase):
             },
         )
 
-        q = parse_url('Patient?_elements=active')
+        q = parse_url("Patient?_elements=active")
         inst_as_fhir = inst.to_fhir(query=q)
         self.assertEquals(
-            inst_as_fhir.as_json(),
-            {
-                "active": True,
-                "resourceType": "Patient",
-            },
+            inst_as_fhir.as_json(), {"active": True, "resourceType": "Patient"}
         )
 
 

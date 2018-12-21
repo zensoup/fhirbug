@@ -2,7 +2,7 @@ import math
 
 
 class Page:
-    '''
+    """
     Base class for holding paginated results along with pagination metadata.
 
     >>> p = Page([1]*20, 2, 20, 100)
@@ -35,7 +35,7 @@ class Page:
     4
     >>> p.pages
     5
-    '''
+    """
 
     def __init__(self, items, page, page_size, total):
         self.items = items

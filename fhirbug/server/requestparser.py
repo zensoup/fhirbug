@@ -2,6 +2,7 @@ from urllib.parse import urlparse, parse_qs
 
 from fhirbug.exceptions import QueryValidationError
 
+
 def split_join(lst):
     """
     Accepts a list of comma separated strings, splits them and joins them in a new list
@@ -9,42 +10,54 @@ def split_join(lst):
     >>> split_join(['a,b,c', 'd', 'e,f'])
     ['a', 'b', 'c', 'd', 'e', 'f']
     """
-    return [e for elem in lst for e in elem.split(',')]
+    return [e for elem in lst for e in elem.split(",")]
+
 
 class FhirRequestQuery:
-  '''
+    """
   Represents parsed parameters from requests.
-  '''
-  def __init__(self, resource, resourceId, operation, operationId, modifiers, search_params, body=None, request=None):
-    #: A string containing the name of the requested Resource. eg: ``'Procedure'``
-    self.resource = resource
+  """
 
-    #: The id of the requested resource if a specific resource was requested else ``None``
-    self.resourceId = resourceId
+    def __init__(
+        self,
+        resource,
+        resourceId,
+        operation,
+        operationId,
+        modifiers,
+        search_params,
+        body=None,
+        request=None,
+    ):
+        #: A string containing the name of the requested Resource. eg: ``'Procedure'``
+        self.resource = resource
 
-    #: A string holding the requested `operation <https://www.hl7.org/fhir/search.html>`_ such as ``$meta`` or ``$validate``
-    self.operation = operation
+        #: The id of the requested resource if a specific resource was requested else ``None``
+        self.resourceId = resourceId
 
-    #: Extra parameters passed after the operation. For example if ``Patient/123/_history/2`` was requested,
-    #: ``operation`` would be ``_history`` and ``operationId`` would be ``2``
-    self.operationId = operationId
+        #: A string holding the requested `operation <https://www.hl7.org/fhir/search.html>`_ such as ``$meta`` or ``$validate``
+        self.operation = operation
 
-    #: Dictionary. Keys are modifier names and values are the provided values. Holds search parameters
-    #: that start with an underscore.
-    #: For example ``Patient/123?_format=json`` would have a modifiers value of ``{'_format': 'json'}``
-    self.modifiers = modifiers
+        #: Extra parameters passed after the operation. For example if ``Patient/123/_history/2`` was requested,
+        #: ``operation`` would be ``_history`` and ``operationId`` would be ``2``
+        self.operationId = operationId
 
-    #: Dictionary. Keys are parameter names and values are the provided values. Holds search parameters
-    #: that are not modifiers
-    #: For example ``Patient/123?_format=json`` would have a modifiers value of ``{'_format': 'json'}``
-    self.search_params = search_params
+        #: Dictionary. Keys are modifier names and values are the provided values. Holds search parameters
+        #: that start with an underscore.
+        #: For example ``Patient/123?_format=json`` would have a modifiers value of ``{'_format': 'json'}``
+        self.modifiers = modifiers
 
-    self.body = body
-    self.request = request
+        #: Dictionary. Keys are parameter names and values are the provided values. Holds search parameters
+        #: that are not modifiers
+        #: For example ``Patient/123?_format=json`` would have a modifiers value of ``{'_format': 'json'}``
+        self.search_params = search_params
+
+        self.body = body
+        self.request = request
 
 
 def parse_url(url):
-  '''
+    """
   Parse an http request string and produce an option dict.
 
   >>> p = parse_url('Patient/123/$validate?_format=json')
@@ -62,61 +75,68 @@ def parse_url(url):
   :param url: a string containing the path of the request. It should not contain the server
               path. For example: `Patients/123?name:contains=Jo`
   :returns: A :class:`FhirRequestQuery` object
-  '''
+  """
 
-  # Supported operations that may be applied straight on a resource type
-  base_operations = ['_search', '_history']
+    # Supported operations that may be applied straight on a resource type
+    base_operations = ["_search", "_history"]
 
-  parsed = urlparse(url)
+    parsed = urlparse(url)
 
-  # Parse the path
-  path = parsed.path.split('/')
+    # Parse the path
+    path = parsed.path.split("/")
 
-  # Remove the empty string from the end if the path ends with a slash
-  if path[-1] == '':
-      path.pop(-1)
+    # Remove the empty string from the end if the path ends with a slash
+    if path[-1] == "":
+        path.pop(-1)
 
-  # Remove the empty string from the start if the path is only a slash
-  if path and path[0] == '':
-      path.pop(0)
+    # Remove the empty string from the start if the path is only a slash
+    if path and path[0] == "":
+        path.pop(0)
 
-  resource = path.pop(0) if path else None
-  # The second item may be a resource id or a base operator. We check if it exists in base_operations
-  if path and path[0] in base_operations:
-      resourceId = None
-      operation = path.pop(0) if path else None
-  else:
-      resourceId = path.pop(0) if path else None
-      operation = path.pop(0) if path else None
-  operationId = path.pop(0) if operation and path else None
+    resource = path.pop(0) if path else None
+    # The second item may be a resource id or a base operator. We check if it exists in base_operations
+    if path and path[0] in base_operations:
+        resourceId = None
+        operation = path.pop(0) if path else None
+    else:
+        resourceId = path.pop(0) if path else None
+        operation = path.pop(0) if path else None
+    operationId = path.pop(0) if operation and path else None
 
-  # parse the query strings
-  qs = parse_qs(parsed.query)
+    # parse the query strings
+    qs = parse_qs(parsed.query)
 
-  # Get the built-in `_keywords`
-  modifiers = {param: split_join(value) for param, value in qs.items() if param.startswith('_')}
+    # Get the built-in `_keywords`
+    modifiers = {
+        param: split_join(value) for param, value in qs.items() if param.startswith("_")
+    }
 
-  # Get the rest of the search parameters
-  search_params = {param: split_join(value) for param, value in qs.items() if not param in modifiers}
+    # Get the rest of the search parameters
+    search_params = {
+        param: split_join(value)
+        for param, value in qs.items()
+        if not param in modifiers
+    }
 
-  # We accept both id and _id params, but transfer _id to search_params as id
-  id_param = modifiers.pop('_id', None)
-  if id_param:
-    search_params['id'] = id_param
+    # We accept both id and _id params, but transfer _id to search_params as id
+    id_param = modifiers.pop("_id", None)
+    if id_param:
+        search_params["id"] = id_param
 
-  params = {'resource': resource,
-          'resourceId': resourceId,
-          'operation': operation,
-          'operationId': operationId,
-          'modifiers': modifiers,
-          'search_params': search_params,
-          }
-  validate_params(params)
-  return FhirRequestQuery(**params)
+    params = {
+        "resource": resource,
+        "resourceId": resourceId,
+        "operation": operation,
+        "operationId": operationId,
+        "modifiers": modifiers,
+        "search_params": search_params,
+    }
+    validate_params(params)
+    return FhirRequestQuery(**params)
 
 
 def validate_params(params):
-  """
+    """
   Validate a parameter dictionary. If the parameters are invalid, raise a
   QueryValidationError with the details.
 
@@ -124,6 +144,6 @@ def validate_params(params):
   :return:
   :raises: :exc:`fhirbug.exceptions.QueryValidationError`
   """
-  pass
-  # if not_valid(params):
-  #   raise QueryValidationError(f'Invalid request string')
+    pass
+    # if not_valid(params):
+    #   raise QueryValidationError(f'Invalid request string')

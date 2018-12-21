@@ -1,9 +1,11 @@
 import unittest
 from fhirbug.config import settings
-settings._reset()
-settings.configure({'DB_BACKEND': 'SQLAlchemy', 'SQLALCHEMY_CONFIG': {'URI': 'sqlite:///memory'}})
-from . import models
 
+settings._reset()
+settings.configure(
+    {"DB_BACKEND": "SQLAlchemy", "SQLALCHEMY_CONFIG": {"URI": "sqlite:///memory"}}
+)
+from . import models
 
 
 class TestAttributes(unittest.TestCase):
@@ -66,30 +68,33 @@ class TestAttributes(unittest.TestCase):
         inst.name = "a_new_name"
         self.assertEquals(inst.name, "A_NEW_NAME")
 
+
 class TestAttributeWithConst(unittest.TestCase):
     def test_const_getter(self):
-        '''
+        """
         Attributes with const values always return the same value
-        '''
+        """
         inst = models.AttributeWithConst()
-        self.assertEquals(inst.name, 'the_name')
-        inst.name = 'new_name'
-        self.assertEquals(inst.name, 'the_name')
+        self.assertEquals(inst.name, "the_name")
+        inst.name = "new_name"
+        self.assertEquals(inst.name, "the_name")
+
 
 class TestDateAttributes(unittest.TestCase):
     def test_date_getter(self):
-        '''
+        """
         Date getter converts to fhir date automatically
-        '''
+        """
         inst = models.WithDateAttribute()
-        self.assertEquals(inst.date.as_json(), '2012-12-12T00:00:00')
+        self.assertEquals(inst.date.as_json(), "2012-12-12T00:00:00")
 
     def test_date_setter(self):
-        '''
+        """
         Date setter converts to and from fhir date automatically
-        '''
+        """
         from datetime import datetime
+
         inst = models.WithDateAttribute()
-        self.assertEquals(inst.date.as_json(), '2012-12-12T00:00:00')
+        self.assertEquals(inst.date.as_json(), "2012-12-12T00:00:00")
         inst.date = datetime(2013, 3, 3)
-        self.assertEquals(inst.date.as_json(), '2013-03-03T00:00:00')
+        self.assertEquals(inst.date.as_json(), "2013-03-03T00:00:00")

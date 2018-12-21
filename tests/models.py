@@ -68,39 +68,44 @@ class WithDateAttribute:
 
 
 class WithSearcher(FhirAbstractBaseMixin, FhirBaseModelMixin):
-    _name = 'my_name'
+    _name = "my_name"
+
     class FhirMap:
         def search_name(cls, field_name, value, sql_query, query):
             return sql_query
+
         name = Attribute(searcher=search_name)
 
 
 class WithSearcherAndRegex(FhirAbstractBaseMixin, FhirBaseModelMixin):
-    _name = 'my_name'
+    _name = "my_name"
+
     class FhirMap:
         def search_name(cls, field_name, value, sql_query, query):
             return sql_query
-        name = Attribute(searcher=search_name, search_regex=r'(name|NAME)')
+
+        name = Attribute(searcher=search_name, search_regex=r"(name|NAME)")
 
 
 class BaseMixinModel(FhirAbstractBaseMixin, FhirBaseModelMixin):
     _name = "hello"
     _age = 12
-    __Resource__ = 'Patient'
+    __Resource__ = "Patient"
 
     class FhirMap:
-        active=Attribute(const(True))
+        active = Attribute(const(True))
         name = Attribute("_name", "_name")
         age = Attribute("_age", "_age")
 
 
 class BetterBaseMixinModel(FhirAbstractBaseMixin, FhirBaseModelMixin):
     from fhirbug.Fhir.resources import HumanName
+
     _name = HumanName(family="sponge", given="bob")
     _age = 12
-    __Resource__ = 'Patient'
+    __Resource__ = "Patient"
 
     class FhirMap:
-        active=Attribute(const(True))
+        active = Attribute(const(True))
         name = Attribute("_name", "_name")
         age = Attribute("_age", "_age")

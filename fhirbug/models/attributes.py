@@ -396,7 +396,9 @@ class NameAttribute(Attribute):
 class EmbeddedAttribute(Attribute):
     def __init__(self, *args, type=None, **kwargs):
         if type is None:
-            raise MappingValidationError('You hane defined an EmbeddedAttribute without specifying the type.')
+            raise MappingValidationError(
+                "You hane defined an EmbeddedAttribute without specifying the type."
+            )
 
         self.type = type
         return super(EmbeddedAttribute, self).__init__(*args, **kwargs)
@@ -422,7 +424,9 @@ class EmbeddedAttribute(Attribute):
         if type(value) is dict:
             embedded_resource = dict_to_resource(self.type, value)
         elif type(value) is list:
-            embedded_resource = map(lambda v: dict_to_resource(self.type, v.as_json()), value)
+            embedded_resource = map(
+                lambda v: dict_to_resource(self.type, v.as_json()), value
+            )
         else:
             embedded_resource = value
         return super(EmbeddedAttribute, self).__set__(instance, embedded_resource)

@@ -63,11 +63,7 @@ class OperationError(Exception):
     """
 
     def __init__(
-        self,
-        severity="error",
-        code="exception",
-        diagnostics="",
-        status_code=500,
+        self, severity="error", code="exception", diagnostics="", status_code=500
     ):
         self.severity = severity
         self.code = code
@@ -93,10 +89,12 @@ class OperationError(Exception):
             }
         )
 
+
 class AuthorizationError(Exception):
     """
     The request could not be authorized.
     """
+
     def __init__(self, auditEvent, query=None):
         #: This exception carries an auditEvent resource describing why authorization failed
         #: It can be thrown anywhere in a mappings ``.get()`` method.

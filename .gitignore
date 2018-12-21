@@ -17,3 +17,4 @@ settings.py
 README.pdf
 docs/_build/
 examples
+.pre-commit-config.yaml

@@ -31,9 +31,13 @@ class LazySettings:
         if config is None:
             settings = self._configure_from_defaults()
             self._wrapped = settings
-            print(('WARNING: Settings have been configured from the default values.'
-                   ' If this is not intended, you are probably not configuring '
-                   'them before importing your mappings'))
+            print(
+                (
+                    "WARNING: Settings have been configured from the default values."
+                    " If this is not intended, you are probably not configuring "
+                    "them before importing your mappings"
+                )
+            )
             return settings
         if isinstance(config, str):
             return self._configure_from_path(config)
@@ -49,7 +53,7 @@ class LazySettings:
         return getattr(self._wrapped, name)
 
     def __setattr__(self, name, value):
-        if name == '_wrapped':
+        if name == "_wrapped":
             # Assign to __dict__ to avoid infinite __setattr__ loops.
             self.__dict__["_wrapped"] = value
             return

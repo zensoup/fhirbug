@@ -4,8 +4,9 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 
 Base = declarative_base()
 
+
 class DatabaseModel(Base, FhirAbstractBaseMixin, FhirBaseModelMixin):
-    __tablename__ = 'test'
+    __tablename__ = "test"
 
     id = Column(Integer, primary_key=True)
     name = Column(String)

@@ -17,6 +17,7 @@ class FhirAbstractBaseMixin:
     User-defined models subclassing this class **must** implement a ``FhirMap``
     nested class.
     """
+
     def to_fhir(self, *args, query=None, **kwargs):
         """
         Convert from a BaseModel to a Fhir Resource and return it.
@@ -38,8 +39,6 @@ class FhirAbstractBaseMixin:
 
         # Filter the matching fields
         param_dict = self.get_params_dict(Resource, elements=self._elements)
-
-
 
         # Cast to a resource
         resource = Resource(param_dict, strict=kwargs.get("strict", True))
@@ -71,10 +70,14 @@ class FhirAbstractBaseMixin:
         # along with all mandatory ones
         # TODO: toggle inclusion of mandatory based on a setting
         if elements:
-            attributes = [attr for attr in attributes if attr in elements + mock.getMandatoryFields() + ['id']]
+            attributes = [
+                attr
+                for attr in attributes
+                if attr in elements + mock.getMandatoryFields() + ["id"]
+            ]
 
-        visible_fields = getattr(self, '_visible_fields', attributes)
-        hidden_fields = getattr(self, '_hidden_fields', [])
+        visible_fields = getattr(self, "_visible_fields", attributes)
+        hidden_fields = getattr(self, "_hidden_fields", [])
 
         # Evaluate the common attributes. This is where all the getters are called
         param_dict = {
