@@ -197,8 +197,8 @@ class FHIRAbstractBase(object):
         """
         return []
 
-    def getMandatoryFields(self):
-        """ Returns a list of properties that are marked as mandatory.
+    def mandatoryFields(self):
+        """ Returns a list of properties that are marked as mandatory / not_optional.
         """
         properties = self.elementProperties()
         return [prop[0] for prop in properties if prop[-1] == True]

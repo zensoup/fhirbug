@@ -73,7 +73,7 @@ class FhirAbstractBaseMixin:
             attributes = [
                 attr
                 for attr in attributes
-                if attr in elements + mock.getMandatoryFields() + ["id"]
+                if attr in elements + mock.mandatoryFields() + ["id"]
             ]
 
         visible_fields = getattr(self, "_visible_fields", attributes)

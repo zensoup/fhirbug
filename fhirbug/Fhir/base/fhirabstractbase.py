@@ -3,6 +3,10 @@
 #
 #  Base class for all FHIR elements.
 
+## This file has been modified for use in the Fhirbug project.
+## You can find the original file and its License at
+## https://github.com/smart-on-fhir/fhir-parser
+
 import sys
 import logging
 
@@ -91,8 +95,11 @@ class FHIRAbstractBase(object):
         `logger.warning()`.
 
         :raises: FHIRValidationError on validation errors, unless strict is False
-        :param dict jsondict: A JSON dictionary to use for initialization
+        :param dict jsondict: A JSON dictionary or array or an (array of)
+                            instance(s) of an other
+                            resource to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
+        :param kwargs: Instead of a JSON dict, parameters can also be passed as keyword arguments
         """
 
         self._resolved = None
@@ -197,8 +204,8 @@ class FHIRAbstractBase(object):
         """
         return []
 
-    def getMandatoryFields(self):
-        """ Returns a list of properties that are marked as mandatory.
+    def mandatoryFields(self):
+        """ Returns a list of properties that are marked as mandatory / not_optional.
         """
         properties = self.elementProperties()
         return [prop[0] for prop in properties if prop[-1] == True]
