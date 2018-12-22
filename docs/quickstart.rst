@@ -3,6 +3,8 @@
 Quickstart
 ==========
 
+.. contents:: Contents:
+
 This section contains a brief example of creating a simple application using
 fhirbug. It's goal is to give the reader a general idea of how fhirbug
 works, not to provide them with in-depth knowledge about it.
