@@ -24,7 +24,6 @@ you are interested in making it better, you are very welcome to contribute!
 
 **What fhirbug does:**
 
-
 - It provides the ability to create "real time" transformations between your ORM models to valid FHIR resources through an extensive mapping API.
 
 - Has been designed to work with existing data-sets and database schemas but can of course be used with its own database.
@@ -44,6 +43,20 @@ you are interested in making it better, you are very welcome to contribute!
 - Handle authentication and authorization. It supports it, but you must write the implementation.
 
 - A ton of smaller stuff, which you can find in the Roadmap_.
+
+___________________
+Installation
+___________________
+Fhirbug has not been published on PyPi, since it is not mature enough yet.
+For now, you can install it using pip from this repo:
+::
+
+    $ pip install git+https://github.com/zensoup/fhirbug
+
+or if you want a specific release:
+::
+
+    $ pip install git+https://github.com/zensoup/fhirbug@v0.1.1
 
 ___________________
 Quick Overview
