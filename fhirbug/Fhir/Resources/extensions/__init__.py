@@ -2,51 +2,7 @@
 Subclasses of Fhir Resources that provide som functionality shortcuts.
 '''
 
-from fhirbug.Fhir.Resources import identifier, humanname, bundle
-class AMKA(identifier.Identifier):
-  '''
-  Create an Identifier Resource representing the AMKA coding from a string
-  containing the AMKA code.
-
-  >>> a = AMKA('123')
-  >>> isinstance(a, identifier.Identifier)
-  True
-  >>> a.as_json()
-  {'system': 'AMKA', 'use': 'official', 'value': '123'}
-  '''
-
-  def __init__(self, jsondict=None, *args, **kwargs):
-    # TODO: validate
-
-    amka_dict = {
-      'value': jsondict,
-      'system': 'AMKA',
-      'use': 'official',
-    }
-    return super(AMKA, self).__init__(amka_dict, *args, **kwargs)
-
-
-class EAMA(identifier.Identifier):
-  '''
-  Create an Identifier Resource representing the AMKA coding from a string
-  containing the AMKA code.
-
-  >>> a = EAMA('123')
-  >>> isinstance(a, identifier.Identifier)
-  True
-  >>> a.as_json()
-  {'system': 'EAMA', 'use': 'usual', 'value': '123'}
-  '''
-
-  def __init__(self, jsondict=None, *args, **kwargs):
-    # TODO: validate
-
-    amka_dict = {
-      'value': jsondict,
-      'system': 'EAMA',
-      'use': 'usual',
-    }
-    return super(EAMA, self).__init__(amka_dict, *args, **kwargs)
+from fhirbug.Fhir.Resources import bundle
 
 
 class PaginatedBundle(bundle.Bundle):
