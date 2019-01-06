@@ -1,8 +1,9 @@
 from bson.objectid import ObjectId
+from bson.errors import InvalidId
 
 from fhirbug.models.attributes import Attribute
 from fhirbug.config import import_models
-from fhirbug.exceptions import MappingValidationError
+from fhirbug.exceptions import MappingValidationError, DoesNotExistError
 
 
 class ObjectIdReferenceAttribute(Attribute):
@@ -87,24 +88,32 @@ class ObjectIdReferenceAttribute(Attribute):
         sys = value = None
         # First, we check to see if we have an identifier present
         if hasattr(reference, "identifier"):
+            # TODO: Handle Identifiers
             try:
-                # TODO: can we make this all a user-defined parameter for the entire identifier?
                 sys = reference.identifier.system
-                # assigner = reference.identifier.assigner
-                # if assigner == getattr(settings, 'ORGANIZATION_NAME', 'CSSA') and sys == 'Patient':
                 value = reference.identifier.value
             except AttributeError:
                 pass
-        value = ObjectId(value)
-        return super(ObjectIdReferenceAttribute, self).__set__(instance, value)
 
         if hasattr(reference, "reference"):
-            ref = reference.reference
-            if ref.startswith("#"):
-                # TODO read internal reference
-                pass
+            value = reference.reference
+            if value is None or '/' not in value:
+                raise MappingValidationError("Invalid subject")
+            model_type, id = value.split('/')
 
-        if value is None:
-            raise MappingValidationError("Invalid subject")
+        try:
+            value = ObjectId(id)
+        except InvalidId:
+            raise MappingValidationError(f"{id} is an invalid resource identifier")
 
-        setattr(instance._model, self.id, value)
+        models = import_models()
+        model_cls = getattr(models, model_type, None)
+        if model_type is None:
+            raise MappingValidationError(f"Resource {model_type} does not exist.")
+        try:
+            resource = model_cls._get_item_from_pk(value)
+        except DoesNotExistError as e:
+            raise MappingValidationError(f"{e.resource_type}/{e.pk} was not found on the server.")
+        print(resource)
+
+        return super(ObjectIdReferenceAttribute, self).__set__(instance, value)
