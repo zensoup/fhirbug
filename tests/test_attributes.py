@@ -1,5 +1,6 @@
 import unittest
 from fhirbug.config import settings
+from fhirbug.exceptions import UnsupportedOperationError
 
 settings._reset()
 settings.configure(
@@ -34,11 +35,24 @@ class TestAttributes(unittest.TestCase):
         inst = models.AttributeWithPropertyGetter()
         self.assertEquals(inst.name, "my_name")
 
+    def test_setter_error_handling(self):
+        """
+        Setter can be a property
+        """
+        inst = models.AttributeWithPropertyGetter()
+        self.assertEquals(inst.name, "my_name")
+        inst.name = "a_new_name"
+        self.assertEquals(inst.name, "my_name")
+        settings._wrapped.STRICT_MODE = {'set_attribute_without_setter': True}
+        print(settings.STRICT_MODE)
+        with self.assertRaises(UnsupportedOperationError):
+            inst.name = "a_new_name"
+
     def test_getter_setter_property(self):
         """
         Setter can be a property
         """
-        inst = models.AttributeWithPropertyGetterAndGetter()
+        inst = models.AttributeWithPropertyGetterAndSetter()
         self.assertEquals(inst.name, "my_name")
         inst.name = "a_new_name"
         self.assertEquals(inst.name, "a_new_name")

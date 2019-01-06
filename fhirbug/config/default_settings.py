@@ -14,3 +14,10 @@ MODELS_PATH = "models"
 # Which DB backend should be used
 # SQLAlchemy | DjangoORM | PyMODM
 DB_BACKEND = "SQLAlchemy"
+
+# Various settings related to how strictly the application handles
+# some situation. A value of True normally means that an error will be thrown
+STRICT_MODE = {
+    # Throw or ignore attempts to set an attribute without having defined a setter func
+    'set_attribute_without_setter': False,
+}

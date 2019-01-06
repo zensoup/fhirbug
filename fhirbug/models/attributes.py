@@ -151,8 +151,9 @@ class Attribute:
     def __set__(self, instance, value):
         try:
             setter = self.setter
-        except AttributeError:
-            if settings.STRICT_MODE["set_attribute_without_setter"]:
+            assert(setter is not None)
+        except (AttributeError, AssertionError):
+            if settings.STRICT_MODE.get("set_attribute_without_setter", False):
                 raise UnsupportedOperationError(
                     "You are trying to alter an attribute that can not be changed"
                 )

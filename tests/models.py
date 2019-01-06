@@ -21,7 +21,7 @@ class AttributeWithPropertyGetter:
     name = Attribute("name")
 
 
-class AttributeWithPropertyGetterAndGetter:
+class AttributeWithPropertyGetterAndSetter:
     class Model:
         _name = "my_name"
 
