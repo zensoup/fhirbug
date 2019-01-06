@@ -393,6 +393,11 @@ class NameAttribute(Attribute):
 
 
 class EmbeddedAttribute(Attribute):
+    '''
+    An attribute representing a BackboneElement that is described by a model
+    and is stored using an ORM relationship, usually a ForeignKeyField or
+    an embedded mongo document.
+    '''
     def __init__(self, *args, type=None, **kwargs):
         if type is None:
             raise MappingValidationError(
@@ -403,29 +408,42 @@ class EmbeddedAttribute(Attribute):
         return super(EmbeddedAttribute, self).__init__(*args, **kwargs)
 
     def __get__(self, instance, owner):
+        # Let the ORM handle getting the backbone element. The ORM should return
+        # a Fhirbug map.
         embedded_resource = super(EmbeddedAttribute, self).__get__(instance, owner)
         if embedded_resource is None:
             return None
+        # Handle lists
         if type(embedded_resource) is list:
             return [r.to_fhir() for r in embedded_resource]
+        # Return a fhir resource
         return embedded_resource.to_fhir()
 
     def __set__(self, instance, value):
-        def dict_to_resource(resource_type, dict):
-            if type(resource_type) is type:
-                ResourceClass = resource_type
-            else:
-                models = import_module(instance.__module__)
-                ResourceClass = getattr(models, resource_type)
-            embedded_resource = ResourceClass(**dict)
-            return embedded_resource
-
+        '''
+        We accept a Fhir Resource class when handling requests
+        but we also allow setting the value using a dictionary.
+        We convert to a Fhir Map and set.
+        '''
         if type(value) is dict:
-            embedded_resource = dict_to_resource(self.type, value)
+            embedded_resource = self.dict_to_resource(self.type, value)
         elif type(value) is list:
             embedded_resource = map(
-                lambda v: dict_to_resource(self.type, v.as_json()), value
+                lambda v: self.dict_to_resource(self.type, v.as_json()), value
             )
         else:
-            embedded_resource = value
+            embedded_resource = self.dict_to_resource(self.type, value.as_json())
         return super(EmbeddedAttribute, self).__set__(instance, embedded_resource)
+
+    def dict_to_resource(self, resource_type, dict):
+        '''
+        Accept a dict (normally the result of FhirResource.as_json()) and return
+        a fhirbug map instance
+        '''
+        if type(resource_type) is type:
+            ResourceClass = resource_type
+        else:
+            models = import_models()
+            ResourceClass = getattr(models, resource_type)
+        embedded_resource = ResourceClass(**dict)
+        return embedded_resource
