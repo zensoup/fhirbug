@@ -262,7 +262,7 @@ class ReferenceAttribute(Attribute):
 
             # Add a display if possible
             if hasattr(item, "_as_display"):
-                reference["display"] = item._as_display
+                reference["display"] = item._as_display()
 
             return reference
 
@@ -280,7 +280,7 @@ class ReferenceAttribute(Attribute):
                 item = self.cls._get_orm_query().get(id)
 
                 if hasattr(item, "_as_display"):
-                    reference["display"] = item._as_display
+                    reference["display"] = item._as_display()
 
             return reference
 

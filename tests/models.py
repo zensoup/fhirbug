@@ -1,5 +1,11 @@
 from fhirbug.models.mixins import FhirBaseModelMixin, FhirAbstractBaseMixin
-from fhirbug.models.attributes import Attribute, const, DateAttribute
+from fhirbug.models.attributes import (
+    Attribute,
+    const,
+    DateAttribute,
+    ReferenceAttribute,
+)
+from unittest.mock import Mock
 from types import SimpleNamespace as SN
 
 
@@ -109,3 +115,30 @@ class BetterBaseMixinModel(FhirAbstractBaseMixin, FhirBaseModelMixin):
         active = Attribute(const(True))
         name = Attribute("_name", "_name")
         age = Attribute("_age", "_age")
+
+
+ReferenceTarget_get_orm_query = Mock()
+class ReferenceTarget(FhirAbstractBaseMixin, FhirBaseModelMixin):
+    _name = "my_name"
+    _get_orm_query = ReferenceTarget_get_orm_query
+
+    class FhirMap:
+        name = Attribute("_name")
+
+
+class WithReference(FhirAbstractBaseMixin, FhirBaseModelMixin):
+    _model = SN(ref_id=12, _contained_names=[])
+
+    ref = ReferenceAttribute(ReferenceTarget, "ref_id", "ref")
+
+
+class WithReferenceAndDisplay(FhirAbstractBaseMixin, FhirBaseModelMixin):
+    _model = SN(ref_id=12, _contained_names=[])
+
+    ref = ReferenceAttribute(ReferenceTarget, "ref_id", "ref", force_display=True)
+
+
+class WithReferenceAndContained(FhirAbstractBaseMixin, FhirBaseModelMixin):
+    _model = SN(ref_id=12, _contained_names=["ref"], _refcount=0, _contained_items=[])
+
+    ref = ReferenceAttribute(ReferenceTarget, "ref_id", "ref")
