@@ -245,7 +245,7 @@ class PutRequestHandler(PostRequestHandler):
                 raise OperationError(
                     severity="error",
                     code="not-found",
-                    diagnostics="{}/{} was not found.".format(e.resource_type, e.pk),
+                    diagnostics="{}/{} was not found on the server.".format(e.resource_type, e.pk),
                     status_code=404,
                 )
 

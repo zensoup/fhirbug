@@ -22,6 +22,7 @@ from fhirbug.db.backends.SQLAlchemy.pagination import paginate
 from fhirbug.db.backends.SQLAlchemy.base import Base, session
 
 from fhirbug.models.mixins import FhirAbstractBaseMixin, FhirBaseModelMixin
+from fhirbug.exceptions import DoesNotExistError
 
 
 class AbstractBaseModel(Base, FhirAbstractBaseMixin):
@@ -38,7 +39,10 @@ class AbstractBaseModel(Base, FhirAbstractBaseMixin):
 
     @classmethod
     def _get_item_from_pk(cls, pk):
-        return cls.query.get(pk)
+        item = cls.query.get(pk)
+        if item is None:
+            raise DoesNotExistError(pk, cls.__name__)
+        return item
 
 
 class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):

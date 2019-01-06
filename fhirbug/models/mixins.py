@@ -3,7 +3,7 @@ import re
 from fhirbug.Fhir import resources
 from fhirbug.models.attributes import Attribute
 from fhirbug.config import import_models
-from fhirbug.exceptions import MappingValidationError, AuthorizationError
+from fhirbug.exceptions import DoesNotExistError, MappingValidationError, AuthorizationError
 from fhirbug.Fhir.resources import PaginatedBundle
 
 from fhirbug.config import settings
@@ -168,8 +168,9 @@ class FhirBaseModelMixin:
       """
         if query.resourceId:
             # item = cls._get_orm_query().get(query.resourceId)
-            item = cls._get_item_from_pk(query.resourceId)
-            if not item:
+            try:
+                item = cls._get_item_from_pk(query.resourceId)
+            except DoesNotExistError:
                 raise MappingValidationError(
                     f'Resource "{query.resource}/{query.resourceId}" does not exist.'
                 )
