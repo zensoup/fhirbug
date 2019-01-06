@@ -225,7 +225,7 @@ class BooleanAttribute(Attribute):
         super(BooleanAttribute, self).__set__(instance, value)
 
 
-class ContainableAttribute(Attribute):
+class ReferenceAttribute(Attribute):
     """
     A Reference to some other Resource that may be contained.
     """
@@ -289,7 +289,6 @@ class ContainableAttribute(Attribute):
             # TODO: can we make this all a user-defined parameter for the entire identifier?
             sys = reference.identifier.system
             # assigner = reference.identifier.assigner
-            # if assigner == getattr(settings, 'ORGANIZATION_NAME', 'CSSA') and sys == 'Patient':
             value = reference.identifier.value
         except AttributeError:
             pass
@@ -301,7 +300,7 @@ class ContainableAttribute(Attribute):
                 pass
 
         if value is None:
-            raise MappingValidationError("Invalid subject")
+            raise MappingValidationError("Invalid reference")
 
         if self.setter:
             Attribute(setter=self.setter).__set__(instance, value)

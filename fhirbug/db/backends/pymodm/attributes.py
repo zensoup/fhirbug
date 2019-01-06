@@ -5,10 +5,14 @@ from fhirbug.config import import_models
 from fhirbug.exceptions import MappingValidationError
 
 
-class ReferenceAttribute(Attribute):
+class ObjectIdReferenceAttribute(Attribute):
     """
     A Reference to some other Resource of one or
     more possible types that may be contained.
+
+    Native pymodm references must explicitly specify the related model type,
+    which doesn't work for us since we accept several possible types. This is
+    why we use ObjectIds to store references.
     """
 
     def __init__(
@@ -92,7 +96,7 @@ class ReferenceAttribute(Attribute):
             except AttributeError:
                 pass
         value = ObjectId(value)
-        return super(ReferenceAttribute, self).__set__(instance, value)
+        return super(ObjectIdReferenceAttribute, self).__set__(instance, value)
 
         if hasattr(reference, "reference"):
             ref = reference.reference
