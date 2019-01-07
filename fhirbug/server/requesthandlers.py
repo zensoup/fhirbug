@@ -245,7 +245,9 @@ class PutRequestHandler(PostRequestHandler):
                 raise OperationError(
                     severity="error",
                     code="not-found",
-                    diagnostics="{}/{} was not found on the server.".format(e.resource_type, e.pk),
+                    diagnostics="{}/{} was not found on the server.".format(
+                        e.resource_type, e.pk
+                    ),
                     status_code=404,
                 )
 
@@ -279,3 +281,62 @@ class PutRequestHandler(PostRequestHandler):
                 status_code=422,
             )
         return updated_resource
+
+
+class DeleteRequestHandler(AbstractRequestHandler):
+    """
+    Receive a request url and the request body of a DELETE request and handle it. This includes parsing the string into a
+    :class:`fhirbug.server.requestparser.FhirRequestQuery`, finding the model for the requested
+    resource and deleting it.
+    It returns a tuple (response json, status code).
+    If an error occurs during the process, an OperationOutcome is returned.
+
+    :param url: a string containing the path of the request. It should not contain the server
+                path. For example: `Patients/123?name:contains=Jo`
+    :type url: string
+
+    :returns: A tuple ``(response_json, status code)``, where response_json may be the requested resource,
+              a Bundle or an OperationOutcome in case of an error.
+    :rtype: tuple
+
+    """
+
+    def handle(self, url, query_context=None):
+        try:
+            self.parse_url(url, query_context)
+            if query_context:
+                self.query.context = query_context
+            # Authorize the request if implemented
+            self._audit_request(self.query)
+            # Import the model mappings
+            models = self.import_models()
+            # Get the Resource
+            Model = self.get_resource(models)
+
+            try:
+                instance = Model._get_item_from_pk(self.query.resourceId)
+            except DoesNotExistError as e:
+                raise OperationError(
+                    severity="error",
+                    code="not-found",
+                    diagnostics="{}/{} was not found on the server.".format(
+                        e.resource_type, e.pk
+                    ),
+                    status_code=404,
+                )
+
+            Model._delete_item(instance)
+
+        except OperationError as e:
+            return e.to_fhir().as_json(), e.status_code
+
+        return (
+            OperationOutcome(
+                issue={
+                    "severity": "information",
+                    "code": "informational",
+                    "details": {"text": "All ok"},
+                }
+            ).as_json(),
+            200,
+        )

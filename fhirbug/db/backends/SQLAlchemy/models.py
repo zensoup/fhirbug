@@ -44,6 +44,16 @@ class AbstractBaseModel(Base, FhirAbstractBaseMixin):
             raise DoesNotExistError(pk, cls.__name__)
         return item
 
+    @classmethod
+    def _delete_item(cls, item):
+        session.delete(item)
+        try:
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise e
+
+
 
 class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
     __abstract__ = True

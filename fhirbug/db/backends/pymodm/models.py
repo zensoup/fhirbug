@@ -26,6 +26,9 @@ class AbstractBaseModel(FhirAbstractBaseMixin):
         except (DoesNotExist, InvalidId):
             raise DoesNotExistError(resource_type=cls.__name__, pk=pk)
 
+    @classmethod
+    def _delete_item(cls, item):
+        item.delete()
 
 class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
     class Meta:
