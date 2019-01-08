@@ -10,3 +10,4 @@ Overview
 
    creating_mappings
    fhir_resources
+   auditing

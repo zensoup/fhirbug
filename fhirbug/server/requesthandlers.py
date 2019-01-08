@@ -63,7 +63,7 @@ class AbstractRequestHandler:
                 raise OperationError(
                     severity="error",
                     code="security",
-                    diagnostics=auditEvent.outcomeDesc,
+                    diagnostics=getattr(auditEvent, "outcomeDesc", None),
                     status_code=403,
                 )
 
