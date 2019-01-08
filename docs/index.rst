@@ -50,3 +50,13 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+.. _fhir: https://www.hl7.org/fhir/
+.. _flask: http://flask.pocoo.org/
+.. _DjangoORM: https://www.djangoproject.com/
+.. _PyMODM: https://github.com/mongodb/pymodm
+.. _SQLAlchemy: https://www.sqlalchemy.org/
+.. _`search parameters`: https://www.hl7.org/fhir/searchparameter-registry.html
+.. _`Documents`: https://www.hl7.org/fhir/documents.html
+.. _`_at`: https://www.hl7.org/fhir/http.html#history
