@@ -55,7 +55,7 @@ class FhirAbstractBaseMixin:
         """
         Return a dictionary of all valid values this instance can provide for a resource of the type ``resource``.
 
-        :param resource: The class of the resource we with to create
+        :param resource: The class of the resource we wish to create
         :return: A dictionary to be used as an argument to initialize a resource instance
         """
         # TODO: Allow for a fields attribute to manually specify which fields to be used?

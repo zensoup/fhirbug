@@ -1,3 +1,5 @@
+import threading
+
 from fhirbug.server.requestparser import parse_url
 from fhirbug.exceptions import (
     MappingValidationError,
@@ -12,6 +14,17 @@ from fhirbug.Fhir.resources import OperationOutcome, FHIRValidationError
 from fhirbug.config import import_models, settings
 
 
+ctx = threading.local()
+
+def register_request_context(context):
+    print('setting context')
+    ctx.context = context
+
+def get_request_context():
+    print(';getting context')
+    return getattr(ctx, 'context', None)
+
+
 class AbstractRequestHandler:
     """
     Base class for request handlers
@@ -21,6 +34,7 @@ class AbstractRequestHandler:
         try:
             self.query = parse_url(url)
             self.query.context = context
+            register_request_context(self.query)
         except QueryValidationError as e:
             raise OperationError(
                 severity="error",
@@ -86,8 +100,6 @@ class GetRequestHandler(AbstractRequestHandler):
     def handle(self, url, query_context=None):
         try:
             self.parse_url(url, query_context)
-            if query_context:
-                self.query.context = query_context
             # Authorize the request if implemented
             self._audit_request(self.query)
             # Import the model mappings
@@ -156,10 +168,10 @@ class PostRequestHandler(AbstractRequestHandler):
 
     """
 
-    def handle(self, url, body):
+    def handle(self, url, body, query_context=None):
         try:
             self.body = body
-            self.parse_url(url)
+            self.parse_url(url, query_context)
             # Import the model mappings
             models = self.import_models()
             # Get the Model class
@@ -230,10 +242,10 @@ class PutRequestHandler(PostRequestHandler):
 
     """
 
-    def handle(self, url, body):
+    def handle(self, url, body, query_context=None):
         try:
             self.body = body
-            self.parse_url(url)
+            self.parse_url(url, query_context)
             # Import the model mappings
             models = self.import_models()
             # Get the Model class
@@ -304,8 +316,6 @@ class DeleteRequestHandler(AbstractRequestHandler):
     def handle(self, url, query_context=None):
         try:
             self.parse_url(url, query_context)
-            if query_context:
-                self.query.context = query_context
             # Authorize the request if implemented
             self._audit_request(self.query)
             # Import the model mappings
