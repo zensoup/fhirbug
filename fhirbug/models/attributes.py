@@ -6,12 +6,26 @@ from fhirbug.exceptions import (
 )
 from fhirbug.Fhir import resources as fhir
 from fhirbug.config import import_searches, import_models, settings
+from fhirbug.server import get_request_context
+
+
+def audited(func):
+    '''
+    When __get__ or __set__ is called for these Attributes,
+    '''
+    def with_audit(prop, instance, *args):
+        ctx = get_request_context()
+        if hasattr(instance._model, 'audit_read') and ctx is not None:
+            print(instance._model.audit_read(ctx))
+        return func(prop, instance, *args)
+    return with_audit
+
+
 
 
 class Attribute:
     """
-
-    The base class for declaring db to fhir mappings. Accepts three positional argumants, a getter, a setter and a searcher.
+    The base class for declaring db to fhir mappings. Accepts three positional arguments, a getter, a setter and a searcher.
 
     Getting values
     --------------
@@ -131,6 +145,7 @@ class Attribute:
         if search_regex:
             self.search_regex = search_regex
 
+    @audited
     def __get__(self, instance, owner):
         getter = self.getter
         # Strings are column names
@@ -147,7 +162,6 @@ class Attribute:
             column, func = getter
             return func(getattr(instance._model, column))
 
-    # def __set__(self, instance, owner, value):
     def __set__(self, instance, value):
         try:
             setter = self.setter
@@ -179,16 +193,16 @@ class Attribute:
 
 class const:
     """
-  const can be used as a getter for an attribute that should always return the same value
+    const can be used as a getter for an attribute that should always return the same value
 
-  >>> from types import SimpleNamespace as SN
-  >>> class Bla:
-  ...   p = Attribute(const(12))
-  ...
-  >>> b = Bla()
-  >>> b.p
-  12
-  """
+    >>> from types import SimpleNamespace as SN
+    >>> class Bla:
+    ...   p = Attribute(const(12))
+    ...
+    >>> b = Bla()
+    >>> b.p
+    12
+    """
 
     def __init__(self, value):
         self.value = value
