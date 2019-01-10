@@ -10,17 +10,23 @@ from fhirbug.server import get_request_context
 
 
 def audited(func):
-    '''
-    When __get__ or __set__ is called for these Attributes,
-    '''
-    def with_audit(prop, instance, *args):
+    """
+    Decorator that adds auditing functionality to the descriptor Attributes'
+    ``__get__` and `__set__` methods.
+    """
+
+    def with_audit(prop, instance, owner):
+        if func.__name__ == '__set__':
+            own = instance.__class__
+        else:
+            own = owner
         ctx = get_request_context()
-        if hasattr(instance._model, 'audit_read') and ctx is not None:
+        prop_name = prop._get_property_name(own)
+        if hasattr(instance._model, "audit_read") and ctx is not None:
             print(instance._model.audit_read(ctx))
-        return func(prop, instance, *args)
+        return func(prop, instance, owner)
+
     return with_audit
-
-
 
 
 class Attribute:
@@ -162,10 +168,11 @@ class Attribute:
             column, func = getter
             return func(getattr(instance._model, column))
 
+    @audited
     def __set__(self, instance, value):
         try:
             setter = self.setter
-            assert(setter is not None)
+            assert setter is not None
         except (AttributeError, AssertionError):
             if settings.STRICT_MODE.get("set_attribute_without_setter", False):
                 raise UnsupportedOperationError(
@@ -189,6 +196,23 @@ class Attribute:
             else:
                 res = func(getattr(instance._model, column), value)
                 setattr(instance._model, column, res)
+
+    def _get_property_name(self, owner_cls):
+        '''
+        Traverses the class's inheritance tree and finds the property name
+        this Attribute has been assigned to. This is useful because the property
+        name is the name of the the Fhir attribute the property represents.
+
+        :param: class owner_cls The class that owns this property
+        :returns: The Fhir name this Attribute has been assigned to.
+        :r_type: str
+        '''
+        if not owner_cls:
+            return
+        for cls in owner_cls.mro()[:-1]:
+            for k, v in vars(cls).items():
+                if id(v) == id(self):
+                    return k
 
 
 class const:
@@ -408,11 +432,12 @@ class NameAttribute(Attribute):
 
 
 class EmbeddedAttribute(Attribute):
-    '''
+    """
     An attribute representing a BackboneElement that is described by a model
     and is stored using an ORM relationship, usually a ForeignKeyField or
     an embedded mongo document.
-    '''
+    """
+
     def __init__(self, *args, type=None, **kwargs):
         if type is None:
             raise MappingValidationError(
@@ -435,11 +460,11 @@ class EmbeddedAttribute(Attribute):
         return embedded_resource.to_fhir()
 
     def __set__(self, instance, value):
-        '''
+        """
         We accept a Fhir Resource class when handling requests
         but we also allow setting the value using a dictionary.
         We convert to a Fhir Map and set.
-        '''
+        """
         if type(value) is dict:
             embedded_resource = self.dict_to_resource(self.type, value)
         elif type(value) is list:
@@ -451,10 +476,10 @@ class EmbeddedAttribute(Attribute):
         return super(EmbeddedAttribute, self).__set__(instance, embedded_resource)
 
     def dict_to_resource(self, resource_type, dict):
-        '''
+        """
         Accept a dict (normally the result of FhirResource.as_json()) and return
         a fhirbug map instance
-        '''
+        """
         if type(resource_type) is type:
             ResourceClass = resource_type
         else:
