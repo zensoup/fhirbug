@@ -64,3 +64,68 @@ Since Fhirbug does not care about your web server implementation, or your
 authentication mechanism, you need to collect and provide the information neccessary for authenticationg the request to the ``audit_request`` method.
 
 Fhirbug's suggestion is passing this information through the ``query.context`` object, by providing ``query_context`` when calling the request handler's ``handle`` method.
+
+
+
+Auditing at the resource level
+------------------------------
+
+Controlling access to the entire resource
+_________________________________________
+
+In order to implement auditing at the resource level, give your mapper models a
+method called ``audit_read``. The signature for this method is the same as the
+one for request handlers we saw above. It accepts a single parameter holding a :class:`FhirRequestQuery <fhirbug.server.requestparser.FhirRequestQuery>` and
+should return an :class:`AuditEvent <fhirbug.Fhir.Resources.AuditEvent>`, whose
+``outcome`` should be ``"0"`` for success and anything else for failure.
+
+::
+
+    class Patient(FhirBaseModel):
+        # Database field definitions go here
+
+        def audit_read(self, query):
+            return AuditEvent(outcome="0", strict=False)
+
+        class FhirMap:
+            # Fhirbug Attributes go here
+
+Controlling access to specific attributes
+_________________________________________
+
+If you want more refined control over which attributes are displayed, during the
+execution of ``audit_read`` you can set ``self._visible_fields`` and /or ``self._hidden_fields``.
+Both should be an iterable that contains a list of attribute names that should be hidden or visible.
+
+For example if we wanted to hide patient contact information from unauthorized users,
+we could do the following:
+
+::
+
+    class Patient(FhirBaseModel):
+        # Database field definitions go here
+
+        def audit_read(self, query):
+            if not is_authorized(query.context.user):
+                self._hidden_fields = ['contact']
+            return AuditEvent(outcome="0", strict=False)
+
+        class FhirMap:
+            # Fhirbug Attributes go here
+
+            
+Similarly, if we wanted to only display ``text`` and ``name`` to unauthorized users
+we could use ``_visible_fields``:
+
+::
+
+    class Patient(FhirBaseModel):
+        # Database field definitions go here
+
+        def audit_read(self, query):
+            if not is_authorized(query.context.user):
+                self._visible_fields = ['text', 'name']
+            return AuditEvent(outcome="0", strict=False)
+
+        class FhirMap:
+            # Fhirbug Attributes go here
