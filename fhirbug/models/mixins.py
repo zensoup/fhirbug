@@ -1,5 +1,6 @@
 import re
 
+from fhirbug.constants import AUDIT_SUCCESS
 from fhirbug.Fhir import resources
 from fhirbug.models.attributes import Attribute
 from fhirbug.config import import_models
@@ -176,7 +177,7 @@ class FhirBaseModelMixin:
                 )
             if hasattr(item, "audit_read"):
                 auditEvent = item.audit_read(query)
-                if auditEvent.outcome != "0":
+                if auditEvent.outcome != AUDIT_SUCCESS:
                     raise AuthorizationError(auditEvent=auditEvent)
             res = item.to_fhir(*args, query=query, **kwargs)
             return res.as_json()
@@ -222,7 +223,7 @@ class FhirBaseModelMixin:
                     item.to_fhir(*args, query=query, **kwargs)
                     for item in pagination.items
                     if not hasattr(item, "audit_read")
-                    or item.audit_read(query).outcome == "0"
+                    or item.audit_read(query).outcome == AUDIT_SUCCESS
                 ],
                 "total": pagination.total,
                 "pages": pagination.pages,

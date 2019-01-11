@@ -1,4 +1,5 @@
 import threading
+import traceback
 
 from fhirbug.server.requestparser import parse_url
 from fhirbug.exceptions import (
@@ -17,11 +18,9 @@ from fhirbug.config import import_models, settings
 ctx = threading.local()
 
 def register_request_context(context):
-    print('setting context')
     ctx.context = context
 
 def get_request_context():
-    print(';getting context')
     return getattr(ctx, 'context', None)
 
 
@@ -29,6 +28,7 @@ class AbstractRequestHandler:
     """
     Base class for request handlers
     """
+
 
     def parse_url(self, url, context=None):
         try:
@@ -91,9 +91,9 @@ class GetRequestHandler(AbstractRequestHandler):
     If an error occurs during the process, an OperationOutcome is returned.
 
     :param url: a string containing the path of the request. It should not contain the server
-                path. For example: `Patients/123?name:contains=Jo`
+    path. For example: `Patients/123?name:contains=Jo`
     :returns: (response json, status code) Where response_json may be the requested resource,
-              a Bundle or an OperationOutcome in case of an error.
+    a Bundle or an OperationOutcome in case of an error.
 
     """
 
@@ -136,8 +136,6 @@ class GetRequestHandler(AbstractRequestHandler):
         except Exception as e:
             diag = "{}".format(e)
             if settings.DEBUG:
-                import traceback
-
                 tb = traceback.format_exc()
                 diag += " {}".format(tb)
             raise OperationError(
@@ -209,8 +207,6 @@ class PostRequestHandler(AbstractRequestHandler):
         except Exception as e:
             diag = "{}".format(e)
             if settings.DEBUG:
-                import traceback
-
                 tb = traceback.format_exc()
                 diag += " {}".format(tb)
             raise OperationError(
@@ -282,8 +278,6 @@ class PutRequestHandler(PostRequestHandler):
         except Exception as e:
             diag = "{}".format(e)
             if settings.DEBUG:
-                import traceback
-
                 tb = traceback.format_exc()
                 diag += " {}".format(tb)
             raise OperationError(

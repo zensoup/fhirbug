@@ -113,7 +113,7 @@ we could do the following:
         class FhirMap:
             # Fhirbug Attributes go here
 
-            
+
 Similarly, if we wanted to only display ``text`` and ``name`` to unauthorized users
 we could use ``_visible_fields``:
 
