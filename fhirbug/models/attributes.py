@@ -11,20 +11,21 @@ from fhirbug.server import get_request_context
 
 def audited(func):
     """
-    Decorator that adds auditing functionality to the descriptor Attributes'
-    ``__get__` and `__set__` methods.
+    A decorator that adds auditing functionality to the ``__get__`` and ``__set__`` methods of descriptor Attributes.
     """
 
-    def with_audit(prop, instance, owner):
-        if func.__name__ == '__set__':
+    def with_audit(desc, instance, arg):
+        # __set__ does not receive an owner argument owner
+        if func.__name__ == "__set__":
             own = instance.__class__
         else:
-            own = owner
+            own = arg
+
         ctx = get_request_context()
-        prop_name = prop._get_property_name(own)
+        prop_name = desc._get_property_name(own)
         if hasattr(instance._model, "audit_read") and ctx is not None:
             print(instance._model.audit_read(ctx))
-        return func(prop, instance, owner)
+        return func(desc, instance, arg)
 
     return with_audit
 
@@ -198,7 +199,7 @@ class Attribute:
                 setattr(instance._model, column, res)
 
     def _get_property_name(self, owner_cls):
-        '''
+        """
         Traverses the class's inheritance tree and finds the property name
         this Attribute has been assigned to. This is useful because the property
         name is the name of the the Fhir attribute the property represents.
@@ -206,7 +207,7 @@ class Attribute:
         :param: class owner_cls The class that owns this property
         :returns: The Fhir name this Attribute has been assigned to.
         :r_type: str
-        '''
+        """
         if not owner_cls:
             return
         for cls in owner_cls.mro()[:-1]:

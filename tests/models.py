@@ -63,6 +63,7 @@ class AttributeWithTransformerSetter:
 
 
 class AttributeWithConst:
+    _model = None
     name = Attribute(const("the_name"))
 
 
