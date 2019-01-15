@@ -54,7 +54,6 @@ class AbstractBaseModel(Base, FhirAbstractBaseMixin):
             raise e
 
 
-
 class FhirBaseModel(AbstractBaseModel, FhirBaseModelMixin):
     __abstract__ = True
 

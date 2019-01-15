@@ -29,7 +29,6 @@ class AbstractRequestHandler:
     Base class for request handlers
     """
 
-
     def parse_url(self, url, context=None):
         try:
             self.query = parse_url(url)

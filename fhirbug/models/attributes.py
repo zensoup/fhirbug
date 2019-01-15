@@ -12,19 +12,24 @@ from fhirbug.server import get_request_context
 def audited(func):
     """
     A decorator that adds auditing functionality to the ``__get__`` and ``__set__`` methods of descriptor Attributes.
+    Attribute auditors, depending on the result of the audit, can return ``True``, meaning access to the attribute has
+    been granted or ``False``, meaning access has been denied but execution should continue normally. If execution
+    should stop and an error returned to the requester, it should raise an exception.
     """
 
     def with_audit(desc, instance, arg):
         # __set__ does not receive an owner argument owner
         if func.__name__ == "__set__":
             own = instance.__class__
+            method = 'audit_set'
         else:
             own = arg
+            method = 'audit_get'
 
         ctx = get_request_context()
         prop_name = desc._get_property_name(own)
-        if hasattr(instance._model, "audit_read") and ctx is not None:
-            print(instance._model.audit_read(ctx))
+        if hasattr(instance._model, method) and ctx is not None:
+            print(getattr(instance._model, method)(ctx))
         return func(desc, instance, arg)
 
     return with_audit
@@ -145,10 +150,12 @@ class Attribute:
     15
     """
 
-    def __init__(self, getter=None, setter=None, searcher=None, search_regex=None):
+    def __init__(self, getter=None, setter=None, searcher=None, search_regex=None, audit_get=None, audit_set=None):
         self.getter = getter
         self.setter = setter
         self.searcher = searcher
+        self.audit_get = audit_get
+        self.audit_set = audit_set
         if search_regex:
             self.search_regex = search_regex
 
