@@ -3,7 +3,8 @@ Babel==2.6.0
 certifi==2018.11.29
 chardet==3.0.4
 Click==7.0
-Django==2.1.4
+coverage==4.5.2
+Django==2.1.5
 docutils==0.14
 Flask==1.0.2
 idna==2.8
