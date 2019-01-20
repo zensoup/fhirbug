@@ -1,12 +1,19 @@
 Auditing
 ==========
 
-With Fhirbug you can audit requests on two levels:
+With Fhirbug you can audit requests on three levels:
 
     - **Request level**: Allow or disallow the specific operation on the specific
       resource, and
 
     - **Resource level**: Allow or disallow access to each individual resource and/or limit access to each of its attributes.
+
+    - **Attribute level**: Allow or disallow access to each individual attribute for each resource.
+
+
+.. warning:: The Auditing API is still undergoing heavy changes and is even more unstable than the rest of the project.
+             Use it at your own risk!
+
 
 
 Auditing at the request level
@@ -73,9 +80,10 @@ Auditing at the resource level
 Controlling access to the entire resource
 _________________________________________
 
-In order to implement auditing at the resource level, give your mapper models a
-method called ``audit_read``. The signature for this method is the same as the
-one for request handlers we saw above. It accepts a single parameter holding a :class:`FhirRequestQuery <fhirbug.server.requestparser.FhirRequestQuery>` and
+In order to implement auditing at the resource level, give your mapper models one or more of the
+methods ``audit_read``, ``audit_create``, ``audit_update``, ``audit_delete``.
+The signature for these methods is the same as the one for request handlers we saw above.
+They accept a single parameter holding a :class:`FhirRequestQuery <fhirbug.server.requestparser.FhirRequestQuery>` and
 should return an :class:`AuditEvent <fhirbug.Fhir.Resources.AuditEvent>`, whose
 ``outcome`` should be ``"0"`` for success and anything else for failure.
 
@@ -90,12 +98,25 @@ should return an :class:`AuditEvent <fhirbug.Fhir.Resources.AuditEvent>`, whose
         class FhirMap:
             # Fhirbug Attributes go here
 
+
 Controlling access to specific attributes
 _________________________________________
 
-If you want more refined control over which attributes are displayed, during the
-execution of ``audit_read`` you can set ``self._visible_fields`` and /or ``self._hidden_fields``.
-Both should be an iterable that contains a list of attribute names that should be hidden or visible.
+If you want more refined control over which attributes can be changed and displayed, during the
+execution of one of the above ``audit_*`` methods, you can call ``self.protect_attributes(*attrs*)`` and /or
+``self.hide_attributes(*attrs*)``.
+In both cases, ``*attrs*`` should be an iterable that contains a list of attribute names that should be protected or hidden.
+
+protect_attributes()
+~~~~~~~~~~~~~~~~~~~~
+The list of attributes passed to ``protect_attributes`` will be marked as protected for the duration of this request
+and will not be allowed to change
+
+hide_attributes()
+~~~~~~~~~~~~~~~~~~~~
+The list of attributes passed to ``hide_attributes`` will be marked as hidden for the current request.
+This means that in case of a POST or PUT request they may be changed but they will not
+be included in the response.
 
 For example if we wanted to hide patient contact information from unauthorized users,
 we could do the following:
@@ -107,25 +128,34 @@ we could do the following:
 
         def audit_read(self, query):
             if not is_authorized(query.context.user):
-                self._hidden_fields = ['contact']
+                self.hide_attributes(['contact'])
             return AuditEvent(outcome="0", strict=False)
 
         class FhirMap:
             # Fhirbug Attributes go here
 
 
-Similarly, if we wanted to only display ``text`` and ``name`` to unauthorized users
-we could use ``_visible_fields``:
+Similarly, if we wanted to only prevent unauthorized users from changing the Identifiers
+of Patients we would use ``protect_attributes``:
 
 ::
 
     class Patient(FhirBaseModel):
         # Database field definitions go here
 
-        def audit_read(self, query):
+        def audit_update(self, query):
             if not is_authorized(query.context.user):
-                self._visible_fields = ['text', 'name']
+                self.protect_attributes = ['identifier']
             return AuditEvent(outcome="0", strict=False)
 
         class FhirMap:
             # Fhirbug Attributes go here
+
+
+Auditing at the attribute level
+--------------------------------
+
+When declaring attributes, you can provide a function to the ``audit_set`` and ``audit_get``
+keyword arguments. The signature for these functions is the same, they accept
+a single positional argument and should return ``True`` if access to the attribute
+is allowed, or ``False`` otherwise.

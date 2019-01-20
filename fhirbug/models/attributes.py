@@ -28,8 +28,10 @@ def audited(func):
 
         ctx = get_request_context()
         prop_name = desc._get_property_name(own)
-        if hasattr(instance._model, method) and ctx is not None:
-            print(getattr(instance._model, method)(ctx))
+        if hasattr(desc, method) and ctx is not None and getattr(desc, method) is not None:
+            res = getattr(desc, method)(instance._model, ctx)
+            if res != True:
+                return None
         return func(desc, instance, arg)
 
     return with_audit
@@ -394,7 +396,11 @@ class NameAttribute(Attribute):
         setter=None,
         searcher=None,
         given_join_separator=" ",
+        audit_get=None,
+        audit_set=None,
     ):
+        self.audit_get = audit_get
+        self.audit_set = audit_set
         searches = import_searches()
         if join_given_names and pass_given_names:
             raise MappingException(

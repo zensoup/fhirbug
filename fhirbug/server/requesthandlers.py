@@ -90,9 +90,11 @@ class GetRequestHandler(AbstractRequestHandler):
     If an error occurs during the process, an OperationOutcome is returned.
 
     :param url: a string containing the path of the request. It should not contain the server
-    path. For example: `Patients/123?name:contains=Jo`
-    :returns: (response json, status code) Where response_json may be the requested resource,
-    a Bundle or an OperationOutcome in case of an error.
+                path. For example: `Patients/123?name:contains=Jo`
+
+    :returns: A tuple ``(response json, status code)`` where response_json may be the requested resource,
+              a Bundle or an OperationOutcome in case of an error.
+    :rtype: tuple
 
     """
 
