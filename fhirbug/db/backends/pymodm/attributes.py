@@ -87,13 +87,13 @@ class ObjectIdReferenceAttribute(Attribute):
             return
         sys = value = None
         # First, we check to see if we have an identifier present
-        if hasattr(reference, "identifier"):
-            # TODO: Handle Identifiers
-            try:
-                sys = reference.identifier.system
-                value = reference.identifier.value
-            except AttributeError:
-                pass
+        # if hasattr(reference, "identifier"):
+        #     # TODO: Handle Identifiers
+        #     try:
+        #         sys = reference.identifier.system
+        #         value = reference.identifier.value
+        #     except AttributeError:
+        #         pass
 
         if hasattr(reference, "reference"):
             value = reference.reference
@@ -114,6 +114,5 @@ class ObjectIdReferenceAttribute(Attribute):
             resource = model_cls._get_item_from_pk(value)
         except DoesNotExistError as e:
             raise MappingValidationError(f"{e.resource_type}/{e.pk} was not found on the server.")
-        print(resource)
 
         return super(ObjectIdReferenceAttribute, self).__set__(instance, value)
