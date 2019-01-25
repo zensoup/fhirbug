@@ -1,21 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Subscription) on 2017-10-28.
-#  2017, SMART Health IT.
+#  Generated from FHIR 4.0.0-a53ec6ee1b (http://hl7.org/fhir/StructureDefinition/Subscription) on 2019-01-25.
+#  2019, SMART Health IT.
 ##
 
 
 from . import domainresource
 
 class Subscription(domainresource.DomainResource):
-    """ A server push subscription criteria.
+    """ Server push subscription criteria.
 
-    The subscription resource is used to define a push based subscription from
+    The subscription resource is used to define a push-based subscription from
     a server to another system. Once a subscription is registered with the
     server, the server checks every resource that is created or updated, and if
     the resource matches the given criteria, it sends a message on the defined
-    "channel" so that another system is able to take an appropriate action.
+    "channel" so that another system can take an appropriate action.
     """
 
     resource_type = "Subscription"
@@ -37,7 +37,7 @@ class Subscription(domainresource.DomainResource):
         List of `ContactPoint` items (represented as `dict` in JSON). """
 
         self.criteria = None
-        """ Rule for server push criteria.
+        """ Rule for server push.
         Type `str`. """
 
         self.end = None
@@ -56,10 +56,6 @@ class Subscription(domainresource.DomainResource):
         """ requested | active | error | off.
         Type `str`. """
 
-        self.tag = None
-        """ A tag to add to matching resources.
-        List of `Coding` items (represented as `dict` in JSON). """
-
         super(Subscription, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
 
     def elementProperties(self):
@@ -72,7 +68,6 @@ class Subscription(domainresource.DomainResource):
             ("error", "error", str, False, None, False),
             ("reason", "reason", str, False, None, True),
             ("status", "status", str, False, None, True),
-            ("tag", "tag", coding.Coding, True, None, False),
         ])
         return js
 
@@ -105,7 +100,7 @@ class SubscriptionChannel(backboneelement.BackboneElement):
         List of `str` items. """
 
         self.payload = None
-        """ Mimetype to send, or omit for no payload.
+        """ MIME type to send, or omit for no payload.
         Type `str`. """
 
         self.type = None
@@ -126,10 +121,6 @@ class SubscriptionChannel(backboneelement.BackboneElement):
 
 
 import sys
-try:
-    from . import coding
-except ImportError:
-    coding = sys.modules[__package__ + '.coding']
 try:
     from . import contactpoint
 except ImportError:

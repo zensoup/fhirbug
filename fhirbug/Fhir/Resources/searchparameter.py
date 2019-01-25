@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/SearchParameter) on 2017-10-28.
-#  2017, SMART Health IT.
+#  Generated from FHIR 4.0.0-a53ec6ee1b (http://hl7.org/fhir/StructureDefinition/SearchParameter) on 2019-01-25.
+#  2019, SMART Health IT.
 ##
 
 
 from . import domainresource
 
 class SearchParameter(domainresource.DomainResource):
-    """ Search Parameter for a resource.
+    """ Search parameter for a resource.
 
     A search parameter that defines a named search item that can be used to
     search/filter on a resource.
@@ -50,11 +50,11 @@ class SearchParameter(domainresource.DomainResource):
         List of `ContactDetail` items (represented as `dict` in JSON). """
 
         self.date = None
-        """ Date this was last changed.
+        """ Date last changed.
         Type `FHIRDate` (represented as `str` in JSON). """
 
         self.derivedFrom = None
-        """ Original Definition for the search parameter.
+        """ Original definition for the search parameter.
         Type `str`. """
 
         self.description = None
@@ -75,8 +75,16 @@ class SearchParameter(domainresource.DomainResource):
 
         self.modifier = None
         """ missing | exact | contains | not | text | in | not-in | below |
-        above | type.
+        above | type | identifier | ofType.
         List of `str` items. """
+
+        self.multipleAnd = None
+        """ Allow multiple parameters (and).
+        Type `bool`. """
+
+        self.multipleOr = None
+        """ Allow multiple values per parameter (or).
+        Type `bool`. """
 
         self.name = None
         """ Name for this search parameter (computer friendly).
@@ -100,15 +108,16 @@ class SearchParameter(domainresource.DomainResource):
 
         self.type = None
         """ number | date | string | token | reference | composite | quantity |
-        uri.
+        uri | special.
         Type `str`. """
 
         self.url = None
-        """ Logical URI to reference this search parameter (globally unique).
+        """ Canonical identifier for this search parameter, represented as a
+        URI (globally unique).
         Type `str`. """
 
         self.useContext = None
-        """ Context the content is intended to support.
+        """ The context that the content is intended to support.
         List of `UsageContext` items (represented as `dict` in JSON). """
 
         self.version = None
@@ -141,6 +150,8 @@ class SearchParameter(domainresource.DomainResource):
             ("expression", "expression", str, False, None, False),
             ("jurisdiction", "jurisdiction", codeableconcept.CodeableConcept, True, None, False),
             ("modifier", "modifier", str, True, None, False),
+            ("multipleAnd", "multipleAnd", bool, False, None, False),
+            ("multipleOr", "multipleOr", bool, False, None, False),
             ("name", "name", str, False, None, True),
             ("publisher", "publisher", str, False, None, False),
             ("purpose", "purpose", str, False, None, False),
@@ -176,7 +187,7 @@ class SearchParameterComponent(backboneelement.BackboneElement):
 
         self.definition = None
         """ Defines how the part works.
-        Type `FHIRReference` referencing `SearchParameter` (represented as `dict` in JSON). """
+        Type `str`. """
 
         self.expression = None
         """ Subexpression relative to main expression.
@@ -187,7 +198,7 @@ class SearchParameterComponent(backboneelement.BackboneElement):
     def elementProperties(self):
         js = super(SearchParameterComponent, self).elementProperties()
         js.extend([
-            ("definition", "definition", fhirreference.FHIRReference, False, None, True),
+            ("definition", "definition", str, False, None, True),
             ("expression", "expression", str, False, None, True),
         ])
         return js
@@ -206,10 +217,6 @@ try:
     from . import fhirdate
 except ImportError:
     fhirdate = sys.modules[__package__ + '.fhirdate']
-try:
-    from . import fhirreference
-except ImportError:
-    fhirreference = sys.modules[__package__ + '.fhirreference']
 try:
     from . import usagecontext
 except ImportError:

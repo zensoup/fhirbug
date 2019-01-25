@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Annotation) on 2017-10-28.
-#  2017, SMART Health IT.
+#  Generated from FHIR 4.0.0-a53ec6ee1b (http://hl7.org/fhir/StructureDefinition/Annotation) on 2019-01-25.
+#  2019, SMART Health IT.
 ##
 
 
@@ -27,14 +27,14 @@ class Annotation(element.Element):
 
         self.authorReference = None
         """ Individual responsible for the annotation.
-        Type `FHIRReference` referencing `Practitioner, Patient, RelatedPerson` (represented as `dict` in JSON). """
+        Type `FHIRReference` (represented as `dict` in JSON). """
 
         self.authorString = None
         """ Individual responsible for the annotation.
         Type `str`. """
 
         self.text = None
-        """ The annotation  - text content.
+        """ The annotation  - text content (as markdown).
         Type `str`. """
 
         self.time = None

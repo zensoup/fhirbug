@@ -3,6 +3,10 @@
 #
 #  Base class for all FHIR elements.
 
+## This file has been modified for use in the Fhirbug project.
+## You can find the original file and its License at
+## https://github.com/smart-on-fhir/fhir-parser
+
 import sys
 import logging
 
@@ -59,29 +63,29 @@ class FHIRAbstractBase(object):
 
     - Pass an other Resource instead of a dict as the value of an attribute
 
-    >>> amka = Identifier({'system': 'AMKA', 'value': '123'})
+    >>> ssn = Identifier({'system': 'SSN', 'value': '123'})
     >>>
-    >>> p = Patient({'identifier': [amka]})
+    >>> p = Patient({'identifier': [ssn]})
     >>> p.as_json() == TARGET
     True
 
     - Pass a single dict or Resource where a list is expected
 
-    >>> p = Patient({'identifier': {'system': 'AMKA', 'value': '123'}})
+    >>> p = Patient({'identifier': {'system': 'SSN', 'value': '123'}})
     >>> p.as_json() == TARGET
     True
 
-    >>> amka = Identifier({'system': 'AMKA', 'value': '123'})
+    >>> ssn = Identifier({'system': 'SSN', 'value': '123'})
     >>>
-    >>> p = Patient({'identifier': amka})
+    >>> p = Patient({'identifier': ssn})
     >>> p.as_json() == TARGET
     True
 
     - Use keyword arguments instead of dicts
 
-    >>> amka = Identifier(system='AMKA', value='123')
+    >>> ssn = Identifier(system='SSN', value='123')
     >>>
-    >>> p = Patient(identifier=amka)
+    >>> p = Patient(identifier=ssn)
     >>> p.as_json() == TARGET
     True
     """
@@ -91,8 +95,11 @@ class FHIRAbstractBase(object):
         `logger.warning()`.
 
         :raises: FHIRValidationError on validation errors, unless strict is False
-        :param dict jsondict: A JSON dictionary to use for initialization
+        :param dict jsondict: A JSON dictionary or array or an (array of)
+                            instance(s) of an other
+                            resource to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
+        :param kwargs: Instead of a JSON dict, parameters can also be passed as keyword arguments
         """
 
         self._resolved = None

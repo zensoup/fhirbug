@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/DocumentManifest) on 2017-10-28.
-#  2017, SMART Health IT.
+#  Generated from FHIR 4.0.0-a53ec6ee1b (http://hl7.org/fhir/StructureDefinition/DocumentManifest) on 2019-01-25.
+#  2019, SMART Health IT.
 ##
 
 
@@ -26,12 +26,12 @@ class DocumentManifest(domainresource.DomainResource):
         """
 
         self.author = None
-        """ Who and/or what authored the manifest.
-        List of `FHIRReference` items referencing `Practitioner, Organization, Device, Patient, RelatedPerson` (represented as `dict` in JSON). """
+        """ Who and/or what authored the DocumentManifest.
+        List of `FHIRReference` items (represented as `dict` in JSON). """
 
         self.content = None
-        """ The items included.
-        List of `DocumentManifestContent` items (represented as `dict` in JSON). """
+        """ Items in manifest.
+        List of `FHIRReference` items (represented as `dict` in JSON). """
 
         self.created = None
         """ When this document manifest created.
@@ -51,7 +51,7 @@ class DocumentManifest(domainresource.DomainResource):
 
         self.recipient = None
         """ Intended to get notified about this set of documents.
-        List of `FHIRReference` items referencing `Patient, Practitioner, RelatedPerson, Organization` (represented as `dict` in JSON). """
+        List of `FHIRReference` items (represented as `dict` in JSON). """
 
         self.related = None
         """ Related things.
@@ -67,7 +67,7 @@ class DocumentManifest(domainresource.DomainResource):
 
         self.subject = None
         """ The subject of the set of documents.
-        Type `FHIRReference` referencing `Patient, Practitioner, Group, Device` (represented as `dict` in JSON). """
+        Type `FHIRReference` (represented as `dict` in JSON). """
 
         self.type = None
         """ Kind of document set.
@@ -79,7 +79,7 @@ class DocumentManifest(domainresource.DomainResource):
         js = super(DocumentManifest, self).elementProperties()
         js.extend([
             ("author", "author", fhirreference.FHIRReference, True, None, False),
-            ("content", "content", DocumentManifestContent, True, None, True),
+            ("content", "content", fhirreference.FHIRReference, True, None, True),
             ("created", "created", fhirdate.FHIRDate, False, None, False),
             ("description", "description", str, False, None, False),
             ("identifier", "identifier", identifier.Identifier, True, None, False),
@@ -95,41 +95,6 @@ class DocumentManifest(domainresource.DomainResource):
 
 
 from . import backboneelement
-
-class DocumentManifestContent(backboneelement.BackboneElement):
-    """ The items included.
-
-    The list of Documents included in the manifest.
-    """
-
-    resource_type = "DocumentManifestContent"
-
-    def __init__(self, jsondict=None, strict=True, **kwargs):
-        """ Initialize all valid properties.
-
-        :raises: FHIRValidationError on validation errors, unless strict is False
-        :param dict jsondict: A JSON dictionary to use for initialization
-        :param bool strict: If True (the default), invalid variables will raise a TypeError
-        """
-
-        self.pAttachment = None
-        """ Contents of this set of documents.
-        Type `Attachment` (represented as `dict` in JSON). """
-
-        self.pReference = None
-        """ Contents of this set of documents.
-        Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
-
-        super(DocumentManifestContent, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
-
-    def elementProperties(self):
-        js = super(DocumentManifestContent, self).elementProperties()
-        js.extend([
-            ("pAttachment", "pAttachment", attachment.Attachment, False, "p", True),
-            ("pReference", "pReference", fhirreference.FHIRReference, False, "p", True),
-        ])
-        return js
-
 
 class DocumentManifestRelated(backboneelement.BackboneElement):
     """ Related things.
@@ -153,7 +118,7 @@ class DocumentManifestRelated(backboneelement.BackboneElement):
 
         self.ref = None
         """ Related Resource.
-        Type `FHIRReference` referencing `Resource` (represented as `dict` in JSON). """
+        Type `FHIRReference` (represented as `dict` in JSON). """
 
         super(DocumentManifestRelated, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
 
@@ -167,10 +132,6 @@ class DocumentManifestRelated(backboneelement.BackboneElement):
 
 
 import sys
-try:
-    from . import attachment
-except ImportError:
-    attachment = sys.modules[__package__ + '.attachment']
 try:
     from . import codeableconcept
 except ImportError:
