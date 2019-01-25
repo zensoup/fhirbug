@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fhirbug.server.requestparser import parse_url
 from fhirbug.exceptions import (
     MappingValidationError,
@@ -8,7 +10,12 @@ from fhirbug.exceptions import (
     AuthorizationError,
 )
 
-from fhirbug.Fhir.resources import OperationOutcome, FHIRValidationError
+from fhirbug.Fhir.resources import (
+    OperationOutcome,
+    FHIRValidationError,
+    AuditEvent,
+    FHIRDate,
+)
 from fhirbug.config import import_models, settings
 
 
@@ -56,9 +63,45 @@ class AbstractRequestHandler:
             )
         return Resource
 
+    def create_audit_event(self, url):
+        """
+        Create an AuditEvent resource that will be used for the duration of the
+        request in order to log details about it.
+        """
+        auditEvent = AuditEvent(
+            type={
+                "system": "http://dicom.nema.org/resources/ontology/DCM",
+                "code": "110100",
+                "display": "Application Activity",
+            },
+            recorded=FHIRDate(datetime.now()),
+            source={"site": "fhirbug", "observer": {"display": "fhirbug"}},
+            agent={"requestor": True},
+            strict=False,
+            outcome="0",
+            entity={
+                "detail": {"type": "query string", "valueString": url},
+                "type": {
+                    "system": "	http://terminology.hl7.org/CodeSystem/audit-entity-type",
+                    "code": "2",
+                    "display": "System Object",
+                },
+            },
+        )
+        return auditEvent
+
     def _audit_request(self, query):
         if hasattr(self, "audit_request"):
             auditEvent = self.audit_request(query)
+            self.auditEvent.entity[0].detail.append(
+                {"type": "AuditOutcome", "valueString": auditEvent.outcome}
+            )
+            self.auditEvent.entity[0].detail.append(
+                {
+                    "type": "AuditDescription",
+                    "valueString": getattr(auditEvent, "outcomeDesc", None),
+                }
+            )
             if auditEvent.outcome != "0":
                 raise OperationError(
                     severity="error",
@@ -85,6 +128,7 @@ class GetRequestHandler(AbstractRequestHandler):
 
     def handle(self, url, query_context=None):
         try:
+            self.auditEvent = self.create_audit_event(url)
             self.parse_url(url, query_context)
             if query_context:
                 self.query.context = query_context
@@ -97,9 +141,12 @@ class GetRequestHandler(AbstractRequestHandler):
 
             # Audit the request if needed
 
-            return self.fetch_items(Model)
+            # return self.auditEvent.as_json(), 200
+            return self.fetch_items(Model), 200
 
         except OperationError as e:
+            self.auditEvent.outcome = "4"
+            self.auditEventDesc = e.status_code
             return e.to_fhir().as_json(), e.status_code
 
     def fetch_items(self, Model):
@@ -158,6 +205,7 @@ class PostRequestHandler(AbstractRequestHandler):
 
     def handle(self, url, body):
         try:
+            self.auditEvent = self.create_audit_event(url)
             self.body = body
             self.parse_url(url)
             # Import the model mappings
@@ -176,6 +224,8 @@ class PostRequestHandler(AbstractRequestHandler):
             return created_resource.to_fhir().as_json(), 201
 
         except OperationError as e:
+            self.auditEvent.outcome = "4"
+            self.auditEventDesc = e.status_code
             return e.to_fhir().as_json(), e.status_code
 
     def request_body_to_resource(self, Resource):
@@ -232,6 +282,7 @@ class PutRequestHandler(PostRequestHandler):
 
     def handle(self, url, body):
         try:
+            self.auditEvent = self.create_audit_event(url)
             self.body = body
             self.parse_url(url)
             # Import the model mappings
@@ -262,6 +313,8 @@ class PutRequestHandler(PostRequestHandler):
             return updated_resource.to_fhir().as_json(), 202
 
         except OperationError as e:
+            self.auditEvent.outcome = "4"
+            self.auditEventDesc = e.status_code
             return e.to_fhir().as_json(), e.status_code
 
     def update(self, instance, resource):
@@ -303,6 +356,7 @@ class DeleteRequestHandler(AbstractRequestHandler):
 
     def handle(self, url, query_context=None):
         try:
+            self.auditEvent = self.create_audit_event(url)
             self.parse_url(url, query_context)
             if query_context:
                 self.query.context = query_context
@@ -328,6 +382,8 @@ class DeleteRequestHandler(AbstractRequestHandler):
             Model._delete_item(instance)
 
         except OperationError as e:
+            self.auditEvent.outcome = "4"
+            self.auditEventDesc = e.status_code
             return e.to_fhir().as_json(), e.status_code
 
         return (
