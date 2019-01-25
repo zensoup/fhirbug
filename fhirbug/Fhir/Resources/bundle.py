@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Bundle) on 2017-10-28.
-#  2017, SMART Health IT.
+#  Generated from FHIR 4.0.0-a53ec6ee1b (http://hl7.org/fhir/StructureDefinition/Bundle) on 2019-01-25.
+#  2019, SMART Health IT.
 ##
 
 
@@ -25,7 +25,7 @@ class Bundle(resource.Resource):
         """
 
         self.entry = None
-        """ Entry in the bundle - will have a resource, or information.
+        """ Entry in the bundle - will have a resource or information.
         List of `BundleEntry` items (represented as `dict` in JSON). """
 
         self.identifier = None
@@ -39,6 +39,10 @@ class Bundle(resource.Resource):
         self.signature = None
         """ Digital Signature.
         Type `Signature` (represented as `dict` in JSON). """
+
+        self.timestamp = None
+        """ When the bundle was assembled.
+        Type `FHIRDate` (represented as `str` in JSON). """
 
         self.total = None
         """ If search, the total number of matches.
@@ -58,6 +62,7 @@ class Bundle(resource.Resource):
             ("identifier", "identifier", identifier.Identifier, False, None, False),
             ("link", "link", BundleLink, True, None, False),
             ("signature", "signature", signature.Signature, False, None, False),
+            ("timestamp", "timestamp", fhirdate.FHIRDate, False, None, False),
             ("total", "total", int, False, None, False),
             ("type", "type", str, False, None, True),
         ])
@@ -67,9 +72,9 @@ class Bundle(resource.Resource):
 from . import backboneelement
 
 class BundleEntry(backboneelement.BackboneElement):
-    """ Entry in the bundle - will have a resource, or information.
+    """ Entry in the bundle - will have a resource or information.
 
-    An entry in a bundle resource - will either contain a resource, or
+    An entry in a bundle resource - will either contain a resource or
     information about a resource (transactions and history only).
     """
 
@@ -84,7 +89,7 @@ class BundleEntry(backboneelement.BackboneElement):
         """
 
         self.fullUrl = None
-        """ Absolute URL for resource (server address, or UUID/OID).
+        """ URI for resource (Absolute URL server address or URI for UUID/OID).
         Type `str`. """
 
         self.link = None
@@ -92,7 +97,7 @@ class BundleEntry(backboneelement.BackboneElement):
         List of `BundleLink` items (represented as `dict` in JSON). """
 
         self.request = None
-        """ Transaction Related Information.
+        """ Additional execution information (transaction/batch/history).
         Type `BundleEntryRequest` (represented as `dict` in JSON). """
 
         self.resource = None
@@ -100,7 +105,7 @@ class BundleEntry(backboneelement.BackboneElement):
         Type `Resource` (represented as `dict` in JSON). """
 
         self.response = None
-        """ Transaction Related Information.
+        """ Results of execution (transaction/batch/history).
         Type `BundleEntryResponse` (represented as `dict` in JSON). """
 
         self.search = None
@@ -123,10 +128,11 @@ class BundleEntry(backboneelement.BackboneElement):
 
 
 class BundleEntryRequest(backboneelement.BackboneElement):
-    """ Transaction Related Information.
+    """ Additional execution information (transaction/batch/history).
 
     Additional information about how this entry should be processed as part of
-    a transaction.
+    a transaction or batch.  For history, it shows how the entry was processed
+    to create the version contained in the entry.
     """
 
     resource_type = "BundleEntryRequest"
@@ -144,7 +150,7 @@ class BundleEntryRequest(backboneelement.BackboneElement):
         Type `str`. """
 
         self.ifModifiedSince = None
-        """ For managing update contention.
+        """ For managing cache currency.
         Type `FHIRDate` (represented as `str` in JSON). """
 
         self.ifNoneExist = None
@@ -156,7 +162,7 @@ class BundleEntryRequest(backboneelement.BackboneElement):
         Type `str`. """
 
         self.method = None
-        """ GET | POST | PUT | DELETE.
+        """ GET | HEAD | POST | PUT | DELETE | PATCH.
         Type `str`. """
 
         self.url = None
@@ -179,10 +185,11 @@ class BundleEntryRequest(backboneelement.BackboneElement):
 
 
 class BundleEntryResponse(backboneelement.BackboneElement):
-    """ Transaction Related Information.
+    """ Results of execution (transaction/batch/history).
 
-    Additional information about how this entry should be processed as part of
-    a transaction.
+    Indicates the results of processing the corresponding 'request' entry in
+    the batch or transaction being responded to or what the results of an
+    operation where when returning history.
     """
 
     resource_type = "BundleEntryResponse"
@@ -196,7 +203,7 @@ class BundleEntryResponse(backboneelement.BackboneElement):
         """
 
         self.etag = None
-        """ The etag for the resource (if relevant).
+        """ The Etag for the resource (if relevant).
         Type `str`. """
 
         self.lastModified = None
@@ -204,7 +211,7 @@ class BundleEntryResponse(backboneelement.BackboneElement):
         Type `FHIRDate` (represented as `str` in JSON). """
 
         self.location = None
-        """ The location, if the operation returns a location.
+        """ The location (if the operation returns a location).
         Type `str`. """
 
         self.outcome = None

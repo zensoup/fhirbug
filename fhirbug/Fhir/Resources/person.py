@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/Person) on 2017-10-28.
-#  2017, SMART Health IT.
+#  Generated from FHIR 4.0.0-a53ec6ee1b (http://hl7.org/fhir/StructureDefinition/Person) on 2019-01-25.
+#  2019, SMART Health IT.
 ##
 
 
@@ -51,7 +51,7 @@ class Person(domainresource.DomainResource):
 
         self.managingOrganization = None
         """ The organization that is the custodian of the person record.
-        Type `FHIRReference` referencing `Organization` (represented as `dict` in JSON). """
+        Type `FHIRReference` (represented as `dict` in JSON). """
 
         self.name = None
         """ A name associated with the person.
@@ -106,7 +106,7 @@ class PersonLink(backboneelement.BackboneElement):
 
         self.target = None
         """ The resource to which this actual person is associated.
-        Type `FHIRReference` referencing `Patient, Practitioner, RelatedPerson, Person` (represented as `dict` in JSON). """
+        Type `FHIRReference` (represented as `dict` in JSON). """
 
         super(PersonLink, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
 

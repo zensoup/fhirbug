@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/UsageContext) on 2017-10-28.
-#  2017, SMART Health IT.
+#  Generated from FHIR 4.0.0-a53ec6ee1b (http://hl7.org/fhir/StructureDefinition/UsageContext) on 2019-01-25.
+#  2019, SMART Health IT.
 ##
 
 
@@ -11,7 +11,7 @@ from . import element
 class UsageContext(element.Element):
     """ Describes the context of use for a conformance or knowledge resource.
 
-    Specifies clinical/business/etc metadata that can be used to retrieve,
+    Specifies clinical/business/etc. metadata that can be used to retrieve,
     index and/or categorize an artifact. This metadata can either be specific
     to the applicable population (e.g., age category, DRG) or the specific
     context of care (e.g., venue, care setting, provider of care).
@@ -43,6 +43,10 @@ class UsageContext(element.Element):
         """ Value that defines the context.
         Type `Range` (represented as `dict` in JSON). """
 
+        self.valueReference = None
+        """ Value that defines the context.
+        Type `FHIRReference` (represented as `dict` in JSON). """
+
         super(UsageContext, self).__init__(jsondict=jsondict, strict=strict, **kwargs)
 
     def elementProperties(self):
@@ -52,6 +56,7 @@ class UsageContext(element.Element):
             ("valueCodeableConcept", "valueCodeableConcept", codeableconcept.CodeableConcept, False, "value", True),
             ("valueQuantity", "valueQuantity", quantity.Quantity, False, "value", True),
             ("valueRange", "valueRange", range.Range, False, "value", True),
+            ("valueReference", "valueReference", fhirreference.FHIRReference, False, "value", True),
         ])
         return js
 
@@ -65,6 +70,10 @@ try:
     from . import coding
 except ImportError:
     coding = sys.modules[__package__ + '.coding']
+try:
+    from . import fhirreference
+except ImportError:
+    fhirreference = sys.modules[__package__ + '.fhirreference']
 try:
     from . import quantity
 except ImportError:

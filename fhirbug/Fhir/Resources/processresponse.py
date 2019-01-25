@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/ProcessResponse) on 2017-10-28.
-#  2017, SMART Health IT.
+#  Generated from FHIR 3.0.1.11917 (http://hl7.org/fhir/StructureDefinition/ProcessResponse) on 2019-01-25.
+#  2019, SMART Health IT.
 ##
 
 
