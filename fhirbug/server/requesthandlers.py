@@ -169,8 +169,6 @@ class GetRequestHandler(AbstractRequestHandler):
             # Get the Resource
             Model = self.get_resource(models)
 
-            # Audit the request if needed
-
             items = self.fetch_items(Model)
 
             self.log_request(
@@ -205,7 +203,7 @@ class GetRequestHandler(AbstractRequestHandler):
                 severity="error",
                 code="security",
                 diagnostics="{}".format(e.auditEvent.as_json()),
-                status_code=500,
+                status_code=403,
             )
         except Exception as e:
             diag = "{}".format(e)
@@ -244,6 +242,8 @@ class PostRequestHandler(AbstractRequestHandler):
         try:
             self.body = body
             self.parse_url(url, query_context)
+
+            self._audit_request(self.query)
             # Import the model mappings
             models = self.import_models()
             # Get the Model class
@@ -263,7 +263,7 @@ class PostRequestHandler(AbstractRequestHandler):
                 resource=created_resource,
                 status=201,
                 method="POST",
-                reuest_body=self.body,
+                request_body=self.body,
             )
             return created_resource.to_fhir().as_json(), 201
 
@@ -273,7 +273,7 @@ class PostRequestHandler(AbstractRequestHandler):
                 query=self.query,
                 status=e.status_code,
                 method="POST",
-                reuest_body=self.body,
+                request_body=self.body,
                 OperationOutcome=e.to_fhir(),
             )
             return e.to_fhir().as_json(), e.status_code
@@ -332,6 +332,7 @@ class PutRequestHandler(PostRequestHandler):
         try:
             self.body = body
             self.parse_url(url, query_context)
+            self._audit_request(self.query)
             # Import the model mappings
             models = self.import_models()
             # Get the Model class
@@ -364,7 +365,7 @@ class PutRequestHandler(PostRequestHandler):
                 resource=updated_resource,
                 status=202,
                 method="PUT",
-                reuest_body=getattr(self, "body", None),
+                request_body=getattr(self, "body", None),
             )
             return updated_resource.to_fhir().as_json(), 202
 
@@ -374,7 +375,7 @@ class PutRequestHandler(PostRequestHandler):
                 query=getattr(self, "query", None),
                 status=e.status_code,
                 method="PUT",
-                reuest_body=getattr(self, "body", None),
+                request_body=getattr(self, "body", None),
                 OperationOutcome=e.to_fhir(),
             )
             return e.to_fhir().as_json(), e.status_code
@@ -416,7 +417,6 @@ class DeleteRequestHandler(AbstractRequestHandler):
 
     def handle(self, url, query_context=None):
         try:
-            self.auditEvent = self.create_audit_event(url)
             self.parse_url(url, query_context)
             # Authorize the request if implemented
             self._audit_request(self.query)
