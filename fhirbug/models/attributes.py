@@ -21,15 +21,19 @@ def audited(func):
         # __set__ does not receive an owner argument owner
         if func.__name__ == "__set__":
             own = instance.__class__
-            method = 'audit_set'
+            method = "audit_set"
         else:
             own = arg
-            method = 'audit_get'
+            method = "audit_get"
 
         ctx = get_request_context()
         prop_name = desc._get_property_name(own)
-        if hasattr(desc, method) and ctx is not None and getattr(desc, method) is not None:
-            res = getattr(desc, method)(instance._model, ctx)
+        if (
+            hasattr(desc, method)
+            and ctx is not None
+            and getattr(desc, method) is not None
+        ):
+            res = getattr(desc, method)(instance._model, ctx, desc._attribute_name)
             if res != True:
                 return None
         return func(desc, instance, arg)
@@ -152,7 +156,15 @@ class Attribute:
     15
     """
 
-    def __init__(self, getter=None, setter=None, searcher=None, search_regex=None, audit_get=None, audit_set=None):
+    def __init__(
+        self,
+        getter=None,
+        setter=None,
+        searcher=None,
+        search_regex=None,
+        audit_get=None,
+        audit_set=None,
+    ):
         self.getter = getter
         self.setter = setter
         self.searcher = searcher
@@ -207,8 +219,18 @@ class Attribute:
                 res = func(getattr(instance._model, column), value)
                 setattr(instance._model, column, res)
 
+    def __set_name__(self, owner, name):
+        """
+        Save the name this descriptor has been assigned to
+        """
+        self._attribute_name = name
+
     def _get_property_name(self, owner_cls):
         """
+        .. deprecated:: 0.1.2
+
+        Deprecated: Use ``self._attribute_name`` instead.
+
         Traverses the class's inheritance tree and finds the property name
         this Attribute has been assigned to. This is useful because the property
         name is the name of the the Fhir attribute the property represents.
@@ -356,7 +378,9 @@ class ReferenceAttribute(Attribute):
 
 
 class DateAttribute(Attribute):
-    def __init__(self, field):
+    def __init__(self, field, audit_get=None, audit_set=None):
+        self.audit_get = audit_get
+        self.audit_set = audit_set
         searches = import_searches()
 
         def setter(old_date_str, new_date_str):

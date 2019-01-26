@@ -82,13 +82,14 @@ class FhirAbstractBaseMixin:
             ]
 
         hidden_attrs = getattr(self, "_hidden_attributes", [])
+        hidden_attrs = list(map(lambda x: x.lower(), hidden_attrs))
 
         # Evaluate the common attributes. This is where all the getters are called
         param_dict = {
             attribute: getattr(self.Fhir, attribute)
             for attribute in attributes
             if hasattr(mock, attribute)
-            and attribute not in hidden_attrs
+            and attribute.lower() not in hidden_attrs
         }
         return param_dict
 
