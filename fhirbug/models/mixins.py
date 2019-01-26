@@ -1,9 +1,14 @@
 import re
 
+from fhirbug.constants import AUDIT_SUCCESS
 from fhirbug.Fhir import resources
 from fhirbug.models.attributes import Attribute
 from fhirbug.config import import_models
-from fhirbug.exceptions import DoesNotExistError, MappingValidationError, AuthorizationError
+from fhirbug.exceptions import (
+    DoesNotExistError,
+    MappingValidationError,
+    AuthorizationError,
+)
 from fhirbug.Fhir.resources import PaginatedBundle
 
 from fhirbug.config import settings
@@ -55,7 +60,7 @@ class FhirAbstractBaseMixin:
         """
         Return a dictionary of all valid values this instance can provide for a resource of the type ``resource``.
 
-        :param resource: The class of the resource we with to create
+        :param resource: The class of the resource we wish to create
         :return: A dictionary to be used as an argument to initialize a resource instance
         """
         # TODO: Allow for a fields attribute to manually specify which fields to be used?
@@ -76,16 +81,15 @@ class FhirAbstractBaseMixin:
                 if attr in elements + mock.mandatoryFields() + ["id"]
             ]
 
-        visible_fields = getattr(self, "_visible_fields", attributes)
-        hidden_fields = getattr(self, "_hidden_fields", [])
+        hidden_attrs = getattr(self, "_hidden_attributes", [])
+        hidden_attrs = list(map(lambda x: x.lower(), hidden_attrs))
 
         # Evaluate the common attributes. This is where all the getters are called
         param_dict = {
             attribute: getattr(self.Fhir, attribute)
             for attribute in attributes
             if hasattr(mock, attribute)
-            and attribute not in hidden_fields
-            and attribute in visible_fields
+            and attribute.lower() not in hidden_attrs
         }
         return param_dict
 
@@ -118,15 +122,25 @@ class FhirAbstractBaseMixin:
         Creates and saves a new row from a Fhir.Resource object
         """
 
+        obj = cls()
+        obj.Fhir._query = query
+
+        # Audit the creation if implemented
+        if hasattr(obj, "audit_create"):
+            auditEvent = obj.audit_create(query)
+            if auditEvent.outcome != AUDIT_SUCCESS:
+                raise AuthorizationError(auditEvent=auditEvent)
+
+        # Get the protected fields
+        protected_attrs = getattr(obj, "_protected_attributes", [])
+
         # Read the attributes of the FhirMap class
         own_attributes = [
             prop
             for prop, type in cls.FhirMap.__dict__.items()
             if isinstance(type, Attribute)
+            and prop not in protected_attrs
         ]
-
-        obj = cls()
-        obj.Fhir._query = query
 
         for path in own_attributes:
             value = getattr(resource, path.replace("_", "."), None)
@@ -141,11 +155,21 @@ class FhirAbstractBaseMixin:
         Edits an existing row from a Fhir.Resource object
         """
 
+        # Audit the update if implemented
+        if hasattr(self, "audit_update"):
+            auditEvent = self.audit_update(query)
+            if auditEvent.outcome != AUDIT_SUCCESS:
+                raise AuthorizationError(auditEvent=auditEvent)
+
+        # Get the protected fields
+        protected_attrs = getattr(self, "_protected_attributes", [])
+
         # Read the attributes of the FhirMap class
         own_attributes = [
             prop
             for prop, type in self.FhirMap.__dict__.items()
             if isinstance(type, Attribute)
+            and prop not in protected_attrs
         ]
 
         self.Fhir._query = query
@@ -159,13 +183,43 @@ class FhirAbstractBaseMixin:
         new = self.__class__._after_update(self)
         return new
 
+    @classmethod
+    def delete_item(cls, item, query=None):
+        # Audit the update if needed
+        if hasattr(item, "audit_delete"):
+            auditEvent = item.audit_delete(query)
+            if auditEvent.outcome != AUDIT_SUCCESS:
+                raise AuthorizationError(auditEvent=auditEvent)
+        return cls._delete_item(item)
+
+
+    def protect_attributes(self, attribute_names=[]):
+        """
+        Accepts a list of attribute names and protects them for the duration of the current operation.
+        Protected attributes can not be changed when creating or editing a resource.
+        Subsequent calls replace the previous attribute list.
+
+        :param list attribute_names: A list of Fhir attribute names to set as protected
+        """
+        self._protected_attributes = attribute_names
+
+    def hide_attributes(self, attribute_names=[]):
+        """
+        Accepts a list of attribute names and marks them as hidden, meaning they will not be included in json
+        representations of this item.
+        Subsequent calls replace the previous attribute list.
+
+        :param list attribute_names: A list of Fhir attribute names to set as hidden
+        """
+        self._hidden_attributes = attribute_names
+
 
 class FhirBaseModelMixin:
     @classmethod
     def get(cls, query, *args, **kwargs):
         """
-      Handle a GET request
-      """
+        Handle a GET request
+        """
         if query.resourceId:
             # item = cls._get_orm_query().get(query.resourceId)
             try:
@@ -176,7 +230,7 @@ class FhirBaseModelMixin:
                 )
             if hasattr(item, "audit_read"):
                 auditEvent = item.audit_read(query)
-                if auditEvent.outcome != "0":
+                if auditEvent.outcome != AUDIT_SUCCESS:
                     raise AuthorizationError(auditEvent=auditEvent)
             res = item.to_fhir(*args, query=query, **kwargs)
             return res.as_json()
@@ -222,7 +276,7 @@ class FhirBaseModelMixin:
                     item.to_fhir(*args, query=query, **kwargs)
                     for item in pagination.items
                     if not hasattr(item, "audit_read")
-                    or item.audit_read(query).outcome == "0"
+                    or item.audit_read(query).outcome == AUDIT_SUCCESS
                 ],
                 "total": pagination.total,
                 "pages": pagination.pages,
@@ -236,14 +290,14 @@ class FhirBaseModelMixin:
     @classmethod
     def has_searcher(cls, query_string):
         """
-      Search if this resource has a registered searcher for the provided query string
+        Search if this resource has a registered searcher for the provided query string
 
-      :param query_string: A query string that is matched against registered field names or regular expressions
-                           by existing searchers
-      :type query_string: string
+        :param query_string: A query string that is matched against registered field names or regular expressions
+                             by existing searchers
+        :type query_string: string
 
-      :returns: bool
-      """
+        :returns: bool
+        """
         for srch in cls.searchables():
             if re.match(srch, query_string):
                 return True
@@ -252,14 +306,14 @@ class FhirBaseModelMixin:
     @classmethod
     def get_searcher(cls, query_string):
         """
-      Return the first search function that matches the provided query string
+        Return the first search function that matches the provided query string
 
-      :param query_string: A query string that is matched against registered field names or regular expressions
-                           by existing searchers
-      :type query_string: string
+        :param query_string: A query string that is matched against registered field names or regular expressions
+                             by existing searchers
+        :type query_string: string
 
-      :returns: function
-      """
+        :returns: function
+        """
         searchers = [
             func
             for srch, func in cls.searchables().items()
@@ -272,9 +326,9 @@ class FhirBaseModelMixin:
     @classmethod
     def searchables(cls):
         """
-      Returns a list od two-tuples containing the name of a searchable attribute and the function that searches for it based
-      on the Attribute definitions in the FhirMap subclass.
-      """
+        Returns a list od two-tuples containing the name of a searchable attribute and the function that searches for it based
+        on the Attribute definitions in the FhirMap subclass.
+        """
         searchables = {}
         for name, prop in cls.FhirMap.__dict__.items():
             if isinstance(prop, Attribute) and prop.searcher:
@@ -285,8 +339,8 @@ class FhirBaseModelMixin:
     @property
     def Fhir(self):
         """
-      Wrapper property that initializes an instance of FhirMap.
-      """
+        Wrapper property that initializes an instance of FhirMap.
+        """
         # Initialize the FhirMap instance
         ## TODO: should we use a base class instead and implement __init__?
         if not hasattr(self, "_Fhir"):

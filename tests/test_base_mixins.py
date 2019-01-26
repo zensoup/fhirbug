@@ -1,4 +1,5 @@
 import unittest
+from types import SimpleNamespace
 from fhirbug.config import settings
 
 if settings.is_configured():
@@ -8,6 +9,7 @@ settings.configure(
 )
 from . import models
 from fhirbug.Fhir.resources import Patient, Observation
+from fhirbug.exceptions import AuthorizationError
 
 
 class TestAbstractBaseMixin(unittest.TestCase):
@@ -162,3 +164,175 @@ class TestBaseModelMixin(unittest.TestCase):
         self.assertTrue(hasattr(inst, "_Fhir"))
         self.assertTrue(hasattr(inst.Fhir, "_model"))
         self.assertTrue(hasattr(inst.Fhir, "_properties"))
+
+
+class TestCRUDMethods(unittest.TestCase):
+    def test_update_from_resource(self):
+        """
+        When _update_from_resource(resource) is called on an instance,
+        its fields should be updated and inst._after_update should be called with the instance as a parameter
+        """
+        _after_update_mock = models.MixinModelWithSetters_after_update
+        inst = models.MixinModelWithSetters()
+        resource = SimpleNamespace(active=False)
+        inst.update_from_resource(resource)
+
+        self.assertEquals(inst._active, False)
+        self.assertEquals(inst.Fhir.active, False)
+        _after_update_mock.assert_called_with(inst)
+
+    def test_update_with_auditing(self):
+        """
+        When calling update_from_resource, if the class has a method called `audit_update`, the method should be called
+        """
+        inst = models.MixinModelWithSettersAndAuditing()
+        resource = SimpleNamespace(active=False)
+        query = "query"
+
+        # Update should be successfull if the AuditEvent has outcome = fhirbug.constants.AUDIT_SUCCESS
+        inst.update_from_resource(resource, query=query)
+        models.Auditing_audit_update_success.assert_called_with(query)
+
+        # If the AuditEvent has outcome != fhirbug.constants.AUDIT_SUCCESS, it should throw an AuthorizationError
+        models.MixinModelWithSettersAndAuditing.audit_update = (
+            models.Auditing_audit_update_failure
+        )
+        inst = models.MixinModelWithSettersAndAuditing()
+        with self.assertRaises(AuthorizationError):
+            inst.update_from_resource(resource, query=query)
+
+    def test_update_with_protected_attributes(self):
+        '''
+        When the auditing method makes a call to ``self.protect_attributes()``, the protected values should not change
+        '''
+        from fhirbug.Fhir.resources import HumanName
+        inst = models.MixinModelWithSettersAndAuditingProtected()
+        resource = SimpleNamespace(active=False, name=HumanName(family="Family name", given="Given name"))
+        inst.update_from_resource(resource)
+
+        # Name should have changed
+        self.assertEquals(inst.Fhir.name.as_json(), {"family": "Family name", "given": ["Given name"]})
+
+        # Active should not have changed
+        self.assertEquals(inst.Fhir.active, None)
+
+    def test_update_with_hidden_attributes(self):
+        '''
+        When the auditing method makes a call to ``self.hide_attributes()``, the values should change but the attributes
+        should not be returned
+        '''
+        from fhirbug.Fhir.resources import HumanName
+        inst = models.MixinModelWithSettersAndAuditingProtected()
+        inst.audit_update = inst.audit_update2
+        resource = SimpleNamespace(active=False, name=HumanName(family="Family name", given="Given name"))
+        inst.update_from_resource(resource)
+
+        self.assertEqual(inst.to_fhir().as_json(), {'name': [{'family': 'Family name', 'given': ['Given name']}], 'resourceType': 'Patient'})
+
+        # Name should have changed
+        self.assertEqual(inst.Fhir.name.as_json(), {"family": "Family name", "given": ["Given name"]})
+
+        # Active should not have changed
+        self.assertEqual(inst.Fhir.active, False)
+
+    def test_create_from_resource(self):
+        """
+        When _create_from_resource(resource) is called on an instance,
+        its fields should be updated and inst._after_update should be called with the instance as a parameter
+        """
+        from fhirbug.Fhir.resources import HumanName
+
+        _after_create_mock = models.MixinModelWithSetters_after_create
+        cls = models.MixinModelWithSetters
+        resource = SimpleNamespace(
+            active=False, name=HumanName(family="family name", given="given name")
+        )
+        inst = cls.create_from_resource(resource)
+
+        self.assertEqual(inst._active, False)
+        self.assertEqual(inst.Fhir.active, False)
+        self.assertEqual(
+            inst._name.as_json(), {"family": "family name", "given": ["given name"]}
+        )
+        _after_create_mock.assert_called_with(inst)
+
+    def test_create_with_auditing(self):
+        """
+        When calling create_from_resource, if the class has a method called `audit_create`, the method should be called
+        """
+        from fhirbug.Fhir.resources import HumanName
+
+        _after_create_mock = models.Auditing_after_create
+        _audit_create_mock = models.Auditing_audit_create_success
+        cls = models.MixinModelWithSettersAndAuditing
+
+        resource = SimpleNamespace(
+            active=False, name=HumanName(family="family_name", given="given_name")
+        )
+        query = unittest.mock.Mock()
+
+        # If auditing is successful an instance should be created
+        inst = cls.create_from_resource(resource, query)
+        # After creat should be properly called
+        _after_create_mock.assert_called_with(inst)
+        self.assertEqual(
+            inst._name.as_json(), {"family": "family_name", "given": ["given_name"]}
+        )
+        # The audit_method should have been called with the query as a parameter
+        _audit_create_mock.assert_called_with(query)
+
+        _after_create_mock.reset_mock()
+        cls.audit_create = models.Auditing_audit_create_failure
+        with self.assertRaises(AuthorizationError):
+            inst = cls.create_from_resource(resource, query)
+        _after_create_mock.assert_not_called()
+
+    def test_create_with_protected_attributes(self):
+        '''
+        When the auditing method makes a call to ``self.protect_attributes()``, the protected values should not be set
+        '''
+        from fhirbug.Fhir.resources import HumanName
+
+        cls = models.MixinModelWithSettersAndAuditingProtected
+        resource = SimpleNamespace(
+            active=False, name=HumanName(family="fam", given="giv")
+        )
+
+        inst = cls.create_from_resource(resource)
+        self.assertEqual(inst._active, None)
+        self.assertEqual(inst.Fhir.name.as_json(), {"family": "fam", "given": ["giv"]})
+
+    def test_delete_item(self):
+        """
+        When calling cls.delete_item, the call should be forwarded to cls._delete_item to handle backend specific tasks
+        """
+        cls = models.DeletableMixinModel
+        inst = cls()
+        query = unittest.mock.Mock()
+        cls.delete_item(inst, query)
+        models.DeletableMixinModel_delete_method.assert_called_with(cls, inst)
+
+    def test_delete_with_auditing(self):
+        """
+        cls.delete_item should be audited when ``audit_delete`` is implemented
+        """
+        audit_success_mock = models.Auditing_audit_delete_success
+        audit_fail_mock = models.Auditing_audit_delete_failure
+
+        cls = models.DeletableMixinModelAudited
+        inst = cls()
+        query = unittest.mock.Mock()
+
+        # With success auditor
+        cls.delete_item(inst, query)
+        models.DeletableMixinModelAudited_delete_method.assert_called_with(cls, inst)
+        audit_success_mock.assert_called_with(query)
+
+        # With failure auditor
+        models.DeletableMixinModelAudited_delete_method.reset_mock()
+        cls.audit_delete = audit_fail_mock
+
+        with self.assertRaises(AuthorizationError):
+            cls.delete_item(inst, query)
+        audit_fail_mock.assert_called_with(query)
+        models.DeletableMixinModelAudited_delete_method.assert_not_called()

@@ -5,7 +5,8 @@ from fhirbug.models.attributes import (
     DateAttribute,
     ReferenceAttribute,
 )
-from unittest.mock import Mock
+from fhirbug.constants import AUDIT_SUCCESS, AUDIT_MINOR_FAILURE
+from unittest.mock import Mock, MagicMock
 from types import SimpleNamespace as SN
 
 
@@ -63,6 +64,7 @@ class AttributeWithTransformerSetter:
 
 
 class AttributeWithConst:
+    _model = None
     name = Attribute(const("the_name"))
 
 
@@ -115,6 +117,88 @@ class BetterBaseMixinModel(FhirAbstractBaseMixin, FhirBaseModelMixin):
         active = Attribute(const(True))
         name = Attribute("_name", "_name")
         age = Attribute("_age", "_age")
+
+
+MixinModelWithSetters_after_update = Mock()
+MixinModelWithSetters_after_create = MagicMock(side_effect=lambda x: x)
+class MixinModelWithSetters(FhirAbstractBaseMixin, FhirBaseModelMixin):
+    from fhirbug.Fhir.resources import HumanName
+
+    __Resource__ = "Patient"
+    _name = HumanName(family="sponge", given="bob")
+    _active = True
+    _after_update = MixinModelWithSetters_after_update
+    _after_create = MixinModelWithSetters_after_create
+
+    class FhirMap:
+        name = Attribute("_name", "_name")
+        active = Attribute("_active", "_active")
+
+
+Auditing_audit_update_success = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_SUCCESS))
+Auditing_audit_update_failure = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_MINOR_FAILURE))
+Auditing_audit_create_success = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_SUCCESS))
+Auditing_audit_create_failure = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_MINOR_FAILURE))
+Auditing_after_create = MagicMock(side_effect=lambda x: x)
+class MixinModelWithSettersAndAuditing(FhirAbstractBaseMixin, FhirBaseModelMixin):
+    from fhirbug.Fhir.resources import HumanName
+
+    __Resource__ = "Patient"
+    _name = HumanName(family="sponge", given="bob")
+    _active = True
+    _after_update = Mock()
+    _after_create = Auditing_after_create
+    audit_update = Auditing_audit_update_success
+    audit_create = Auditing_audit_create_success
+
+
+    class FhirMap:
+        name = Attribute("_name", "_name")
+        active = Attribute("_active", "_active")
+
+class MixinModelWithSettersAndAuditingProtected(FhirAbstractBaseMixin, FhirBaseModelMixin):
+    _name = None
+    _active = None
+
+    _after_update = Mock()
+    _after_create = MagicMock(side_effect=lambda x: x)
+    __Resource__ = "Patient"
+
+    def audit_update(self, query):
+        self.protect_attributes(['active'])
+        return(SN(outcome=AUDIT_SUCCESS))
+
+    def audit_update2(self, query):
+        self.hide_attributes(['active'])
+        return(SN(outcome=AUDIT_SUCCESS))
+
+    def audit_create(self, query):
+        self.protect_attributes(['active'])
+        return(SN(outcome=AUDIT_SUCCESS))
+
+    def audit_create2(self, query):
+        self.hide_attributes(['active'])
+        return(SN(outcome=AUDIT_SUCCESS))
+
+    class FhirMap:
+        name = Attribute("_name", "_name")
+        active = Attribute("_active", "_active")
+
+
+DeletableMixinModel_delete_method = Mock()
+class DeletableMixinModel(BaseMixinModel, FhirAbstractBaseMixin, FhirBaseModelMixin):
+    @classmethod
+    def _delete_item(cls, item):
+        return DeletableMixinModel_delete_method(cls, item)
+
+DeletableMixinModelAudited_delete_method = Mock()
+Auditing_audit_delete_success = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_SUCCESS))
+Auditing_audit_delete_failure = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_MINOR_FAILURE))
+class DeletableMixinModelAudited(BaseMixinModel, FhirAbstractBaseMixin, FhirBaseModelMixin):
+    audit_delete = Auditing_audit_delete_success
+    @classmethod
+    def _delete_item(cls, item):
+        return DeletableMixinModelAudited_delete_method(cls, item)
 
 
 ReferenceTarget_get_orm_query = Mock()

@@ -1,3 +1,5 @@
+import threading
+import traceback
 from datetime import datetime
 
 from fhirbug.server.requestparser import parse_url
@@ -19,6 +21,15 @@ from fhirbug.Fhir.resources import (
 from fhirbug.config import import_models, settings
 
 
+ctx = threading.local()
+
+def register_request_context(context):
+    ctx.context = context
+
+def get_request_context():
+    return getattr(ctx, 'context', None)
+
+
 class AbstractRequestHandler:
     """
     Base class for request handlers
@@ -28,6 +39,7 @@ class AbstractRequestHandler:
         try:
             self.query = parse_url(url)
             self.query.context = context
+            register_request_context(self.query)
         except QueryValidationError as e:
             raise OperationError(
                 severity="error",
@@ -140,16 +152,16 @@ class GetRequestHandler(AbstractRequestHandler):
 
     :param url: a string containing the path of the request. It should not contain the server
                 path. For example: `Patients/123?name:contains=Jo`
-    :returns: (response json, status code) Where response_json may be the requested resource,
+
+    :returns: A tuple ``(response json, status code)`` where response_json may be the requested resource,
               a Bundle or an OperationOutcome in case of an error.
+    :rtype: tuple
 
     """
 
     def handle(self, url, query_context=None):
         try:
             self.parse_url(url, query_context)
-            if query_context:
-                self.query.context = query_context
             # Authorize the request if implemented
             self._audit_request(self.query)
             # Import the model mappings
@@ -198,8 +210,6 @@ class GetRequestHandler(AbstractRequestHandler):
         except Exception as e:
             diag = "{}".format(e)
             if settings.DEBUG:
-                import traceback
-
                 tb = traceback.format_exc()
                 diag += " {}".format(tb)
             raise OperationError(
@@ -230,10 +240,10 @@ class PostRequestHandler(AbstractRequestHandler):
 
     """
 
-    def handle(self, url, body):
+    def handle(self, url, body, query_context=None):
         try:
             self.body = body
-            self.parse_url(url)
+            self.parse_url(url, query_context)
             # Import the model mappings
             models = self.import_models()
             # Get the Model class
@@ -287,8 +297,6 @@ class PostRequestHandler(AbstractRequestHandler):
         except Exception as e:
             diag = "{}".format(e)
             if settings.DEBUG:
-                import traceback
-
                 tb = traceback.format_exc()
                 diag += " {}".format(tb)
             raise OperationError(
@@ -320,10 +328,10 @@ class PutRequestHandler(PostRequestHandler):
 
     """
 
-    def handle(self, url, body):
+    def handle(self, url, body, query_context=None):
         try:
             self.body = body
-            self.parse_url(url)
+            self.parse_url(url, query_context)
             # Import the model mappings
             models = self.import_models()
             # Get the Model class
@@ -377,8 +385,6 @@ class PutRequestHandler(PostRequestHandler):
         except Exception as e:
             diag = "{}".format(e)
             if settings.DEBUG:
-                import traceback
-
                 tb = traceback.format_exc()
                 diag += " {}".format(tb)
             raise OperationError(
@@ -412,8 +418,6 @@ class DeleteRequestHandler(AbstractRequestHandler):
         try:
             self.auditEvent = self.create_audit_event(url)
             self.parse_url(url, query_context)
-            if query_context:
-                self.query.context = query_context
             # Authorize the request if implemented
             self._audit_request(self.query)
             # Import the model mappings

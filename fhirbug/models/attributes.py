@@ -6,12 +6,44 @@ from fhirbug.exceptions import (
 )
 from fhirbug.Fhir import resources as fhir
 from fhirbug.config import import_searches, import_models, settings
+from fhirbug.server import get_request_context
+
+
+def audited(func):
+    """
+    A decorator that adds auditing functionality to the ``__get__`` and ``__set__`` methods of descriptor Attributes.
+    Attribute auditors, depending on the result of the audit, can return ``True``, meaning access to the attribute has
+    been granted or ``False``, meaning access has been denied but execution should continue normally. If execution
+    should stop and an error returned to the requester, it should raise an exception.
+    """
+
+    def with_audit(desc, instance, arg):
+        # __set__ does not receive an owner argument owner
+        if func.__name__ == "__set__":
+            own = instance.__class__
+            method = "audit_set"
+        else:
+            own = arg
+            method = "audit_get"
+
+        ctx = get_request_context()
+        prop_name = getattr(desc, "_attribute_name", "")
+        if (
+            hasattr(desc, method)
+            and ctx is not None
+            and getattr(desc, method) is not None
+        ):
+            res = getattr(desc, method)(instance._model, ctx, prop_name)
+            if res != True:
+                return None
+        return func(desc, instance, arg)
+
+    return with_audit
 
 
 class Attribute:
     """
-
-    The base class for declaring db to fhir mappings. Accepts three positional argumants, a getter, a setter and a searcher.
+    The base class for declaring db to fhir mappings. Accepts three positional arguments, a getter, a setter and a searcher.
 
     Getting values
     --------------
@@ -124,13 +156,24 @@ class Attribute:
     15
     """
 
-    def __init__(self, getter=None, setter=None, searcher=None, search_regex=None):
+    def __init__(
+        self,
+        getter=None,
+        setter=None,
+        searcher=None,
+        search_regex=None,
+        audit_get=None,
+        audit_set=None,
+    ):
         self.getter = getter
         self.setter = setter
         self.searcher = searcher
+        self.audit_get = audit_get
+        self.audit_set = audit_set
         if search_regex:
             self.search_regex = search_regex
 
+    @audited
     def __get__(self, instance, owner):
         getter = self.getter
         # Strings are column names
@@ -147,11 +190,11 @@ class Attribute:
             column, func = getter
             return func(getattr(instance._model, column))
 
-    # def __set__(self, instance, owner, value):
+    @audited
     def __set__(self, instance, value):
         try:
             setter = self.setter
-            assert(setter is not None)
+            assert setter is not None
         except (AttributeError, AssertionError):
             if settings.STRICT_MODE.get("set_attribute_without_setter", False):
                 raise UnsupportedOperationError(
@@ -176,19 +219,46 @@ class Attribute:
                 res = func(getattr(instance._model, column), value)
                 setattr(instance._model, column, res)
 
+    def __set_name__(self, owner, name):
+        """
+        Save the name this descriptor has been assigned to
+        """
+        self._attribute_name = name
+
+    def _get_property_name(self, owner_cls):
+        """
+        .. deprecated:: 0.1.2
+
+        Deprecated: Use ``self._attribute_name`` instead.
+
+        Traverses the class's inheritance tree and finds the property name
+        this Attribute has been assigned to. This is useful because the property
+        name is the name of the the Fhir attribute the property represents.
+
+        :param: class owner_cls The class that owns this property
+        :returns: The Fhir name this Attribute has been assigned to.
+        :r_type: str
+        """
+        if not owner_cls:
+            return
+        for cls in owner_cls.mro()[:-1]:
+            for k, v in vars(cls).items():
+                if id(v) == id(self):
+                    return k
+
 
 class const:
     """
-  const can be used as a getter for an attribute that should always return the same value
+    const can be used as a getter for an attribute that should always return the same value
 
-  >>> from types import SimpleNamespace as SN
-  >>> class Bla:
-  ...   p = Attribute(const(12))
-  ...
-  >>> b = Bla()
-  >>> b.p
-  12
-  """
+    >>> from types import SimpleNamespace as SN
+    >>> class Bla:
+    ...   p = Attribute(const(12))
+    ...
+    >>> b = Bla()
+    >>> b.p
+    12
+    """
 
     def __init__(self, value):
         self.value = value
@@ -308,7 +378,9 @@ class ReferenceAttribute(Attribute):
 
 
 class DateAttribute(Attribute):
-    def __init__(self, field):
+    def __init__(self, field, audit_get=None, audit_set=None):
+        self.audit_get = audit_get
+        self.audit_set = audit_set
         searches = import_searches()
 
         def setter(old_date_str, new_date_str):
@@ -348,7 +420,11 @@ class NameAttribute(Attribute):
         setter=None,
         searcher=None,
         given_join_separator=" ",
+        audit_get=None,
+        audit_set=None,
     ):
+        self.audit_get = audit_get
+        self.audit_set = audit_set
         searches = import_searches()
         if join_given_names and pass_given_names:
             raise MappingException(
@@ -394,11 +470,12 @@ class NameAttribute(Attribute):
 
 
 class EmbeddedAttribute(Attribute):
-    '''
+    """
     An attribute representing a BackboneElement that is described by a model
     and is stored using an ORM relationship, usually a ForeignKeyField or
     an embedded mongo document.
-    '''
+    """
+
     def __init__(self, *args, type=None, **kwargs):
         if type is None:
             raise MappingValidationError(
@@ -421,11 +498,11 @@ class EmbeddedAttribute(Attribute):
         return embedded_resource.to_fhir()
 
     def __set__(self, instance, value):
-        '''
+        """
         We accept a Fhir Resource class when handling requests
         but we also allow setting the value using a dictionary.
         We convert to a Fhir Map and set.
-        '''
+        """
         if type(value) is dict:
             embedded_resource = self.dict_to_resource(self.type, value)
         elif type(value) is list:
@@ -437,10 +514,10 @@ class EmbeddedAttribute(Attribute):
         return super(EmbeddedAttribute, self).__set__(instance, embedded_resource)
 
     def dict_to_resource(self, resource_type, dict):
-        '''
+        """
         Accept a dict (normally the result of FhirResource.as_json()) and return
         a fhirbug map instance
-        '''
+        """
         if type(resource_type) is type:
             ResourceClass = resource_type
         else:
