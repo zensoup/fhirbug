@@ -8,6 +8,7 @@ Overview
    :maxdepth: 3
    :caption: Contents:
 
-   creating_mappings
-   fhir_resources
-   auditing
+   overview/creating_mappings
+   overview/fhir_resources
+   overview/auditing
+   overview/logging
