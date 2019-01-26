@@ -27,13 +27,13 @@ def audited(func):
             method = "audit_get"
 
         ctx = get_request_context()
-        prop_name = desc._get_property_name(own)
+        prop_name = desc._attribute_name
         if (
             hasattr(desc, method)
             and ctx is not None
             and getattr(desc, method) is not None
         ):
-            res = getattr(desc, method)(instance._model, ctx, desc._attribute_name)
+            res = getattr(desc, method)(instance._model, ctx, prop_name)
             if res != True:
                 return None
         return func(desc, instance, arg)

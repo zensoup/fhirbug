@@ -38,6 +38,7 @@ is processed normally.
         def audit_request(self, query):
             return AuditEvent(outcome="0", strict=False)
 
+
 *The simplest possible auditing handler, one that approves all requests.*
 
 In any other case, the request fails with status code ``403``,
@@ -99,12 +100,42 @@ should return an :class:`AuditEvent <fhirbug.Fhir.Resources.AuditEvent>`, whose
             # Fhirbug Attributes go here
 
 
+You can use Mixins to let resources share common auditing methods:
+
+
+    ::
+
+        class OnlyForAdmins:
+            def audit_read(self, query):
+                # Assuming you have passed the appropriate query cintext to the request handler
+                isSuperUser = query.context.User.is_superuser
+
+                return (
+                    AuditEvent(outcome="0", strict=False)
+                    if isSuperUser
+                    else AuditEvent(
+                        outcome="4",
+                        outcomeDesc="Only admins can access this resource",
+                        strict=False,
+                    )
+                )
+
+        class AuditRequest(OnlyForAdmins, FhirBaseModel):
+            # Mapping goes here
+
+        class OperationOutcome(OnlyForAdmins, FhirBaseModel):
+            # Mapping goes here
+
+            ...
+
+
 Controlling access to specific attributes
 _________________________________________
 
 If you want more refined control over which attributes can be changed and displayed, during the
 execution of one of the above ``audit_*`` methods, you can call ``self.protect_attributes(*attrs*)`` and /or
-``self.hide_attributes(*attrs*)``.
+``self.hide_attributes(*attrs*)`` inside them.
+
 In both cases, ``*attrs*`` should be an iterable that contains a list of attribute names that should be protected or hidden.
 
 protect_attributes()
@@ -155,7 +186,32 @@ of Patients we would use ``protect_attributes``:
 Auditing at the attribute level
 --------------------------------
 
+.. warning:: This feature is more experimental than the rest. If you intend to use it
+             be aware of the complications that may rise because you are inside a desciptor getter
+             (For example trying to get the specific attribute's value would result in an infinte loop)
+
+
 When declaring attributes, you can provide a function to the ``audit_set`` and ``audit_get``
-keyword arguments. The signature for these functions is the same, they accept
-a single positional argument and should return ``True`` if access to the attribute
+keyword arguments. These functions accept three positional arguments:
+
+The first is the instance of the Attribute descriptor, the second, ``query`` being the :class:`FhirRequestQuery <fhirbug.server.requestparser.FhirRequestQuery>`
+for this request and the third being the attribute's name
+It should return ``True`` if access to the attribute
 is allowed, or ``False`` otherwise.
+
+It's also possible to deny the entire request by throwing an
+:class:`AuthorizationError<fhirbug.exceptions.AuthorizationError>`
+
+.. function:: audit_get(descriptor, query, attribute_name) -> boolean
+
+    :param FhirRequestQuery query: The ``FhirRequestQuery`` object for this request
+    :param str attribute_name: The name this attribute has been assigned to
+    :return: True if access to this attribute is allowed, False otherwise
+    :rtype: boolean
+
+.. function:: audit_set(descriptor, query, attribute_name) -> boolean
+
+    :param FhirRequestQuery query: The ``FhirRequestQuery`` object for this request
+    :param str attribute_name: The name this attribute has been assigned to
+    :return: True if changing this attribute is allowed, False otherwise
+    :rtype: boolean
