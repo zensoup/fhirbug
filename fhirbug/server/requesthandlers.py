@@ -112,15 +112,15 @@ class AbstractRequestHandler:
     def _audit_request(self, query):
         if hasattr(self, "audit_request"):
             auditEvent = self.audit_request(query)
-            self.auditEvent.entity[0].detail.append(
-                {"type": "AuditOutcome", "valueString": auditEvent.outcome}
-            )
-            self.auditEvent.entity[0].detail.append(
-                {
-                    "type": "AuditDescription",
-                    "valueString": getattr(auditEvent, "outcomeDesc", None),
-                }
-            )
+            # self.auditEvent.entity[0].detail.append(
+            #     {"type": "AuditOutcome", "valueString": auditEvent.outcome}
+            # )
+            # self.auditEvent.entity[0].detail.append(
+            #     {
+            #         "type": "AuditDescription",
+            #         "valueString": getattr(auditEvent, "outcomeDesc", None),
+            #     }
+            # )
             if auditEvent.outcome != "0":
                 raise OperationError(
                     severity="error",
