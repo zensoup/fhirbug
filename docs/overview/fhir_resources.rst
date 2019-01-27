@@ -137,6 +137,7 @@ API for :ref:`creating-resources`.
 
 .. class:: fhirbug.Fhir.base.fhirabstractbase.FHIRAbstractBase
 
+    
     .. automethod:: fhirbug.Fhir.base.fhirabstractbase.FHIRAbstractBase.__init__
 
         Parameters that are not defined in FHIR for this resource are ignored.
