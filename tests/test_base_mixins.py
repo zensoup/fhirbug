@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import Mock, patch
 from types import SimpleNamespace
 from fhirbug.config import settings
 
@@ -8,8 +9,14 @@ settings.configure(
     {"DB_BACKEND": "SQLAlchemy", "SQLALCHEMY_CONFIG": {"URI": "sqlite:///memory"}}
 )
 from . import models
+from fhirbug.constants import AUDIT_SUCCESS, AUDIT_MINOR_FAILURE
 from fhirbug.Fhir.resources import Patient, Observation
-from fhirbug.exceptions import AuthorizationError
+from fhirbug.exceptions import (
+    AuthorizationError,
+    DoesNotExistError,
+    MappingValidationError,
+)
+from fhirbug.models.mixins import FhirBaseModelMixin, get_pagination_info
 
 
 class TestAbstractBaseMixin(unittest.TestCase):
@@ -202,35 +209,51 @@ class TestCRUDMethods(unittest.TestCase):
             inst.update_from_resource(resource, query=query)
 
     def test_update_with_protected_attributes(self):
-        '''
+        """
         When the auditing method makes a call to ``self.protect_attributes()``, the protected values should not change
-        '''
+        """
         from fhirbug.Fhir.resources import HumanName
+
         inst = models.MixinModelWithSettersAndAuditingProtected()
-        resource = SimpleNamespace(active=False, name=HumanName(family="Family name", given="Given name"))
+        resource = SimpleNamespace(
+            active=False, name=HumanName(family="Family name", given="Given name")
+        )
         inst.update_from_resource(resource)
 
         # Name should have changed
-        self.assertEquals(inst.Fhir.name.as_json(), {"family": "Family name", "given": ["Given name"]})
+        self.assertEquals(
+            inst.Fhir.name.as_json(), {"family": "Family name", "given": ["Given name"]}
+        )
 
         # Active should not have changed
         self.assertEquals(inst.Fhir.active, None)
 
     def test_update_with_hidden_attributes(self):
-        '''
+        """
         When the auditing method makes a call to ``self.hide_attributes()``, the values should change but the attributes
         should not be returned
-        '''
+        """
         from fhirbug.Fhir.resources import HumanName
+
         inst = models.MixinModelWithSettersAndAuditingProtected()
         inst.audit_update = inst.audit_update2
-        resource = SimpleNamespace(active=False, name=HumanName(family="Family name", given="Given name"))
+        resource = SimpleNamespace(
+            active=False, name=HumanName(family="Family name", given="Given name")
+        )
         inst.update_from_resource(resource)
 
-        self.assertEqual(inst.to_fhir().as_json(), {'name': [{'family': 'Family name', 'given': ['Given name']}], 'resourceType': 'Patient'})
+        self.assertEqual(
+            inst.to_fhir().as_json(),
+            {
+                "name": [{"family": "Family name", "given": ["Given name"]}],
+                "resourceType": "Patient",
+            },
+        )
 
         # Name should have changed
-        self.assertEqual(inst.Fhir.name.as_json(), {"family": "Family name", "given": ["Given name"]})
+        self.assertEqual(
+            inst.Fhir.name.as_json(), {"family": "Family name", "given": ["Given name"]}
+        )
 
         # Active should not have changed
         self.assertEqual(inst.Fhir.active, False)
@@ -288,9 +311,9 @@ class TestCRUDMethods(unittest.TestCase):
         _after_create_mock.assert_not_called()
 
     def test_create_with_protected_attributes(self):
-        '''
+        """
         When the auditing method makes a call to ``self.protect_attributes()``, the protected values should not be set
-        '''
+        """
         from fhirbug.Fhir.resources import HumanName
 
         cls = models.MixinModelWithSettersAndAuditingProtected
@@ -336,3 +359,115 @@ class TestCRUDMethods(unittest.TestCase):
             cls.delete_item(inst, query)
         audit_fail_mock.assert_called_with(query)
         models.DeletableMixinModelAudited_delete_method.assert_not_called()
+
+
+class TestGetMethodSingleItem(unittest.TestCase):
+    def test_get_single_item(self):
+        """ If the provided query object contains a resource_id, it should call
+        ``_get_item_from_pk`` for that id and return the result in json form
+        """
+        cls = FhirBaseModelMixin
+        queryMock = Mock()
+        cls._get_item_from_pk = Mock()
+        del (cls._get_item_from_pk().audit_read)
+
+        res = cls.get(queryMock)
+        cls._get_item_from_pk.assert_called_with(queryMock.resourceId)
+        self.assertEqual(res, cls._get_item_from_pk().to_fhir().as_json())
+
+    def test_get_single_item_audit(self):
+        """ If the provided query object contains a resource_id, it should call
+        ``_get_item_from_pk`` for that id and return the result in json form
+        """
+        cls = FhirBaseModelMixin
+        queryMock = Mock()
+        cls._get_item_from_pk = Mock()
+        cls._get_item_from_pk().audit_read = Mock(
+            return_value=SimpleNamespace(outcome=AUDIT_SUCCESS)
+        )
+
+        res = cls.get(queryMock)
+        cls._get_item_from_pk.assert_called_with(queryMock.resourceId)
+        cls._get_item_from_pk().audit_read.assert_called_with(queryMock)
+        self.assertEqual(res, cls._get_item_from_pk().to_fhir().as_json())
+
+    def test_get_single_item_audit_fail(self):
+        """ If the provided query object contains a resource_id, it should call
+        ``_get_item_from_pk`` for that id and return the result in json form
+        """
+        cls = FhirBaseModelMixin
+        queryMock = Mock()
+        cls._get_item_from_pk = Mock()
+        cls._get_item_from_pk().audit_read = Mock(
+            return_value=SimpleNamespace(outcome=AUDIT_MINOR_FAILURE)
+        )
+
+        with self.assertRaises(AuthorizationError) as e:
+            res = cls.get(queryMock)
+        cls._get_item_from_pk.assert_called_with(queryMock.resourceId)
+
+    def test_get_single_item_does_not_exist(self):
+        """ If the provided query object contains a resource_id, it should call
+        ``_get_item_from_pk`` for that id and return the result in json form
+        """
+        cls = FhirBaseModelMixin
+        queryMock = Mock()
+        cls._get_item_from_pk = Mock(side_effect=DoesNotExistError)
+
+        with self.assertRaises(MappingValidationError) as e:
+            res = cls.get(queryMock)
+        cls._get_item_from_pk.assert_called_with(queryMock.resourceId)
+
+
+class TestPaginationInfo(unittest.TestCase):
+    def test_from_query(self):
+        """
+        If ``_count`` and ``search-offset``  have been provided in the query
+        use those
+        """
+        from fhirbug.server.requestparser import FhirRequestQuery
+
+        query = FhirRequestQuery("resource", modifiers={"_count": [69]})
+        page, count, next_offset, prev_offset = get_pagination_info(query)
+        self.assertEqual((page, count, next_offset, prev_offset), (1, 69, 70, 1))
+
+        query = FhirRequestQuery(
+            "resource", modifiers={"_count": [69]}, search_params={"search-offset": [70]}
+        )
+        page, count, next_offset, prev_offset = get_pagination_info(query)
+        self.assertEqual((page, count, next_offset, prev_offset), (2, 69, 139, 1))
+
+    @patch('fhirbug.models.mixins.settings')
+    def test_defaults(self, settingsMock):
+        """
+        If no options have been provided in the query or the settings load the defaults
+        """
+        from fhirbug.server.requestparser import FhirRequestQuery
+        settingsMock.DEFAULT_BUNDLE_SIZE = 18
+        settingsMock.MAX_BUNDLE_SIZE = 20
+
+        query = FhirRequestQuery("resource")
+        page, count, next_offset, prev_offset = get_pagination_info(query)
+        self.assertEqual((page, count, next_offset, prev_offset), (1, 18, 19, 1))
+
+        query = FhirRequestQuery(
+            "resource", modifiers={"_count": [69]}, search_params={"search-offset": [70]}
+        )
+        page, count, next_offset, prev_offset = get_pagination_info(query)
+        self.assertEqual((page, count, next_offset, prev_offset), (4, 20, 90, 50))
+
+
+# @patch('fhirbug.models.mixins.settings')
+# class TestGetMethodBundledItems(unittest.TestCase):
+#     def test_get_single_item(self, settingsMock):
+#         ''' If the provided query object contains a resource_id, it should call
+#         ``_get_item_from_pk`` for that id and return the result in json form
+#         '''
+#         from fhirbug.server.requestparser import FhirRequestQuery
+#         query = FhirRequestQuery('resource')
+#         cls = FhirBaseModelMixin
+#         cls._get_orm_query = Mock()
+#         settingsMock.DEFAULT_BUNDLE_SIZE = 99
+#         settingsMock.MAX_BUNDLE_SIZE = 999
+#
+#         res = cls.get(query)

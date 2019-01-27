@@ -10,8 +10,31 @@ from fhirbug.exceptions import (
     AuthorizationError,
 )
 from fhirbug.Fhir.resources import PaginatedBundle
+from fhirbug.server.requestparser import generate_query_string
 
 from fhirbug.config import settings
+
+
+def get_pagination_info(query):
+    """
+    Reads item count and offset from the provided  ``FhirRequestQuery`` instance,
+    or the application settings. It makes count obay MAX_BUNDLE_SIZE and
+    calculates which page we are on.
+
+    :param FhirRequestQuery query: The FhirRequestQuery object for this request.
+    :returns: (page, count, prev_offset, next_offset) The number of the page we are on, how many items we should show,
+              the offset of the next page and the offset of the previous page.
+    :rtype: (int, int, int, int)
+    """
+    count = int(query.modifiers.get("_count", [settings.DEFAULT_BUNDLE_SIZE])[0])
+    count = min(count, settings.MAX_BUNDLE_SIZE)
+    offset = query.search_params.get("search-offset", ["1"])
+    offset = int(offset[0])
+    page = offset // count + 1
+
+    prev_offset = max(offset - count, 1)
+    next_offset = offset + count
+    return page, count, next_offset, prev_offset
 
 
 class FhirAbstractBaseMixin:
@@ -88,8 +111,7 @@ class FhirAbstractBaseMixin:
         param_dict = {
             attribute: getattr(self.Fhir, attribute)
             for attribute in attributes
-            if hasattr(mock, attribute)
-            and attribute.lower() not in hidden_attrs
+            if hasattr(mock, attribute) and attribute.lower() not in hidden_attrs
         }
         return param_dict
 
@@ -138,8 +160,7 @@ class FhirAbstractBaseMixin:
         own_attributes = [
             prop
             for prop, type in cls.FhirMap.__dict__.items()
-            if isinstance(type, Attribute)
-            and prop not in protected_attrs
+            if isinstance(type, Attribute) and prop not in protected_attrs
         ]
 
         for path in own_attributes:
@@ -168,8 +189,7 @@ class FhirAbstractBaseMixin:
         own_attributes = [
             prop
             for prop, type in self.FhirMap.__dict__.items()
-            if isinstance(type, Attribute)
-            and prop not in protected_attrs
+            if isinstance(type, Attribute) and prop not in protected_attrs
         ]
 
         self.Fhir._query = query
@@ -191,7 +211,6 @@ class FhirAbstractBaseMixin:
             if auditEvent.outcome != AUDIT_SUCCESS:
                 raise AuthorizationError(auditEvent=auditEvent)
         return cls._delete_item(item)
-
 
     def protect_attributes(self, attribute_names=[]):
         """
@@ -215,6 +234,9 @@ class FhirAbstractBaseMixin:
 
 
 class FhirBaseModelMixin:
+    """
+    """
+
     @classmethod
     def get(cls, query, *args, **kwargs):
         """
@@ -254,23 +276,9 @@ class FhirBaseModelMixin:
             # TODO: Handle sorting
 
             # Handle pagination
-            count = int(
-                query.modifiers.get("_count", [settings.DEFAULT_BUNDLE_SIZE])[0]
-            )
-            count = min(count, settings.MAX_BUNDLE_SIZE)
-            offset = query.search_params.get("search-offset", ["1"])
-            offset = int(offset[0])
-            page = offset // count + 1
+            page, count, next_offset, prev_offset = get_pagination_info(query)
             pagination = cls.paginate(sql_query, page, count)
-            url_queries = "&".join(
-                [
-                    f"{param}={value}"
-                    for param, values in query.search_params.items()
-                    for value in values
-                    if param != "search-offset"
-                ]
-            )
-            url_queries = "&" + url_queries if url_queries else ""
+            url_queries = generate_query_string(query)
             params = {
                 "items": [
                     item.to_fhir(*args, query=query, **kwargs)
@@ -282,8 +290,8 @@ class FhirBaseModelMixin:
                 "pages": pagination.pages,
                 "has_next": pagination.has_next,
                 "has_previous": pagination.has_previous,
-                "next_page": f"{cls.__name__}/?_count={count}&search-offset={offset+count}{url_queries}",
-                "previous_page": f"{cls.__name__}/?_count={count}&search-offset={max(offset-count,1)}{url_queries}",
+                "next_page": f"{cls.__name__}/?_count={count}&search-offset={next_offset}{url_queries}",
+                "previous_page": f"{cls.__name__}/?_count={count}&search-offset={prev_offset}{url_queries}",
             }
             return PaginatedBundle(pagination=params).as_json()
 

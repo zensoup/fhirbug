@@ -2,6 +2,21 @@ from urllib.parse import urlparse, parse_qs
 
 from fhirbug.exceptions import QueryValidationError
 
+def generate_query_string(query):
+    '''
+    Convert a ``FhirRequestQuery`` back to a query string.
+    '''
+    url_queries = "&".join(
+        [
+            f"{param}={value}"
+            for param, values in query.search_params.items()
+            for value in values
+            if param != "search-offset"
+        ]
+    )
+    url_queries = "&" + url_queries if url_queries else ""
+    return url_queries
+
 
 def split_join(lst):
     """
@@ -21,11 +36,11 @@ class FhirRequestQuery:
     def __init__(
         self,
         resource,
-        resourceId,
-        operation,
-        operationId,
-        modifiers,
-        search_params,
+        resourceId=None,
+        operation=None,
+        operationId=None,
+        modifiers={},
+        search_params={},
         body=None,
         request=None,
     ):

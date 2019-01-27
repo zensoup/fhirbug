@@ -1,6 +1,21 @@
 import unittest
-from fhirbug.server.requestparser import parse_url, split_join
+from fhirbug.server.requestparser import (
+    parse_url,
+    split_join,
+    generate_query_string,
+    FhirRequestQuery,
+)
 from fhirbug.exceptions import QueryValidationError
+
+
+class TestGenerateQueryString(unittest.TestCase):
+    def test(self):
+        query = FhirRequestQuery(
+            "Resource",
+            search_params={"one": ["1"], "two": [2, 2], "search-offset": [12]},
+        )
+        res = generate_query_string(query)
+        self.assertEqual(res, "&one=1&two=2&two=2")
 
 
 class TestSplitJoin(unittest.TestCase):
