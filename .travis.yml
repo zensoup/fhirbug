@@ -9,7 +9,7 @@ install:
     - pip install codecov
 script:
     - coverage run run_doctests.py
-    - nosetests --with-coverage --cover-package=fhirbug.server --cover-package=fhirbug.models --cover-package=fhirbug.db --cover-package=fhirbug.config
+    - nosetests --with-coverage --cover-package=fhirbug.server --cover-package=fhirbug.models --cover-package=fhirbug.db --cover-package=fhirbug.config -I fhirsearch_tests
 
 after_success:
     - codecov
