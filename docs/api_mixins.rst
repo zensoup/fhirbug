@@ -3,10 +3,10 @@ Mixins
 
 .. module:: fhirbug.models.mixins
 
-.. autoclass:: FhirAbstractBaseMixin
+.. autoclass:: fhirbug.models.mixins.FhirAbstractBaseMixin
     :members:
     :inherited-members:
 
-.. autoclass:: FhirBaseModelMixin
+.. autoclass:: fhirbug.models.mixins.FhirBaseModelMixin
     :members:
     :inherited-members:
