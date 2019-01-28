@@ -50,42 +50,43 @@ def NumericSearchWithQuantity(column, convert_value=None, alter_query=None):
     return search
 
 
-def DateSearch(column):
-    def transform(value, trim=True):
-        if trim:
-            value = value[2:]
+def transform_date(value, trim=True):
+    if trim:
+        value = value[2:]
+    try:
+        value = isodate.parse_datetime(value)
+        return value
+    except:
         try:
-            value = isodate.parse_datetime(value)
+            value = isodate.parse_date(value)
             return value
         except:
-            try:
-                value = isodate.parse_date(value)
-                return value
-            except:
-                raise QueryValidationError(f"{value} is not a valid ISO date")
+            raise QueryValidationError(f"{value} is not a valid ISO date")
 
+
+def DateSearch(column):
     def search_datetime(cls, field_name, value, sql_query, query):
         # value = query.search_params[field_name] if field_name in query.search_params else query.modifiers[field_name]
         # value = value.pop()
         if value.startswith("lt"):  # Less than
-            return sql_query.filter(**{"{}__lt".format(column): transform(value)})
+            return sql_query.filter(**{"{}__lt".format(column): transform_date(value)})
         if value.startswith("gt"):  # Greater than
-            return sql_query.filter(**{"{}__gt".format(column): transform(value)})
+            return sql_query.filter(**{"{}__gt".format(column): transform_date(value)})
         if value.startswith("le"):  # Less or equal
-            return sql_query.filter(**{"{}__lte".format(column): transform(value)})
+            return sql_query.filter(**{"{}__lte".format(column): transform_date(value)})
         if value.startswith("ge"):  # Greater or equal
-            return sql_query.filter(**{"{}__gte".format(column): transform(value)})
+            return sql_query.filter(**{"{}__gte".format(column): transform_date(value)})
         if value.startswith("eq"):  # Equals
-            return sql_query.filter(**{column: transform(value)})
+            return sql_query.filter(**{column: transform_date(value)})
         if value.startswith("ne"):  # Not Equal
-            return sql_query.filter(~Q(**{column: transform(value)}))
+            return sql_query.filter(~Q(**{column: transform_date(value)}))
         if value.startswith("ap"):  # Approximately (+- 10%)
             floor = transform(value) - timedelta(30)
             ceil = transform(value) + timedelta(30)
             return sql_query.filter(**{"{}__gte".format(column): floor}).filter(
                 **{"{}__gte".format(column): ceil}
             )
-        return sql_query.filter(**{column: transform(value, trim=False)})
+        return sql_query.filter(**{column: transform_date(value, trim=False)})
 
     return search_datetime
 

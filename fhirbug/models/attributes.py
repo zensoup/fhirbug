@@ -265,11 +265,25 @@ class const:
 
 
 class BooleanAttribute(Attribute):
+    '''
+    Used for attributes representing boolean types.
+    ``truthy_values`` and ``falsy_values`` are used to determine which possible values from the database
+    we should consider as True and False.
+    Values that are not in any of the lists are mapped to ``default`` and if that is None, a MappingValidationError is
+    thrown.
+
+    :param save_true_as: How do we save True in the database
+    :param save_false_as: How do we save Fasle in the database
+    :param deafult: If we read a value that is not in ``truthy_values`` or ``falsy_values``, it will default to ths value.
+    :param list truthy_values: Which values, when read from the database should be mapped to True
+    :param list falsy_values: Which values, when read from the database should be mapped to False
+    '''
     def __init__(
         self,
         *args,
         save_true_as=1,
         save_false_as=0,
+        default=None,
         truthy_values=["true", "True", 1, "1"],
         falsy_values=["false", "False", "0", 0],
         **kwargs,
@@ -278,6 +292,7 @@ class BooleanAttribute(Attribute):
         self.save_false_as = save_false_as
         self.truthy_values = truthy_values
         self.falsy_values = falsy_values
+        self.default = default
         return super(BooleanAttribute, self).__init__(*args, **kwargs)
 
     def __get__(self, *args, **kwargs):
@@ -286,7 +301,8 @@ class BooleanAttribute(Attribute):
             return True
         elif value in self.falsy_values:
             return False
-        return value
+        else:
+            return self.default
 
     def __set__(self, instance, value):
         if value:

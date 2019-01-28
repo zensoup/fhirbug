@@ -51,43 +51,44 @@ def NumericSearchWithQuantity(column, convert_value=None, alter_query=None):
     return search
 
 
-def DateSearch(column):
-    def transform(value, trim=True):
-        if trim:
-            value = value[2:]
+def transform_date(value, trim=True):
+    if trim:
+        value = value[2:]
+    try:
+        value = isodate.parse_datetime(value)
+        return value
+    except:
         try:
-            value = isodate.parse_datetime(value)
+            value = isodate.parse_date(value)
             return value
         except:
-            try:
-                value = isodate.parse_date(value)
-                return value
-            except:
-                raise QueryValidationError(f"{value} is not a valid ISO date")
+            raise QueryValidationError(f"{value} is not a valid ISO date")
 
+
+def DateSearch(column):
     def search_datetime(cls, field_name, value, sql_query, query):
         # value = query.search_params[field_name] if field_name in query.search_params else query.modifiers[field_name]
         # value = value.pop()
         col = getattr(cls, column)
         if value.startswith("lt"):  # Less than
-            return sql_query.filter(col < transform(value))
+            return sql_query.filter(col < transform_date(value))
         if value.startswith("gt"):  # Greater than
-            return sql_query.filter(col > transform(value))
+            return sql_query.filter(col > transform_date(value))
         if value.startswith("le"):  # Less or equal
-            return sql_query.filter(col <= transform(value))
+            return sql_query.filter(col <= transform_date(value))
         if value.startswith("ge"):  # Greater or equal
-            return sql_query.filter(col >= transform(value))
+            return sql_query.filter(col >= transform_date(value))
         if value.startswith("eq"):  # Equals
-            return sql_query.filter(col == transform(value))
+            return sql_query.filter(col == transform_date(value))
         if value.startswith("ne"):  # Not Equal
-            return sql_query.filter(col != transform(value))
+            return sql_query.filter(col != transform_date(value))
         ## TODO load from settings
         if value.startswith("ap"):  # Approximately (+- 1month)
-            floor = transform(value) - timedelta(30)
-            ceil = transform(value) + timedelta(30)
+            floor = transform_date(value) - timedelta(30)
+            ceil = transform_date(value) + timedelta(30)
             return sql_query.filter(col >= floor).filter(col <= ceil)
 
-        return sql_query.filter(col == transform(value, trim=False))
+        return sql_query.filter(col == transform_date(value, trim=False))
 
     return search_datetime
 
