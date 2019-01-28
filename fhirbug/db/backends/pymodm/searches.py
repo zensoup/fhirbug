@@ -31,7 +31,7 @@ def NumericSearch(column):
                 {column: {"$lte": val + val * 0.1}}
             )
 
-        return sql_query.filter({column: value})
+        return sql_query.raw({column: to_float(value)})
 
     return search
 

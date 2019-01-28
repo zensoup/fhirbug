@@ -27,7 +27,6 @@ def setUpModule():
 class TestModel(unittest.TestCase):
     def test_something(self):
         q = session.query(models_sqlAlchemy.DatabaseModel).all()
-        print(q)
 
     # def test_getter_string(self):
     #     """

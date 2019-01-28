@@ -197,7 +197,6 @@ class TestGetRequestHandler(unittest.TestCase):
         with patch("fhirbug.server.requesthandlers.settings") as settingsMock:
             modelMock = Mock()
             modelMock.get = Mock(side_effect=Exception)
-            print(0)
             with self.assertRaises(OperationError) as e:
                 res = handler.fetch_items(modelMock)
             self.assertEqual(e.exception.status_code, 500)

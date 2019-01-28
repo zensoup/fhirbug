@@ -6,8 +6,12 @@ from unittest.mock import Mock, patch, call
 from fhirbug.exceptions import QueryValidationError
 from fhirbug.db.backends.SQLAlchemy import searches as searches_sqla
 from fhirbug.db.backends.DjangoORM import searches as searches_django
+from fhirbug.db.backends.pymodm import searches as searches_pymodm
 
 
+###
+# SQLAlchemy
+###
 class TestSQLAlchemyNumeric(unittest.TestCase):
     def setUp(self):
         self.NumericSearch = searches_sqla.NumericSearch
@@ -178,7 +182,7 @@ class TestSQLAlchemyString(unittest.TestCase):
 class TestSQLAlchemyDate(unittest.TestCase):
     def setUp(self):
         self.DateSearch = searches_sqla.DateSearch
-    #     self.MockPath = "fhirbug.db.backends.SQLAlchemy.searches.or_"
+        #     self.MockPath = "fhirbug.db.backends.SQLAlchemy.searches.or_"
         column = Mock()
         column.__eq__ = Mock()
         column.__lt__ = Mock()
@@ -192,44 +196,49 @@ class TestSQLAlchemyDate(unittest.TestCase):
         self.search = self.DateSearch("name")
 
     def test_transform_date(self):
-        self.assertEqual(searches_sqla.transform_date('xx2013-01-01'), date(2013, 1, 1))
-        self.assertEqual(searches_sqla.transform_date('xx2013-01-01T12:33'), datetime(2013, 1, 1, 12, 33, 0))
-        self.assertEqual(searches_sqla.transform_date('2014-02-03', trim=False), date(2014, 2, 3))
+        self.assertEqual(searches_sqla.transform_date("xx2013-01-01"), date(2013, 1, 1))
+        self.assertEqual(
+            searches_sqla.transform_date("xx2013-01-01T12:33"),
+            datetime(2013, 1, 1, 12, 33, 0),
+        )
+        self.assertEqual(
+            searches_sqla.transform_date("2014-02-03", trim=False), date(2014, 2, 3)
+        )
         with self.assertRaises(QueryValidationError):
-            searches_sqla.transform_date('invalid')
+            searches_sqla.transform_date("invalid")
 
     def test_search_lt(self):
-        self.search(self.cls, '', 'lt2017-01-01', self.sql_query, '')
+        self.search(self.cls, "", "lt2017-01-01", self.sql_query, "")
         self.column.__lt__.assert_called_with(date(2017, 1, 1))
         self.sql_query.filter.assert_called_with(self.column.__lt__())
 
     def test_search_gt(self):
-        self.search(self.cls, '', 'gt2018-01-01', self.sql_query, '')
+        self.search(self.cls, "", "gt2018-01-01", self.sql_query, "")
         self.column.__gt__.assert_called_with(date(2018, 1, 1))
         self.sql_query.filter.assert_called_with(self.column.__gt__())
 
     def test_search_le(self):
-        self.search(self.cls, '', 'le2018-02-02', self.sql_query, '')
+        self.search(self.cls, "", "le2018-02-02", self.sql_query, "")
         self.column.__le__.assert_called_with(date(2018, 2, 2))
         self.sql_query.filter.assert_called_with(self.column.__le__())
 
     def test_search_ge(self):
-        self.search(self.cls, '', 'ge2018-03-01', self.sql_query, '')
+        self.search(self.cls, "", "ge2018-03-01", self.sql_query, "")
         self.column.__ge__.assert_called_with(date(2018, 3, 1))
         self.sql_query.filter.assert_called_with(self.column.__ge__())
 
     def test_search_eq(self):
-        self.search(self.cls, '', 'eq1918-03-01', self.sql_query, '')
+        self.search(self.cls, "", "eq1918-03-01", self.sql_query, "")
         self.column.__eq__.assert_called_with(date(1918, 3, 1))
         self.sql_query.filter.assert_called_with(self.column.__eq__())
 
     def test_search_ne(self):
-        self.search(self.cls, '', 'ne1928-03-02', self.sql_query, '')
+        self.search(self.cls, "", "ne1928-03-02", self.sql_query, "")
         self.column.__ne__.assert_called_with(date(1928, 3, 2))
         self.sql_query.filter.assert_called_with(self.column.__ne__())
 
     def test_search_ap(self):
-        self.search(self.cls, '', 'ap1928-03-05', self.sql_query, '')
+        self.search(self.cls, "", "ap1928-03-05", self.sql_query, "")
         self.column.__ge__.assert_called_with(date(1928, 2, 4))
         self.column.__le__.assert_called_with(date(1928, 4, 4))
 
@@ -237,11 +246,14 @@ class TestSQLAlchemyDate(unittest.TestCase):
         self.sql_query.filter().filter.assert_called_with(self.column.__le__())
 
     def test_searche(self):
-        self.search(self.cls, '', '1928-03-02', self.sql_query, '')
+        self.search(self.cls, "", "1928-03-02", self.sql_query, "")
         self.column.__eq__.assert_called_with(date(1928, 3, 2))
         self.sql_query.filter.assert_called_with(self.column.__eq__())
 
 
+###
+# Django
+###
 class TestDjangoORMNumeric(TestSQLAlchemyNumeric):
     def setUp(self):
         self.NumericSearch = searches_django.NumericSearch
@@ -302,11 +314,18 @@ class TestDjangoORMDate(unittest.TestCase):
         self.search = self.DateSearch("date")
 
     def test_transform_date(self):
-        self.assertEqual(searches_django.transform_date('xx2013-01-01'), date(2013, 1, 1))
-        self.assertEqual(searches_django.transform_date('xx2013-01-01T12:33'), datetime(2013, 1, 1, 12, 33, 0))
-        self.assertEqual(searches_django.transform_date('2014-02-03', trim=False), date(2014, 2, 3))
+        self.assertEqual(
+            searches_django.transform_date("xx2013-01-01"), date(2013, 1, 1)
+        )
+        self.assertEqual(
+            searches_django.transform_date("xx2013-01-01T12:33"),
+            datetime(2013, 1, 1, 12, 33, 0),
+        )
+        self.assertEqual(
+            searches_django.transform_date("2014-02-03", trim=False), date(2014, 2, 3)
+        )
         with self.assertRaises(QueryValidationError):
-            searches_sqla.transform_date('invalid')
+            searches_sqla.transform_date("invalid")
 
     def test_date_search_lt(self):
         self.search(self.cls, "", "lt2019-03-04", self.sql_query, "")
@@ -314,7 +333,9 @@ class TestDjangoORMDate(unittest.TestCase):
 
     def test_date_search_gt(self):
         self.search(self.cls, "", "gt2019-03-04T12:34", self.sql_query, "")
-        self.sql_query.filter.assert_called_with(date__gt=datetime(2019, 3, 4, 12, 34, 0))
+        self.sql_query.filter.assert_called_with(
+            date__gt=datetime(2019, 3, 4, 12, 34, 0)
+        )
 
     def test_date_search_le(self):
         self.search(self.cls, "", "le1980-02-06", self.sql_query, "")
@@ -328,7 +349,7 @@ class TestDjangoORMDate(unittest.TestCase):
         self.search(self.cls, "", "eq1999-12", self.sql_query, "")
         self.sql_query.filter.assert_called_with(date=date(1999, 12, 1))
 
-    @patch('fhirbug.db.backends.DjangoORM.searches.Q')
+    @patch("fhirbug.db.backends.DjangoORM.searches.Q")
     def test_date_search_ne(self, QMock):
         self.search(self.cls, "", "ne1980-01-01", self.sql_query, "")
         self.sql_query.filter.assert_called_with(~QMock())
@@ -347,8 +368,9 @@ class TestDjangoORMDate(unittest.TestCase):
         self.assertRaises(QVE, self.search, self.cls, "", "nea321", self.sql_query, "")
         self.assertRaises(QVE, self.search, self.cls, "", "nea32 1", self.sql_query, "")
 
-@patch('fhirbug.db.backends.DjangoORM.searches.Q')
-class TestDjangoString(unittest.TestCase):
+
+@patch("fhirbug.db.backends.DjangoORM.searches.Q")
+class TestDjangoORMString(unittest.TestCase):
     def setUp(self):
         self.StringSearch = searches_django.StringSearch
         column = Mock()
@@ -369,12 +391,18 @@ class TestDjangoString(unittest.TestCase):
         With simple arguments it shoud do a `startswith` query
         """
         self.search(self.cls, "name", "bob", self.sql_query, None)
-        Q.assert_called_with(name__startswith='bob')
+        Q.assert_called_with(name__startswith="bob")
         self.sql_query.filter.assert_called_with(Q())
 
         Q.reset_mock()
         self.search_with_2(self.cls, "name", "bobb", self.sql_query, None)
-        Q.assert_has_calls([call(name__startswith='bobb'), call(lastname__startswith='bobb'), call().__ior__(Q())])
+        Q.assert_has_calls(
+            [
+                call(name__startswith="bobb"),
+                call(lastname__startswith="bobb"),
+                call().__ior__(Q()),
+            ]
+        )
         self.sql_query.filter.assert_called_with(Q().__ior__())
 
     def test_search_contains(self, Q):
@@ -382,12 +410,18 @@ class TestDjangoString(unittest.TestCase):
         With simple arguments it shoud do a `contains` query
         """
         self.search(self.cls, "name:contains", "John", self.sql_query, None)
-        Q.assert_called_with(name__contains='John')
+        Q.assert_called_with(name__contains="John")
         self.sql_query.filter.assert_called_with(Q())
 
         Q.reset_mock()
         self.search_with_2(self.cls, "name:contains", "Jack", self.sql_query, None)
-        Q.assert_has_calls([call(name__contains='Jack'), call(lastname__contains='Jack'), call().__ior__(Q())])
+        Q.assert_has_calls(
+            [
+                call(name__contains="Jack"),
+                call(lastname__contains="Jack"),
+                call().__ior__(Q()),
+            ]
+        )
         self.sql_query.filter.assert_called_with(Q().__ior__())
 
     def test_search_exact(self, Q):
@@ -395,10 +429,101 @@ class TestDjangoString(unittest.TestCase):
         With simple arguments it shoud do an exact query
         """
         self.search(self.cls, "firstname:exact", "Mary", self.sql_query, None)
-        Q.assert_called_with(name='Mary')
+        Q.assert_called_with(name="Mary")
         self.sql_query.filter.assert_called_with(Q())
 
         Q.reset_mock()
         self.search_with_2(self.cls, "firstname:exact", "Susan", self.sql_query, None)
-        Q.assert_has_calls([call(name='Susan'), call(lastname='Susan'), call().__ior__(Q())])
+        Q.assert_has_calls(
+            [call(name="Susan"), call(lastname="Susan"), call().__ior__(Q())]
+        )
         self.sql_query.filter.assert_called_with(Q().__ior__())
+
+
+###
+# PyMODM
+###
+class TestPyModmNumeric(unittest.TestCase):
+    def setUp(self):
+        self.NumericSearch = searches_pymodm.NumericSearch
+        column = Mock()
+        self.column = column
+        self.cls = SimpleNamespace(name=column)
+        self.sql_query = Mock()
+        self.search = self.NumericSearch("age")
+
+    def test_to_float(self):
+        self.assertEqual(searches_pymodm.to_float("2"), 2.0)
+        with self.assertRaises(QueryValidationError) as e:
+            searches_pymodm.to_float("nope")
+        self.assertEqual(e.exception.args[0], "nope is an invalid numerical parameter")
+
+    @patch("fhirbug.db.backends.pymodm.searches.to_float")
+    def test_numeric_search(self, to_float):
+        ret = self.search(self.cls, "", "lt2", self.sql_query, "")
+        to_float.assert_called_with("2")
+        self.sql_query.raw.assert_called_with({"age": {"$lt": to_float()}})
+
+        ret = self.search(self.cls, "", "gt2.123", self.sql_query, "")
+        to_float.assert_called_with("2.123")
+        self.sql_query.raw.assert_called_with({"age": {"$gt": to_float()}})
+
+        ret = self.search(self.cls, "", "le1002.112323", self.sql_query, "")
+        to_float.assert_called_with("1002.112323")
+        self.sql_query.raw.assert_called_with({"age": {"$lte": to_float()}})
+
+        ret = self.search(self.cls, "", "ge.3", self.sql_query, "")
+        to_float.assert_called_with(".3")
+        self.sql_query.raw.assert_called_with({"age": {"$gte": to_float()}})
+
+        ret = self.search(self.cls, "", "eq1.3", self.sql_query, "")
+        to_float.assert_called_with("1.3")
+        self.sql_query.raw.assert_called_with({"age": to_float()})
+
+        ret = self.search(self.cls, "", "ne1.3", self.sql_query, "")
+        to_float.assert_called_with("1.3")
+        self.sql_query.raw.assert_called_with({"age": {"$ne": to_float()}})
+
+        ret = self.search(self.cls, "", "ap100.123", self.sql_query, "")
+        to_float.assert_called_with("100.123")
+        self.sql_query.raw.assert_called_with({"age": {"$gte": to_float().__sub__()}})
+        self.sql_query.raw().raw.assert_called_with(
+            {"age": {"$lte": to_float().__add__()}}
+        )
+
+        ret = self.search(self.cls, "", "101.123", self.sql_query, "")
+        to_float.assert_called_with("101.123")
+        self.sql_query.raw.assert_called_with({"age": to_float()})
+
+
+@patch("fhirbug.db.backends.pymodm.searches.NumericSearch")
+class TestPyModmNumericSearchWithQuantity(unittest.TestCase):
+    def test_it(self, NSMock):
+        cv = Mock()
+        aq = Mock()
+        search = searches_pymodm.NumericSearchWithQuantity("value", convert_value=cv)
+        search("a", "a", "eq123|mg", "f", "query")
+        cv.assert_called_with("eq123", "mg")
+        aq.assert_not_called()
+        NSMock.assert_called_with("value")
+        NSMock().search.assert_called_with("a", "a", cv(), "f", "query")
+
+        cv = Mock()
+        aq = Mock()
+        search = searches_pymodm.NumericSearchWithQuantity("value", alter_query=aq)
+        search("a", "a", "eq123|mg", "f", "query")
+        cv.assert_not_called()
+        aq.assert_called_with("query", "eq123", "mg")
+        NSMock.assert_called_with("value")
+        NSMock().search.assert_called_with("a", "a", "eq123", aq(), "query")
+
+        cv = Mock()
+        aq = Mock()
+        search = searches_pymodm.NumericSearchWithQuantity(
+            "value", convert_value=cv, alter_query=aq
+        )
+        search("a", "a", "eq123|http://unitsofmeasure.org|mg", "f", "query")
+        cv.assert_called_with("eq123", "http://unitsofmeasure.org|mg")
+        aq.assert_called_with("query", cv(), "http://unitsofmeasure.org|mg")
+        NSMock.assert_called_with("value")
+        NSMock().search.assert_called_with("a", "a", cv(), aq(), "query")

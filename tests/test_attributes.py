@@ -46,7 +46,6 @@ class TestAttributes(unittest.TestCase):
         inst.name = "a_new_name"
         self.assertEquals(inst.name, "my_name")
         settings._wrapped.STRICT_MODE = {"set_attribute_without_setter": True}
-        print(settings.STRICT_MODE)
         with self.assertRaises(UnsupportedOperationError):
             inst.name = "a_new_name"
 
