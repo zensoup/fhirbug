@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, call
 from types import SimpleNamespace
 from fhirbug.config import settings
 
@@ -16,7 +16,11 @@ from fhirbug.exceptions import (
     DoesNotExistError,
     MappingValidationError,
 )
-from fhirbug.models.mixins import FhirBaseModelMixin, get_pagination_info
+from fhirbug.models.mixins import (
+    FhirAbstractBaseMixin,
+    FhirBaseModelMixin,
+    get_pagination_info,
+)
 
 
 class TestAbstractBaseMixin(unittest.TestCase):
@@ -86,6 +90,34 @@ class TestAbstractBaseMixin(unittest.TestCase):
         self.assertEquals(
             inst_as_fhir.as_json(), {"active": True, "resourceType": "Patient"}
         )
+
+    @patch("fhirbug.models.mixins.import_models")
+    def test_rev_includes(self, import_modelsMock):
+        from fhirbug.server.requestparser import parse_url
+
+        itemMock = Mock()
+
+        searcherMock = Mock()
+        searcherMock().all = Mock(return_value=[itemMock])
+        import_modelsMock().Observation.searchables = Mock(
+            return_value={"subject": searcherMock}
+        )
+
+        q = parse_url("Patient?_revinclude=Observation:subject")
+        model = FhirAbstractBaseMixin()
+        model.Fhir = Mock()
+        model._contained_items = []
+
+        model.get_rev_includes(q)
+
+        searcherMock.assert_called_with(
+            import_modelsMock().Observation,
+            "subject",
+            model.Fhir.id,
+            import_modelsMock().Observation._get_orm_query(),
+            q,
+        )
+        self.assertEqual(model._contained_items, [itemMock.to_fhir()])
 
 
 class TestBaseModelMixin(unittest.TestCase):
@@ -432,17 +464,20 @@ class TestPaginationInfo(unittest.TestCase):
         self.assertEqual((page, count, next_offset, prev_offset), (1, 69, 70, 1))
 
         query = FhirRequestQuery(
-            "resource", modifiers={"_count": [69]}, search_params={"search-offset": [70]}
+            "resource",
+            modifiers={"_count": [69]},
+            search_params={"search-offset": [70]},
         )
         page, count, next_offset, prev_offset = get_pagination_info(query)
         self.assertEqual((page, count, next_offset, prev_offset), (2, 69, 139, 1))
 
-    @patch('fhirbug.models.mixins.settings')
+    @patch("fhirbug.models.mixins.settings")
     def test_defaults(self, settingsMock):
         """
         If no options have been provided in the query or the settings load the defaults
         """
         from fhirbug.server.requestparser import FhirRequestQuery
+
         settingsMock.DEFAULT_BUNDLE_SIZE = 18
         settingsMock.MAX_BUNDLE_SIZE = 20
 
@@ -451,23 +486,93 @@ class TestPaginationInfo(unittest.TestCase):
         self.assertEqual((page, count, next_offset, prev_offset), (1, 18, 19, 1))
 
         query = FhirRequestQuery(
-            "resource", modifiers={"_count": [69]}, search_params={"search-offset": [70]}
+            "resource",
+            modifiers={"_count": [69]},
+            search_params={"search-offset": [70]},
         )
         page, count, next_offset, prev_offset = get_pagination_info(query)
         self.assertEqual((page, count, next_offset, prev_offset), (4, 20, 90, 50))
 
 
-# @patch('fhirbug.models.mixins.settings')
-# class TestGetMethodBundledItems(unittest.TestCase):
-#     def test_get_single_item(self, settingsMock):
-#         ''' If the provided query object contains a resource_id, it should call
-#         ``_get_item_from_pk`` for that id and return the result in json form
-#         '''
-#         from fhirbug.server.requestparser import FhirRequestQuery
-#         query = FhirRequestQuery('resource')
-#         cls = FhirBaseModelMixin
-#         cls._get_orm_query = Mock()
-#         settingsMock.DEFAULT_BUNDLE_SIZE = 99
-#         settingsMock.MAX_BUNDLE_SIZE = 999
-#
-#         res = cls.get(query)
+@patch("fhirbug.models.mixins.get_pagination_info", return_value=(1, 2, 3, 4))
+@patch("fhirbug.models.mixins.generate_query_string", return_value="mock")
+@patch("fhirbug.models.mixins.PaginatedBundle")
+class TestGetMethodBundledItems(unittest.TestCase):
+    def test_bundle(
+        self, paginatedBundleMock, generate_query_stringMock, get_pagination_infoMock
+    ):
+        """ If the provided query object contains a resource_id, it should call
+        ``_get_item_from_pk`` for that id and return the result in json form
+        """
+        from fhirbug.server.requestparser import FhirRequestQuery
+
+        query = FhirRequestQuery("resource")
+        cls = FhirBaseModelMixin
+        cls._get_orm_query = Mock()
+        cls.paginate = Mock()
+        cls.paginate().items = [Mock(), Mock()]
+
+        res = cls.get(query)
+
+        get_pagination_infoMock.assert_called_with(query)
+        cls.paginate.assert_called_with(cls._get_orm_query(), 1, 2)
+        generate_query_stringMock.assert_called_with(query)
+
+        paginatedBundleMock.assert_called_with(
+            pagination={
+                "items": [],
+                "total": cls.paginate().total,
+                "pages": cls.paginate().pages,
+                "has_next": cls.paginate().has_next,
+                "has_previous": cls.paginate().has_previous,
+                "next_page": "FhirBaseModelMixin/?_count=2&search-offset=3mock",
+                "previous_page": "FhirBaseModelMixin/?_count=2&search-offset=4mock",
+            }
+        )
+        self.assertEqual(res, paginatedBundleMock().as_json())
+
+    def test_bundle_with_searches(
+        self, paginatedBundleMock, generate_query_stringMock, get_pagination_infoMock
+    ):
+        """ If the provided query object contains a resource_id, it should call
+        ``_get_item_from_pk`` for that id and return the result in json form
+        """
+        from fhirbug.server.requestparser import FhirRequestQuery
+
+        query = FhirRequestQuery("resource", search_params={"one": [1], "two": [2, 3]})
+        cls = FhirBaseModelMixin
+        cls._get_orm_query = Mock()
+        cls.paginate = Mock()
+        cls.paginate().items = [Mock(), Mock()]
+
+        cls.has_searcher = Mock(return_value=True)
+        cls.get_searcher = Mock()
+
+        res = cls.get(query)
+
+        cls.get_searcher.assert_has_calls(
+            [
+                call("one"),
+                call()(cls, "one", 1, cls._get_orm_query(), query),
+                call("two"),
+                call()(cls, "two", 2, cls.get_searcher()(), query),
+                call("two"),
+                call()(cls, "two", 3, cls.get_searcher()(), query),
+            ]
+        )
+
+        get_pagination_infoMock.assert_called_with(query)
+        cls.paginate.assert_called_with(cls.get_searcher()(), 1, 2)
+        generate_query_stringMock.assert_called_with(query)
+
+        paginatedBundleMock.assert_called_with(
+            pagination={
+                "items": [],
+                "total": cls.paginate().total,
+                "pages": cls.paginate().pages,
+                "has_next": cls.paginate().has_next,
+                "has_previous": cls.paginate().has_previous,
+                "next_page": "FhirBaseModelMixin/?_count=2&search-offset=3mock",
+                "previous_page": "FhirBaseModelMixin/?_count=2&search-offset=4mock",
+            }
+        )

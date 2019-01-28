@@ -4,6 +4,8 @@ from fhirbug.models.attributes import (
     const,
     DateAttribute,
     ReferenceAttribute,
+    BooleanAttribute,
+    NameAttribute,
 )
 from fhirbug.constants import AUDIT_SUCCESS, AUDIT_MINOR_FAILURE
 from unittest.mock import Mock, MagicMock
@@ -68,6 +70,11 @@ class AttributeWithConst:
     name = Attribute(const("the_name"))
 
 
+class AttributeWithConstSetter:
+    _model = SN(_name=12)
+    name = Attribute('_name', ('_name', const("the_name")))
+
+
 class WithDateAttribute:
     from datetime import datetime
 
@@ -121,6 +128,8 @@ class BetterBaseMixinModel(FhirAbstractBaseMixin, FhirBaseModelMixin):
 
 MixinModelWithSetters_after_update = Mock()
 MixinModelWithSetters_after_create = MagicMock(side_effect=lambda x: x)
+
+
 class MixinModelWithSetters(FhirAbstractBaseMixin, FhirBaseModelMixin):
     from fhirbug.Fhir.resources import HumanName
 
@@ -135,11 +144,21 @@ class MixinModelWithSetters(FhirAbstractBaseMixin, FhirBaseModelMixin):
         active = Attribute("_active", "_active")
 
 
-Auditing_audit_update_success = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_SUCCESS))
-Auditing_audit_update_failure = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_MINOR_FAILURE))
-Auditing_audit_create_success = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_SUCCESS))
-Auditing_audit_create_failure = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_MINOR_FAILURE))
+Auditing_audit_update_success = MagicMock(
+    side_effect=lambda x: SN(outcome=AUDIT_SUCCESS)
+)
+Auditing_audit_update_failure = MagicMock(
+    side_effect=lambda x: SN(outcome=AUDIT_MINOR_FAILURE)
+)
+Auditing_audit_create_success = MagicMock(
+    side_effect=lambda x: SN(outcome=AUDIT_SUCCESS)
+)
+Auditing_audit_create_failure = MagicMock(
+    side_effect=lambda x: SN(outcome=AUDIT_MINOR_FAILURE)
+)
 Auditing_after_create = MagicMock(side_effect=lambda x: x)
+
+
 class MixinModelWithSettersAndAuditing(FhirAbstractBaseMixin, FhirBaseModelMixin):
     from fhirbug.Fhir.resources import HumanName
 
@@ -151,12 +170,14 @@ class MixinModelWithSettersAndAuditing(FhirAbstractBaseMixin, FhirBaseModelMixin
     audit_update = Auditing_audit_update_success
     audit_create = Auditing_audit_create_success
 
-
     class FhirMap:
         name = Attribute("_name", "_name")
         active = Attribute("_active", "_active")
 
-class MixinModelWithSettersAndAuditingProtected(FhirAbstractBaseMixin, FhirBaseModelMixin):
+
+class MixinModelWithSettersAndAuditingProtected(
+    FhirAbstractBaseMixin, FhirBaseModelMixin
+):
     _name = None
     _active = None
 
@@ -165,20 +186,20 @@ class MixinModelWithSettersAndAuditingProtected(FhirAbstractBaseMixin, FhirBaseM
     __Resource__ = "Patient"
 
     def audit_update(self, query):
-        self.protect_attributes(['active'])
-        return(SN(outcome=AUDIT_SUCCESS))
+        self.protect_attributes(["active"])
+        return SN(outcome=AUDIT_SUCCESS)
 
     def audit_update2(self, query):
-        self.hide_attributes(['active'])
-        return(SN(outcome=AUDIT_SUCCESS))
+        self.hide_attributes(["active"])
+        return SN(outcome=AUDIT_SUCCESS)
 
     def audit_create(self, query):
-        self.protect_attributes(['active'])
-        return(SN(outcome=AUDIT_SUCCESS))
+        self.protect_attributes(["active"])
+        return SN(outcome=AUDIT_SUCCESS)
 
     def audit_create2(self, query):
-        self.hide_attributes(['active'])
-        return(SN(outcome=AUDIT_SUCCESS))
+        self.hide_attributes(["active"])
+        return SN(outcome=AUDIT_SUCCESS)
 
     class FhirMap:
         name = Attribute("_name", "_name")
@@ -186,22 +207,36 @@ class MixinModelWithSettersAndAuditingProtected(FhirAbstractBaseMixin, FhirBaseM
 
 
 DeletableMixinModel_delete_method = Mock()
+
+
 class DeletableMixinModel(BaseMixinModel, FhirAbstractBaseMixin, FhirBaseModelMixin):
     @classmethod
     def _delete_item(cls, item):
         return DeletableMixinModel_delete_method(cls, item)
 
+
 DeletableMixinModelAudited_delete_method = Mock()
-Auditing_audit_delete_success = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_SUCCESS))
-Auditing_audit_delete_failure = MagicMock(side_effect=lambda x: SN(outcome=AUDIT_MINOR_FAILURE))
-class DeletableMixinModelAudited(BaseMixinModel, FhirAbstractBaseMixin, FhirBaseModelMixin):
+Auditing_audit_delete_success = MagicMock(
+    side_effect=lambda x: SN(outcome=AUDIT_SUCCESS)
+)
+Auditing_audit_delete_failure = MagicMock(
+    side_effect=lambda x: SN(outcome=AUDIT_MINOR_FAILURE)
+)
+
+
+class DeletableMixinModelAudited(
+    BaseMixinModel, FhirAbstractBaseMixin, FhirBaseModelMixin
+):
     audit_delete = Auditing_audit_delete_success
+
     @classmethod
     def _delete_item(cls, item):
         return DeletableMixinModelAudited_delete_method(cls, item)
 
 
 ReferenceTarget_get_orm_query = Mock()
+
+
 class ReferenceTarget(FhirAbstractBaseMixin, FhirBaseModelMixin):
     _name = "my_name"
     _get_orm_query = ReferenceTarget_get_orm_query
@@ -226,3 +261,38 @@ class WithReferenceAndContained(FhirAbstractBaseMixin, FhirBaseModelMixin):
     _model = SN(ref_id=12, _contained_names=["ref"], _refcount=0, _contained_items=[])
 
     ref = ReferenceAttribute(ReferenceTarget, "ref_id", "ref")
+
+
+class BooleanAttributeModel:
+    _model = SN(toast=0, yellow=False, feather="true", something="cheese", deflt="asdf")
+    toast = BooleanAttribute("toast", "toast")
+    yellow = BooleanAttribute("yellow", "yellow")
+    feather = BooleanAttribute(("feather", str), "yellow")
+    true = BooleanAttribute(const(True))
+    deflt = BooleanAttribute("deflt", default=False)
+    something = BooleanAttribute("something")
+
+
+class NameAttibuteModel:
+    givenSetterMock = Mock()
+    _model = SN(_given1="sponge", _given2="bob", _family="squarepants")
+    withSetters = NameAttribute(
+        given_getter="_given1",
+        given_setter="_given1",
+        family_getter="_family",
+        family_setter="_family",
+    )
+    withJoin = NameAttribute(
+        given_getter="_given1",
+        given_setter="_given1",
+        family_getter="_family",
+        family_setter="_family",
+        join_given_names=True,
+    )
+    withPass = NameAttribute(
+        given_getter="_given1",
+        given_setter=givenSetterMock,
+        family_getter="_family",
+        family_setter="_family",
+        pass_given_names=True,
+    )
