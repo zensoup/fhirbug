@@ -2,7 +2,7 @@ from bson.objectid import ObjectId
 from bson.errors import InvalidId
 
 from fhirbug.models.attributes import Attribute
-from fhirbug.config import import_models
+from fhirbug.config import settings, import_models
 from fhirbug.exceptions import MappingValidationError, DoesNotExistError
 
 
@@ -113,6 +113,9 @@ class ObjectIdReferenceAttribute(Attribute):
         try:
             resource = model_cls._get_item_from_pk(value)
         except DoesNotExistError as e:
-            raise MappingValidationError(f"{e.resource_type}/{e.pk} was not found on the server.")
+            if settings.STRICT_MODE['set_non_existent_reference']:
+                raise MappingValidationError(f"{e.resource_type}/{e.pk} was not found on the server.")
+            else:
+                print(f"{e.resource_type}/{e.pk} was not found on the server.")
 
         return super(ObjectIdReferenceAttribute, self).__set__(instance, value)

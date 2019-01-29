@@ -172,7 +172,7 @@ def generate_class_definition(resource_name, FHIRResource, not_found):
     for _, name, typ, islist, ofmany, mandatory in properties:
 
         # Append an underscore to reserved names
-        if name in ["class", "import", "except", "global", "for", "assert"]:
+        if name in ["class", "import", "except", "global", "for", "assert", "from"]:
             name += "_"
 
         # There is no need to map contained attributes, since Fhirbug

@@ -20,4 +20,6 @@ DB_BACKEND = "SQLAlchemy"
 STRICT_MODE = {
     # Throw or ignore attempts to set an attribute without having defined a setter func
     'set_attribute_without_setter': False,
+    # Throw when attempting to create a reference to an object that does not exist on the server
+    'set_non_existent_reference': False,
 }

@@ -35,7 +35,8 @@ def generate(files=profile_folder):
                     if t["code"] == "Reference":
                         if f'{elem["path"]}' not in result:
                             result[f'{elem["path"]}'] = set()
-                        result[f'{elem["path"]}'].add(t["targetProfile"].split("/")[-1])
+                        for prof in t["targetProfile"]:
+                            result[f'{elem["path"]}'].add(prof.split("/")[-1])
     return result
 
 
