@@ -1,3 +1,4 @@
+import builtins
 from importlib import import_module
 from fhirbug.exceptions import (
     MappingValidationError,
@@ -265,7 +266,7 @@ class const:
 
 
 class BooleanAttribute(Attribute):
-    '''
+    """
     Used for attributes representing boolean types.
     ``truthy_values`` and ``falsy_values`` are used to determine which possible values from the database
     we should consider as True and False.
@@ -277,7 +278,8 @@ class BooleanAttribute(Attribute):
     :param deafult: If we read a value that is not in ``truthy_values`` or ``falsy_values``, it will default to ths value.
     :param list truthy_values: Which values, when read from the database should be mapped to True
     :param list falsy_values: Which values, when read from the database should be mapped to False
-    '''
+    """
+
     def __init__(
         self,
         *args,
@@ -498,8 +500,13 @@ class EmbeddedAttribute(Attribute):
                 "You hane defined an EmbeddedAttribute without specifying the type."
             )
 
+        # If a class name has been passed as a string, import the model
+        if builtins.type(type) is str:
+            models = import_models()
+            type = getattr(models, type)
+
         self.type = type
-        return super(EmbeddedAttribute, self).__init__(*args, **kwargs)
+        super(EmbeddedAttribute, self).__init__(*args, **kwargs)
 
     def __get__(self, instance, owner):
         # Let the ORM handle getting the backbone element. The ORM should return
@@ -520,24 +527,23 @@ class EmbeddedAttribute(Attribute):
         We convert to a Fhir Map and set.
         """
         if type(value) is dict:
-            embedded_resource = self.dict_to_resource(self.type, value)
+            value = self.dict_to_resource(value)
+            embedded_resource = self.type.from_resource(value)
         elif type(value) is list:
             embedded_resource = map(
-                lambda v: self.dict_to_resource(self.type, v.as_json()), value
+                lambda v: self.type.from_resource(self.dict_to_resource(v))
+                if type(v) is dict
+                else self.type.from_resource(v),
+                value,
             )
         else:
-            embedded_resource = self.dict_to_resource(self.type, value.as_json())
+            embedded_resource = self.type.from_resource(value)
         return super(EmbeddedAttribute, self).__set__(instance, embedded_resource)
 
-    def dict_to_resource(self, resource_type, dict):
+    def dict_to_resource(self, dict):
         """
-        Accept a dict (normally the result of FhirResource.as_json()) and return
-        a fhirbug map instance
+        Convert a dictionary to an instance of the corresponding FHIR resource
         """
-        if type(resource_type) is type:
-            ResourceClass = resource_type
-        else:
-            models = import_models()
-            ResourceClass = getattr(models, resource_type)
-        embedded_resource = ResourceClass(**dict)
-        return embedded_resource
+        mapperClass = self.type
+        ResourceClass = mapperClass._get_resource_cls()
+        return ResourceClass(dict)
