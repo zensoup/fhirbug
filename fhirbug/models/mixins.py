@@ -46,6 +46,12 @@ class FhirAbstractBaseMixin:
     nested class.
     """
 
+    @classmethod
+    def _get_resource_cls(cls):
+        resource_name = getattr(cls, "__Resource__", cls.__name__)
+        Resource = getattr(resources, resource_name)
+        return Resource
+
     def to_fhir(self, *args, query=None, **kwargs):
         """
         Convert from a BaseModel to a Fhir Resource and return it.
@@ -62,8 +68,8 @@ class FhirAbstractBaseMixin:
         self._refcount = 0
 
         # Use __Resource__ if it has been defined else the dame of the class
-        resource_name = getattr(self, "__Resource__", self.__class__.__name__)
-        Resource = getattr(resources, resource_name)
+        # resource_name = getattr(self, "__Resource__", self.__class__.__name__)
+        Resource = self.__class__._get_resource_cls()
 
         # Filter the matching fields
         param_dict = self.get_params_dict(Resource, elements=self._elements)
@@ -139,7 +145,7 @@ class FhirAbstractBaseMixin:
                     self._contained_items += list(map(lambda i: i.to_fhir(), items))
 
     @classmethod
-    def create_from_resource(cls, resource, query=None):
+    def from_resource(cls, resource, query=None):
         """
         Creates and saves a new row from a Fhir.Resource object
         """
@@ -168,8 +174,15 @@ class FhirAbstractBaseMixin:
             if value is not None:
                 setattr(obj.Fhir, path, value)
 
+        return obj
+
+    @classmethod
+    def create_from_resource(cls, resource, query=None):
+        obj = cls.from_resource(resource, query)
         obj = cls._after_create(obj)
         return obj
+
+
 
     def update_from_resource(self, resource, query=None):
         """
