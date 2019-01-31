@@ -38,11 +38,20 @@ def replaceReference(ref):
     return references[ref]
 
 def replaceAllReferences(examples):
+    def replace(resource):
+        if type(resource) is list:
+            return list(map(replace, resource))
+        elif type(resource) is dict:
+            for val in resource.values():
+                if type(val) in (dict, list):
+                    if 'reference' in val:
+                        val['reference'] = replaceReference(val['reference'])
+                    else:
+                        replace(val)
+
     for ex_list in examples.values():
         for ex in ex_list:
-            for val in ex.values():
-                if type(val) is dict and 'reference' in val:
-                    val['reference'] = replaceReference(val['reference'])
+            replace(ex)
 
 def replaceIds(examples):
     for cls, ex_list in examples.items():

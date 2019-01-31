@@ -8,12 +8,13 @@ from fhirbug.db.backends.pymodm.models import FhirBaseModel
 from fhirbug.db.backends.pymodm.searches import StringSearch, NumericSearch
 
 
-class Extension(MongoModel):
-    pass
+class Extension(FhirBaseModel, MongoModel):
+    class FhirMap:
+        pass
 
 
 class Account(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -44,11 +45,11 @@ class Account(FhirBaseModel, MongoModel):
         guarantor = EmbeddedAttribute(type="AccountGuarantor", getter="guarantor", setter="guarantor", searcher=StringSearch("guarantor"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
-        owner = ObjectIdReferenceAttribute({'Organization'}, ("owner", str), "owner", pk_setter="owner")
-        partOf = ObjectIdReferenceAttribute({'Account'}, ("partOf", str), "partOf", pk_setter="partOf")
+        owner = ObjectIdReferenceAttribute(['Organization'], ("owner", str), "owner", pk_setter="owner")
+        partOf = ObjectIdReferenceAttribute(['Account'], ("partOf", str), "partOf", pk_setter="partOf")
         servicePeriod = EmbeddedAttribute(type="Period", getter="servicePeriod", setter="servicePeriod", searcher=StringSearch("servicePeriod"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'PractitionerRole', 'Location', 'HealthcareService', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Device', 'HealthcareService', 'Location', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole'], ("subject", str), "subject", pk_setter="subject")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class AccountCoverage(FhirBaseModel, EmbeddedMongoModel):
@@ -61,7 +62,7 @@ class AccountCoverage(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        coverage = ObjectIdReferenceAttribute({'Coverage'}, ("coverage", str), "coverage", pk_setter="coverage")
+        coverage = ObjectIdReferenceAttribute(['Coverage'], ("coverage", str), "coverage", pk_setter="coverage")
         priority = Attribute(getter="priority", setter="priority", searcher=NumericSearch("priority"))
 
 class AccountGuarantor(FhirBaseModel, EmbeddedMongoModel):
@@ -76,11 +77,11 @@ class AccountGuarantor(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         onHold = Attribute(getter="onHold", setter="onHold", searcher=StringSearch("onHold"))
-        party = ObjectIdReferenceAttribute({'Organization', 'RelatedPerson', 'Patient'}, ("party", str), "party", pk_setter="party")
+        party = ObjectIdReferenceAttribute(['Organization', 'Patient', 'RelatedPerson'], ("party", str), "party", pk_setter="party")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
 
 class ActivityDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -169,24 +170,24 @@ class ActivityDefinition(FhirBaseModel, MongoModel):
         kind = Attribute(getter="kind", setter="kind", searcher=StringSearch("kind"))
         lastReviewDate = DateAttribute("lastReviewDate")
         library = Attribute(getter="library", setter="library", searcher=StringSearch("library"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
-        observationRequirement = ObjectIdReferenceAttribute({'ObservationDefinition'}, ("observationRequirement", str), "observationRequirement", pk_setter="observationRequirement")
-        observationResultRequirement = ObjectIdReferenceAttribute({'ObservationDefinition'}, ("observationResultRequirement", str), "observationResultRequirement", pk_setter="observationResultRequirement")
+        observationRequirement = ObjectIdReferenceAttribute(['ObservationDefinition'], ("observationRequirement", str), "observationRequirement", pk_setter="observationRequirement")
+        observationResultRequirement = ObjectIdReferenceAttribute(['ObservationDefinition'], ("observationResultRequirement", str), "observationResultRequirement", pk_setter="observationResultRequirement")
         participant = EmbeddedAttribute(type="ActivityDefinitionParticipant", getter="participant", setter="participant", searcher=StringSearch("participant"))
         priority = Attribute(getter="priority", setter="priority", searcher=StringSearch("priority"))
         productCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="productCodeableConcept", setter="productCodeableConcept", searcher=StringSearch("productCodeableConcept"))
-        productReference = ObjectIdReferenceAttribute({'Substance', 'Medication'}, ("productReference", str), "productReference", pk_setter="productReference")
+        productReference = ObjectIdReferenceAttribute(['Medication', 'Substance'], ("productReference", str), "productReference", pk_setter="productReference")
         profile = Attribute(getter="profile", setter="profile", searcher=StringSearch("profile"))
         publisher = Attribute(getter="publisher", setter="publisher", searcher=StringSearch("publisher"))
         purpose = Attribute(getter="purpose", setter="purpose", searcher=StringSearch("purpose"))
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         relatedArtifact = EmbeddedAttribute(type="RelatedArtifact", getter="relatedArtifact", setter="relatedArtifact", searcher=StringSearch("relatedArtifact"))
         reviewer = EmbeddedAttribute(type="ContactDetail", getter="reviewer", setter="reviewer", searcher=StringSearch("reviewer"))
-        specimenRequirement = ObjectIdReferenceAttribute({'SpecimenDefinition'}, ("specimenRequirement", str), "specimenRequirement", pk_setter="specimenRequirement")
+        specimenRequirement = ObjectIdReferenceAttribute(['SpecimenDefinition'], ("specimenRequirement", str), "specimenRequirement", pk_setter="specimenRequirement")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subjectCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="subjectCodeableConcept", setter="subjectCodeableConcept", searcher=StringSearch("subjectCodeableConcept"))
-        subjectReference = ObjectIdReferenceAttribute({'Group'}, ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
+        subjectReference = ObjectIdReferenceAttribute(['Group'], ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
         subtitle = Attribute(getter="subtitle", setter="subtitle", searcher=StringSearch("subtitle"))
         timingAge = EmbeddedAttribute(type="Age", getter="timingAge", setter="timingAge", searcher=StringSearch("timingAge"))
         timingDateTime = DateAttribute("timingDateTime")
@@ -256,7 +257,7 @@ class Address(FhirBaseModel, EmbeddedMongoModel):
         use = Attribute(getter="use", setter="use", searcher=StringSearch("use"))
 
 class AdverseEvent(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -293,23 +294,23 @@ class AdverseEvent(FhirBaseModel, MongoModel):
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         actuality = Attribute(getter="actuality", setter="actuality", searcher=StringSearch("actuality"))
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
-        contributor = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Device'}, ("contributor", str), "contributor", pk_setter="contributor")
+        contributor = ObjectIdReferenceAttribute(['Device', 'Practitioner', 'PractitionerRole'], ("contributor", str), "contributor", pk_setter="contributor")
         date = DateAttribute("date")
         detected = DateAttribute("detected")
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         event = EmbeddedAttribute(type="CodeableConcept", getter="event", setter="event", searcher=StringSearch("event"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         outcome = EmbeddedAttribute(type="CodeableConcept", getter="outcome", setter="outcome", searcher=StringSearch("outcome"))
         recordedDate = DateAttribute("recordedDate")
-        recorder = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Patient'}, ("recorder", str), "recorder", pk_setter="recorder")
-        referenceDocument = ObjectIdReferenceAttribute({'DocumentReference'}, ("referenceDocument", str), "referenceDocument", pk_setter="referenceDocument")
-        resultingCondition = ObjectIdReferenceAttribute({'Condition'}, ("resultingCondition", str), "resultingCondition", pk_setter="resultingCondition")
+        recorder = ObjectIdReferenceAttribute(['Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("recorder", str), "recorder", pk_setter="recorder")
+        referenceDocument = ObjectIdReferenceAttribute(['DocumentReference'], ("referenceDocument", str), "referenceDocument", pk_setter="referenceDocument")
+        resultingCondition = ObjectIdReferenceAttribute(['Condition'], ("resultingCondition", str), "resultingCondition", pk_setter="resultingCondition")
         seriousness = EmbeddedAttribute(type="CodeableConcept", getter="seriousness", setter="seriousness", searcher=StringSearch("seriousness"))
         severity = EmbeddedAttribute(type="CodeableConcept", getter="severity", setter="severity", searcher=StringSearch("severity"))
-        study = ObjectIdReferenceAttribute({'ResearchStudy'}, ("study", str), "study", pk_setter="study")
-        subject = ObjectIdReferenceAttribute({'Practitioner', 'RelatedPerson', 'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
-        subjectMedicalHistory = ObjectIdReferenceAttribute({'Immunization', 'AllergyIntolerance', 'DocumentReference', 'Observation', 'Procedure', 'FamilyMemberHistory', 'Media', 'Condition'}, ("subjectMedicalHistory", str), "subjectMedicalHistory", pk_setter="subjectMedicalHistory")
+        study = ObjectIdReferenceAttribute(['ResearchStudy'], ("study", str), "study", pk_setter="study")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient', 'Practitioner', 'RelatedPerson'], ("subject", str), "subject", pk_setter="subject")
+        subjectMedicalHistory = ObjectIdReferenceAttribute(['AllergyIntolerance', 'Condition', 'DocumentReference', 'FamilyMemberHistory', 'Immunization', 'Media', 'Observation', 'Procedure'], ("subjectMedicalHistory", str), "subjectMedicalHistory", pk_setter="subjectMedicalHistory")
         suspectEntity = EmbeddedAttribute(type="AdverseEventSuspectEntity", getter="suspectEntity", setter="suspectEntity", searcher=StringSearch("suspectEntity"))
 
 class AdverseEventSuspectEntity(FhirBaseModel, EmbeddedMongoModel):
@@ -323,7 +324,7 @@ class AdverseEventSuspectEntity(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         causality = EmbeddedAttribute(type="AdverseEventSuspectEntityCausality", getter="causality", setter="causality", searcher=StringSearch("causality"))
-        instance = ObjectIdReferenceAttribute({'Immunization', 'MedicationStatement', 'Procedure', 'Medication', 'MedicationAdministration', 'Substance', 'Device'}, ("instance", str), "instance", pk_setter="instance")
+        instance = ObjectIdReferenceAttribute(['Device', 'Immunization', 'Medication', 'MedicationAdministration', 'MedicationStatement', 'Procedure', 'Substance'], ("instance", str), "instance", pk_setter="instance")
 
 class AdverseEventSuspectEntityCausality(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -338,7 +339,7 @@ class AdverseEventSuspectEntityCausality(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         assessment = EmbeddedAttribute(type="CodeableConcept", getter="assessment", setter="assessment", searcher=StringSearch("assessment"))
-        author = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("author", str), "author", pk_setter="author")
+        author = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("author", str), "author", pk_setter="author")
         method = EmbeddedAttribute(type="CodeableConcept", getter="method", setter="method", searcher=StringSearch("method"))
         productRelatedness = Attribute(getter="productRelatedness", setter="productRelatedness", searcher=StringSearch("productRelatedness"))
 
@@ -360,7 +361,7 @@ class Age(FhirBaseModel, EmbeddedMongoModel):
         value = Attribute(getter="value", setter="value", searcher=NumericSearch("value"))
 
 class AllergyIntolerance(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -395,12 +396,12 @@ class AllergyIntolerance(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        asserter = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Patient'}, ("asserter", str), "asserter", pk_setter="asserter")
+        asserter = ObjectIdReferenceAttribute(['Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("asserter", str), "asserter", pk_setter="asserter")
         category = Attribute(getter="category", setter="category", searcher=StringSearch("category"))
         clinicalStatus = EmbeddedAttribute(type="CodeableConcept", getter="clinicalStatus", setter="clinicalStatus", searcher=StringSearch("clinicalStatus"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         criticality = Attribute(getter="criticality", setter="criticality", searcher=StringSearch("criticality"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         lastOccurrence = DateAttribute("lastOccurrence")
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
@@ -409,10 +410,10 @@ class AllergyIntolerance(FhirBaseModel, MongoModel):
         onsetPeriod = EmbeddedAttribute(type="Period", getter="onsetPeriod", setter="onsetPeriod", searcher=StringSearch("onsetPeriod"))
         onsetRange = EmbeddedAttribute(type="Range", getter="onsetRange", setter="onsetRange", searcher=StringSearch("onsetRange"))
         onsetString = Attribute(getter="onsetString", setter="onsetString", searcher=StringSearch("onsetString"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         reaction = EmbeddedAttribute(type="AllergyIntoleranceReaction", getter="reaction", setter="reaction", searcher=StringSearch("reaction"))
         recordedDate = DateAttribute("recordedDate")
-        recorder = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Patient'}, ("recorder", str), "recorder", pk_setter="recorder")
+        recorder = ObjectIdReferenceAttribute(['Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("recorder", str), "recorder", pk_setter="recorder")
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
         verificationStatus = EmbeddedAttribute(type="CodeableConcept", getter="verificationStatus", setter="verificationStatus", searcher=StringSearch("verificationStatus"))
 
@@ -449,13 +450,13 @@ class Annotation(FhirBaseModel, EmbeddedMongoModel):
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
-        authorReference = ObjectIdReferenceAttribute({'Organization', 'Practitioner', 'RelatedPerson', 'Patient'}, ("authorReference", str), "authorReference", pk_setter="authorReference")
+        authorReference = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'RelatedPerson'], ("authorReference", str), "authorReference", pk_setter="authorReference")
         authorString = Attribute(getter="authorString", setter="authorString", searcher=StringSearch("authorString"))
         text = Attribute(getter="text", setter="text", searcher=StringSearch("text"))
         time = DateAttribute("time")
 
 class Appointment(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -493,7 +494,7 @@ class Appointment(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         appointmentType = EmbeddedAttribute(type="CodeableConcept", getter="appointmentType", setter="appointmentType", searcher=StringSearch("appointmentType"))
-        basedOn = ObjectIdReferenceAttribute({'ServiceRequest'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['ServiceRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         cancelationReason = EmbeddedAttribute(type="CodeableConcept", getter="cancelationReason", setter="cancelationReason", searcher=StringSearch("cancelationReason"))
         comment = Attribute(getter="comment", setter="comment", searcher=StringSearch("comment"))
         created = DateAttribute("created")
@@ -505,15 +506,15 @@ class Appointment(FhirBaseModel, MongoModel):
         patientInstruction = Attribute(getter="patientInstruction", setter="patientInstruction", searcher=StringSearch("patientInstruction"))
         priority = Attribute(getter="priority", setter="priority", searcher=NumericSearch("priority"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'Condition', 'Observation', 'Procedure', 'ImmunizationRecommendation'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'ImmunizationRecommendation', 'Observation', 'Procedure'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
         requestedPeriod = EmbeddedAttribute(type="Period", getter="requestedPeriod", setter="requestedPeriod", searcher=StringSearch("requestedPeriod"))
         serviceCategory = EmbeddedAttribute(type="CodeableConcept", getter="serviceCategory", setter="serviceCategory", searcher=StringSearch("serviceCategory"))
         serviceType = EmbeddedAttribute(type="CodeableConcept", getter="serviceType", setter="serviceType", searcher=StringSearch("serviceType"))
-        slot = ObjectIdReferenceAttribute({'Slot'}, ("slot", str), "slot", pk_setter="slot")
+        slot = ObjectIdReferenceAttribute(['Slot'], ("slot", str), "slot", pk_setter="slot")
         specialty = EmbeddedAttribute(type="CodeableConcept", getter="specialty", setter="specialty", searcher=StringSearch("specialty"))
         start = DateAttribute("start")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        supportingInformation = ObjectIdReferenceAttribute({'Resource'}, ("supportingInformation", str), "supportingInformation", pk_setter="supportingInformation")
+        supportingInformation = ObjectIdReferenceAttribute(['Resource'], ("supportingInformation", str), "supportingInformation", pk_setter="supportingInformation")
 
 class AppointmentParticipant(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -528,14 +529,14 @@ class AppointmentParticipant(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        actor = ObjectIdReferenceAttribute({'PractitionerRole', 'Location', 'RelatedPerson', 'HealthcareService', 'Practitioner', 'Device', 'Patient'}, ("actor", str), "actor", pk_setter="actor")
+        actor = ObjectIdReferenceAttribute(['Device', 'HealthcareService', 'Location', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("actor", str), "actor", pk_setter="actor")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         required = Attribute(getter="required", setter="required", searcher=StringSearch("required"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class AppointmentResponse(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -558,8 +559,8 @@ class AppointmentResponse(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        actor = ObjectIdReferenceAttribute({'PractitionerRole', 'Location', 'RelatedPerson', 'HealthcareService', 'Practitioner', 'Device', 'Patient'}, ("actor", str), "actor", pk_setter="actor")
-        appointment = ObjectIdReferenceAttribute({'Appointment'}, ("appointment", str), "appointment", pk_setter="appointment")
+        actor = ObjectIdReferenceAttribute(['Device', 'HealthcareService', 'Location', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("actor", str), "actor", pk_setter="actor")
+        appointment = ObjectIdReferenceAttribute(['Appointment'], ("appointment", str), "appointment", pk_setter="appointment")
         comment = Attribute(getter="comment", setter="comment", searcher=StringSearch("comment"))
         end = DateAttribute("end")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
@@ -591,7 +592,7 @@ class Attachment(FhirBaseModel, EmbeddedMongoModel):
         url = Attribute(getter="url", setter="url", searcher=StringSearch("url"))
 
 class AuditEvent(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -649,7 +650,7 @@ class AuditEventAgent(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         altId = Attribute(getter="altId", setter="altId", searcher=StringSearch("altId"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         media = EmbeddedAttribute(type="Coding", getter="media", setter="media", searcher=StringSearch("media"))
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         network = EmbeddedAttribute(type="AuditEventAgentNetwork", getter="network", setter="network", searcher=StringSearch("network"))
@@ -658,7 +659,7 @@ class AuditEventAgent(FhirBaseModel, EmbeddedMongoModel):
         requestor = Attribute(getter="requestor", setter="requestor", searcher=StringSearch("requestor"))
         role = EmbeddedAttribute(type="CodeableConcept", getter="role", setter="role", searcher=StringSearch("role"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
-        who = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("who", str), "who", pk_setter="who")
+        who = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("who", str), "who", pk_setter="who")
 
 class AuditEventAgentNetwork(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -698,15 +699,15 @@ class AuditEventEntity(FhirBaseModel, EmbeddedMongoModel):
         role = EmbeddedAttribute(type="Coding", getter="role", setter="role", searcher=StringSearch("role"))
         securityLabel = EmbeddedAttribute(type="Coding", getter="securityLabel", setter="securityLabel", searcher=StringSearch("securityLabel"))
         type = EmbeddedAttribute(type="Coding", getter="type", setter="type", searcher=StringSearch("type"))
-        what = ObjectIdReferenceAttribute({'Resource'}, ("what", str), "what", pk_setter="what")
+        what = ObjectIdReferenceAttribute(['Resource'], ("what", str), "what", pk_setter="what")
 
 class AuditEventEntityDetail(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     type = fields.CharField(blank=False, required=True)
-    valueBase64Binary = fields.CharField(blank=False, required=True)
-    valueString = fields.CharField(blank=False, required=True)
+    valueBase64Binary = fields.CharField(blank=True, required=False)
+    valueString = fields.CharField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -726,7 +727,7 @@ class AuditEventSource(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        observer = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("observer", str), "observer", pk_setter="observer")
+        observer = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("observer", str), "observer", pk_setter="observer")
         site = Attribute(getter="site", setter="site", searcher=StringSearch("site"))
         type = EmbeddedAttribute(type="Coding", getter="type", setter="type", searcher=StringSearch("type"))
 
@@ -740,7 +741,7 @@ class BackboneElement(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
 
 class Basic(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -760,14 +761,14 @@ class Basic(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        author = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("author", str), "author", pk_setter="author")
+        author = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("author", str), "author", pk_setter="author")
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         created = DateAttribute("created")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        subject = ObjectIdReferenceAttribute({'Resource'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Resource'], ("subject", str), "subject", pk_setter="subject")
 
 class Binary(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -781,10 +782,10 @@ class Binary(FhirBaseModel, MongoModel):
         meta = EmbeddedAttribute(type="Meta", getter="meta", setter="meta", searcher=StringSearch("meta"))
         contentType = Attribute(getter="contentType", setter="contentType", searcher=StringSearch("contentType"))
         data = Attribute(getter="data", setter="data", searcher=StringSearch("data"))
-        securityContext = ObjectIdReferenceAttribute({'Resource'}, ("securityContext", str), "securityContext", pk_setter="securityContext")
+        securityContext = ObjectIdReferenceAttribute(['Resource'], ("securityContext", str), "securityContext", pk_setter="securityContext")
 
 class BiologicallyDerivedProduct(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -813,12 +814,12 @@ class BiologicallyDerivedProduct(FhirBaseModel, MongoModel):
         collection = EmbeddedAttribute(type="BiologicallyDerivedProductCollection", getter="collection", setter="collection", searcher=StringSearch("collection"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         manipulation = EmbeddedAttribute(type="BiologicallyDerivedProductManipulation", getter="manipulation", setter="manipulation", searcher=StringSearch("manipulation"))
-        parent = ObjectIdReferenceAttribute({'BiologicallyDerivedProduct'}, ("parent", str), "parent", pk_setter="parent")
+        parent = ObjectIdReferenceAttribute(['BiologicallyDerivedProduct'], ("parent", str), "parent", pk_setter="parent")
         processing = EmbeddedAttribute(type="BiologicallyDerivedProductProcessing", getter="processing", setter="processing", searcher=StringSearch("processing"))
         productCategory = Attribute(getter="productCategory", setter="productCategory", searcher=StringSearch("productCategory"))
         productCode = EmbeddedAttribute(type="CodeableConcept", getter="productCode", setter="productCode", searcher=StringSearch("productCode"))
         quantity = Attribute(getter="quantity", setter="quantity", searcher=NumericSearch("quantity"))
-        request = ObjectIdReferenceAttribute({'ServiceRequest'}, ("request", str), "request", pk_setter="request")
+        request = ObjectIdReferenceAttribute(['ServiceRequest'], ("request", str), "request", pk_setter="request")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         storage = EmbeddedAttribute(type="BiologicallyDerivedProductStorage", getter="storage", setter="storage", searcher=StringSearch("storage"))
 
@@ -836,8 +837,8 @@ class BiologicallyDerivedProductCollection(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         collectedDateTime = DateAttribute("collectedDateTime")
         collectedPeriod = EmbeddedAttribute(type="Period", getter="collectedPeriod", setter="collectedPeriod", searcher=StringSearch("collectedPeriod"))
-        collector = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("collector", str), "collector", pk_setter="collector")
-        source = ObjectIdReferenceAttribute({'Organization', 'Patient'}, ("source", str), "source", pk_setter="source")
+        collector = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("collector", str), "collector", pk_setter="collector")
+        source = ObjectIdReferenceAttribute(['Organization', 'Patient'], ("source", str), "source", pk_setter="source")
 
 class BiologicallyDerivedProductManipulation(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -867,7 +868,7 @@ class BiologicallyDerivedProductProcessing(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        additive = ObjectIdReferenceAttribute({'Substance'}, ("additive", str), "additive", pk_setter="additive")
+        additive = ObjectIdReferenceAttribute(['Substance'], ("additive", str), "additive", pk_setter="additive")
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         procedure = EmbeddedAttribute(type="CodeableConcept", getter="procedure", setter="procedure", searcher=StringSearch("procedure"))
         timeDateTime = DateAttribute("timeDateTime")
@@ -891,7 +892,7 @@ class BiologicallyDerivedProductStorage(FhirBaseModel, EmbeddedMongoModel):
         temperature = Attribute(getter="temperature", setter="temperature", searcher=NumericSearch("temperature"))
 
 class BodySite(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -922,7 +923,7 @@ class BodySite(FhirBaseModel, MongoModel):
         qualifier = EmbeddedAttribute(type="CodeableConcept", getter="qualifier", setter="qualifier", searcher=StringSearch("qualifier"))
 
 class BodyStructure(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -952,10 +953,10 @@ class BodyStructure(FhirBaseModel, MongoModel):
         location = EmbeddedAttribute(type="CodeableConcept", getter="location", setter="location", searcher=StringSearch("location"))
         locationQualifier = EmbeddedAttribute(type="CodeableConcept", getter="locationQualifier", setter="locationQualifier", searcher=StringSearch("locationQualifier"))
         morphology = EmbeddedAttribute(type="CodeableConcept", getter="morphology", setter="morphology", searcher=StringSearch("morphology"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
 
 class Bundle(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -1067,7 +1068,7 @@ class BundleLink(FhirBaseModel, EmbeddedMongoModel):
         url = Attribute(getter="url", setter="url", searcher=StringSearch("url"))
 
 class CapabilityStatement(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -1161,7 +1162,7 @@ class CapabilityStatementImplementation(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        custodian = ObjectIdReferenceAttribute({'Organization'}, ("custodian", str), "custodian", pk_setter="custodian")
+        custodian = ObjectIdReferenceAttribute(['Organization'], ("custodian", str), "custodian", pk_setter="custodian")
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         url = Attribute(getter="url", setter="url", searcher=StringSearch("url"))
 
@@ -1365,7 +1366,7 @@ class CapabilityStatementSoftware(FhirBaseModel, EmbeddedMongoModel):
         version = Attribute(getter="version", setter="version", searcher=StringSearch("version"))
 
 class CarePlan(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -1404,27 +1405,27 @@ class CarePlan(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         activity = EmbeddedAttribute(type="CarePlanActivity", getter="activity", setter="activity", searcher=StringSearch("activity"))
-        addresses = ObjectIdReferenceAttribute({'Condition'}, ("addresses", str), "addresses", pk_setter="addresses")
-        author = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("author", str), "author", pk_setter="author")
-        basedOn = ObjectIdReferenceAttribute({'CarePlan'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
-        careTeam = ObjectIdReferenceAttribute({'CareTeam'}, ("careTeam", str), "careTeam", pk_setter="careTeam")
+        addresses = ObjectIdReferenceAttribute(['Condition'], ("addresses", str), "addresses", pk_setter="addresses")
+        author = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("author", str), "author", pk_setter="author")
+        basedOn = ObjectIdReferenceAttribute(['CarePlan'], ("basedOn", str), "basedOn", pk_setter="basedOn")
+        careTeam = ObjectIdReferenceAttribute(['CareTeam'], ("careTeam", str), "careTeam", pk_setter="careTeam")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
-        contributor = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("contributor", str), "contributor", pk_setter="contributor")
+        contributor = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("contributor", str), "contributor", pk_setter="contributor")
         created = DateAttribute("created")
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
-        goal = ObjectIdReferenceAttribute({'Goal'}, ("goal", str), "goal", pk_setter="goal")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
+        goal = ObjectIdReferenceAttribute(['Goal'], ("goal", str), "goal", pk_setter="goal")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         instantiatesCanonical = Attribute(getter="instantiatesCanonical", setter="instantiatesCanonical", searcher=StringSearch("instantiatesCanonical"))
         instantiatesUri = Attribute(getter="instantiatesUri", setter="instantiatesUri", searcher=StringSearch("instantiatesUri"))
         intent = Attribute(getter="intent", setter="intent", searcher=StringSearch("intent"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        partOf = ObjectIdReferenceAttribute({'CarePlan'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['CarePlan'], ("partOf", str), "partOf", pk_setter="partOf")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
-        replaces = ObjectIdReferenceAttribute({'CarePlan'}, ("replaces", str), "replaces", pk_setter="replaces")
+        replaces = ObjectIdReferenceAttribute(['CarePlan'], ("replaces", str), "replaces", pk_setter="replaces")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
-        supportingInfo = ObjectIdReferenceAttribute({'Resource'}, ("supportingInfo", str), "supportingInfo", pk_setter="supportingInfo")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
+        supportingInfo = ObjectIdReferenceAttribute(['Resource'], ("supportingInfo", str), "supportingInfo", pk_setter="supportingInfo")
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
 
 class CarePlanActivity(FhirBaseModel, EmbeddedMongoModel):
@@ -1442,9 +1443,9 @@ class CarePlanActivity(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         detail = EmbeddedAttribute(type="CarePlanActivityDetail", getter="detail", setter="detail", searcher=StringSearch("detail"))
         outcomeCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="outcomeCodeableConcept", setter="outcomeCodeableConcept", searcher=StringSearch("outcomeCodeableConcept"))
-        outcomeReference = ObjectIdReferenceAttribute({'Resource'}, ("outcomeReference", str), "outcomeReference", pk_setter="outcomeReference")
+        outcomeReference = ObjectIdReferenceAttribute(['Resource'], ("outcomeReference", str), "outcomeReference", pk_setter="outcomeReference")
         progress = EmbeddedAttribute(type="Annotation", getter="progress", setter="progress", searcher=StringSearch("progress"))
-        reference = ObjectIdReferenceAttribute({'VisionPrescription', 'MedicationRequest', 'NutritionOrder', 'Appointment', 'DeviceRequest', 'ServiceRequest', 'CommunicationRequest', 'Task', 'RequestGroup'}, ("reference", str), "reference", pk_setter="reference")
+        reference = ObjectIdReferenceAttribute(['Appointment', 'CommunicationRequest', 'DeviceRequest', 'MedicationRequest', 'NutritionOrder', 'RequestGroup', 'ServiceRequest', 'Task', 'VisionPrescription'], ("reference", str), "reference", pk_setter="reference")
 
 class CarePlanActivityDetail(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -1478,17 +1479,17 @@ class CarePlanActivityDetail(FhirBaseModel, EmbeddedMongoModel):
         dailyAmount = EmbeddedAttribute(type="Quantity", getter="dailyAmount", setter="dailyAmount", searcher=StringSearch("dailyAmount"))
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         doNotPerform = Attribute(getter="doNotPerform", setter="doNotPerform", searcher=StringSearch("doNotPerform"))
-        goal = ObjectIdReferenceAttribute({'Goal'}, ("goal", str), "goal", pk_setter="goal")
+        goal = ObjectIdReferenceAttribute(['Goal'], ("goal", str), "goal", pk_setter="goal")
         instantiatesCanonical = Attribute(getter="instantiatesCanonical", setter="instantiatesCanonical", searcher=StringSearch("instantiatesCanonical"))
         instantiatesUri = Attribute(getter="instantiatesUri", setter="instantiatesUri", searcher=StringSearch("instantiatesUri"))
         kind = Attribute(getter="kind", setter="kind", searcher=StringSearch("kind"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
-        performer = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'HealthcareService', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("performer", str), "performer", pk_setter="performer")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
+        performer = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'HealthcareService', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("performer", str), "performer", pk_setter="performer")
         productCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="productCodeableConcept", setter="productCodeableConcept", searcher=StringSearch("productCodeableConcept"))
-        productReference = ObjectIdReferenceAttribute({'Substance', 'Medication'}, ("productReference", str), "productReference", pk_setter="productReference")
+        productReference = ObjectIdReferenceAttribute(['Medication', 'Substance'], ("productReference", str), "productReference", pk_setter="productReference")
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation', 'DocumentReference'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
         scheduledPeriod = EmbeddedAttribute(type="Period", getter="scheduledPeriod", setter="scheduledPeriod", searcher=StringSearch("scheduledPeriod"))
         scheduledString = Attribute(getter="scheduledString", setter="scheduledString", searcher=StringSearch("scheduledString"))
         scheduledTiming = EmbeddedAttribute(type="Timing", getter="scheduledTiming", setter="scheduledTiming", searcher=StringSearch("scheduledTiming"))
@@ -1496,7 +1497,7 @@ class CarePlanActivityDetail(FhirBaseModel, EmbeddedMongoModel):
         statusReason = EmbeddedAttribute(type="CodeableConcept", getter="statusReason", setter="statusReason", searcher=StringSearch("statusReason"))
 
 class CareTeam(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -1525,17 +1526,17 @@ class CareTeam(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        managingOrganization = ObjectIdReferenceAttribute({'Organization'}, ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
+        managingOrganization = ObjectIdReferenceAttribute(['Organization'], ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         participant = EmbeddedAttribute(type="CareTeamParticipant", getter="participant", setter="participant", searcher=StringSearch("participant"))
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'Condition'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        reasonReference = ObjectIdReferenceAttribute(['Condition'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         telecom = EmbeddedAttribute(type="ContactPoint", getter="telecom", setter="telecom", searcher=StringSearch("telecom"))
 
 class CareTeamParticipant(FhirBaseModel, EmbeddedMongoModel):
@@ -1550,13 +1551,13 @@ class CareTeamParticipant(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        member = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'CareTeam', 'Organization', 'Patient'}, ("member", str), "member", pk_setter="member")
-        onBehalfOf = ObjectIdReferenceAttribute({'Organization'}, ("onBehalfOf", str), "onBehalfOf", pk_setter="onBehalfOf")
+        member = ObjectIdReferenceAttribute(['CareTeam', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("member", str), "member", pk_setter="member")
+        onBehalfOf = ObjectIdReferenceAttribute(['Organization'], ("onBehalfOf", str), "onBehalfOf", pk_setter="onBehalfOf")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         role = EmbeddedAttribute(type="CodeableConcept", getter="role", setter="role", searcher=StringSearch("role"))
 
 class CatalogEntry(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -1591,7 +1592,7 @@ class CatalogEntry(FhirBaseModel, MongoModel):
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         lastUpdated = DateAttribute("lastUpdated")
         orderable = Attribute(getter="orderable", setter="orderable", searcher=StringSearch("orderable"))
-        referencedItem = ObjectIdReferenceAttribute({'ObservationDefinition', 'PlanDefinition', 'SpecimenDefinition', 'ActivityDefinition', 'PractitionerRole', 'Medication', 'HealthcareService', 'Practitioner', 'Device', 'Organization', 'Binary'}, ("referencedItem", str), "referencedItem", pk_setter="referencedItem")
+        referencedItem = ObjectIdReferenceAttribute(['ActivityDefinition', 'Binary', 'Device', 'HealthcareService', 'Medication', 'ObservationDefinition', 'Organization', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'SpecimenDefinition'], ("referencedItem", str), "referencedItem", pk_setter="referencedItem")
         relatedEntry = EmbeddedAttribute(type="CatalogEntryRelatedEntry", getter="relatedEntry", setter="relatedEntry", searcher=StringSearch("relatedEntry"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
@@ -1608,11 +1609,11 @@ class CatalogEntryRelatedEntry(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        item = ObjectIdReferenceAttribute({'CatalogEntry'}, ("item", str), "item", pk_setter="item")
+        item = ObjectIdReferenceAttribute(['CatalogEntry'], ("item", str), "item", pk_setter="item")
         relationtype = Attribute(getter="relationtype", setter="relationtype", searcher=StringSearch("relationtype"))
 
 class ChargeItem(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -1656,15 +1657,15 @@ class ChargeItem(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        account = ObjectIdReferenceAttribute({'Account'}, ("account", str), "account", pk_setter="account")
+        account = ObjectIdReferenceAttribute(['Account'], ("account", str), "account", pk_setter="account")
         bodysite = EmbeddedAttribute(type="CodeableConcept", getter="bodysite", setter="bodysite", searcher=StringSearch("bodysite"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        context = ObjectIdReferenceAttribute({'Encounter', 'EpisodeOfCare'}, ("context", str), "context", pk_setter="context")
-        costCenter = ObjectIdReferenceAttribute({'Organization'}, ("costCenter", str), "costCenter", pk_setter="costCenter")
+        context = ObjectIdReferenceAttribute(['Encounter', 'EpisodeOfCare'], ("context", str), "context", pk_setter="context")
+        costCenter = ObjectIdReferenceAttribute(['Organization'], ("costCenter", str), "costCenter", pk_setter="costCenter")
         definitionCanonical = Attribute(getter="definitionCanonical", setter="definitionCanonical", searcher=StringSearch("definitionCanonical"))
         definitionUri = Attribute(getter="definitionUri", setter="definitionUri", searcher=StringSearch("definitionUri"))
         enteredDate = DateAttribute("enteredDate")
-        enterer = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("enterer", str), "enterer", pk_setter="enterer")
+        enterer = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("enterer", str), "enterer", pk_setter="enterer")
         factorOverride = Attribute(getter="factorOverride", setter="factorOverride", searcher=NumericSearch("factorOverride"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
@@ -1672,22 +1673,22 @@ class ChargeItem(FhirBaseModel, MongoModel):
         occurrencePeriod = EmbeddedAttribute(type="Period", getter="occurrencePeriod", setter="occurrencePeriod", searcher=StringSearch("occurrencePeriod"))
         occurrenceTiming = EmbeddedAttribute(type="Timing", getter="occurrenceTiming", setter="occurrenceTiming", searcher=StringSearch("occurrenceTiming"))
         overrideReason = Attribute(getter="overrideReason", setter="overrideReason", searcher=StringSearch("overrideReason"))
-        partOf = ObjectIdReferenceAttribute({'ChargeItem'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['ChargeItem'], ("partOf", str), "partOf", pk_setter="partOf")
         performer = EmbeddedAttribute(type="ChargeItemPerformer", getter="performer", setter="performer", searcher=StringSearch("performer"))
-        performingOrganization = ObjectIdReferenceAttribute({'Organization'}, ("performingOrganization", str), "performingOrganization", pk_setter="performingOrganization")
+        performingOrganization = ObjectIdReferenceAttribute(['Organization'], ("performingOrganization", str), "performingOrganization", pk_setter="performingOrganization")
         priceOverride = EmbeddedAttribute(type="Money", getter="priceOverride", setter="priceOverride", searcher=StringSearch("priceOverride"))
         productCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="productCodeableConcept", setter="productCodeableConcept", searcher=StringSearch("productCodeableConcept"))
-        productReference = ObjectIdReferenceAttribute({'Substance', 'Device', 'Medication'}, ("productReference", str), "productReference", pk_setter="productReference")
+        productReference = ObjectIdReferenceAttribute(['Device', 'Medication', 'Substance'], ("productReference", str), "productReference", pk_setter="productReference")
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         reason = EmbeddedAttribute(type="CodeableConcept", getter="reason", setter="reason", searcher=StringSearch("reason"))
-        requestingOrganization = ObjectIdReferenceAttribute({'Organization'}, ("requestingOrganization", str), "requestingOrganization", pk_setter="requestingOrganization")
-        service = ObjectIdReferenceAttribute({'DiagnosticReport', 'MedicationDispense', 'Immunization', 'SupplyDelivery', 'Observation', 'ImagingStudy', 'Procedure', 'MedicationAdministration'}, ("service", str), "service", pk_setter="service")
+        requestingOrganization = ObjectIdReferenceAttribute(['Organization'], ("requestingOrganization", str), "requestingOrganization", pk_setter="requestingOrganization")
+        service = ObjectIdReferenceAttribute(['DiagnosticReport', 'ImagingStudy', 'Immunization', 'MedicationAdministration', 'MedicationDispense', 'Observation', 'Procedure', 'SupplyDelivery'], ("service", str), "service", pk_setter="service")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
-        supportingInformation = ObjectIdReferenceAttribute({'Resource'}, ("supportingInformation", str), "supportingInformation", pk_setter="supportingInformation")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
+        supportingInformation = ObjectIdReferenceAttribute(['Resource'], ("supportingInformation", str), "supportingInformation", pk_setter="supportingInformation")
 
 class ChargeItemDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -1736,7 +1737,7 @@ class ChargeItemDefinition(FhirBaseModel, MongoModel):
         effectivePeriod = EmbeddedAttribute(type="Period", getter="effectivePeriod", setter="effectivePeriod", searcher=StringSearch("effectivePeriod"))
         experimental = Attribute(getter="experimental", setter="experimental", searcher=StringSearch("experimental"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        instance = ObjectIdReferenceAttribute({'Substance', 'Device', 'Medication'}, ("instance", str), "instance", pk_setter="instance")
+        instance = ObjectIdReferenceAttribute(['Device', 'Medication', 'Substance'], ("instance", str), "instance", pk_setter="instance")
         jurisdiction = EmbeddedAttribute(type="CodeableConcept", getter="jurisdiction", setter="jurisdiction", searcher=StringSearch("jurisdiction"))
         lastReviewDate = DateAttribute("lastReviewDate")
         partOf = Attribute(getter="partOf", setter="partOf", searcher=StringSearch("partOf"))
@@ -1804,11 +1805,11 @@ class ChargeItemPerformer(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        actor = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("actor", str), "actor", pk_setter="actor")
+        actor = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("actor", str), "actor", pk_setter="actor")
         function = EmbeddedAttribute(type="CodeableConcept", getter="function", setter="function", searcher=StringSearch("function"))
 
 class Claim(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -1855,21 +1856,21 @@ class Claim(FhirBaseModel, MongoModel):
         careTeam = EmbeddedAttribute(type="ClaimCareTeam", getter="careTeam", setter="careTeam", searcher=StringSearch("careTeam"))
         created = DateAttribute("created")
         diagnosis = EmbeddedAttribute(type="ClaimDiagnosis", getter="diagnosis", setter="diagnosis", searcher=StringSearch("diagnosis"))
-        enterer = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("enterer", str), "enterer", pk_setter="enterer")
-        facility = ObjectIdReferenceAttribute({'Location'}, ("facility", str), "facility", pk_setter="facility")
+        enterer = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("enterer", str), "enterer", pk_setter="enterer")
+        facility = ObjectIdReferenceAttribute(['Location'], ("facility", str), "facility", pk_setter="facility")
         fundsReserve = EmbeddedAttribute(type="CodeableConcept", getter="fundsReserve", setter="fundsReserve", searcher=StringSearch("fundsReserve"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         insurance = EmbeddedAttribute(type="ClaimInsurance", getter="insurance", setter="insurance", searcher=StringSearch("insurance"))
-        insurer = ObjectIdReferenceAttribute({'Organization'}, ("insurer", str), "insurer", pk_setter="insurer")
+        insurer = ObjectIdReferenceAttribute(['Organization'], ("insurer", str), "insurer", pk_setter="insurer")
         item = EmbeddedAttribute(type="ClaimItem", getter="item", setter="item", searcher=StringSearch("item"))
-        originalPrescription = ObjectIdReferenceAttribute({'DeviceRequest', 'VisionPrescription', 'MedicationRequest'}, ("originalPrescription", str), "originalPrescription", pk_setter="originalPrescription")
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        originalPrescription = ObjectIdReferenceAttribute(['DeviceRequest', 'MedicationRequest', 'VisionPrescription'], ("originalPrescription", str), "originalPrescription", pk_setter="originalPrescription")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         payee = EmbeddedAttribute(type="ClaimPayee", getter="payee", setter="payee", searcher=StringSearch("payee"))
-        prescription = ObjectIdReferenceAttribute({'DeviceRequest', 'VisionPrescription', 'MedicationRequest'}, ("prescription", str), "prescription", pk_setter="prescription")
+        prescription = ObjectIdReferenceAttribute(['DeviceRequest', 'MedicationRequest', 'VisionPrescription'], ("prescription", str), "prescription", pk_setter="prescription")
         priority = EmbeddedAttribute(type="CodeableConcept", getter="priority", setter="priority", searcher=StringSearch("priority"))
         procedure = EmbeddedAttribute(type="ClaimProcedure", getter="procedure", setter="procedure", searcher=StringSearch("procedure"))
-        provider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("provider", str), "provider", pk_setter="provider")
-        referral = ObjectIdReferenceAttribute({'ServiceRequest'}, ("referral", str), "referral", pk_setter="referral")
+        provider = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("provider", str), "provider", pk_setter="provider")
+        referral = ObjectIdReferenceAttribute(['ServiceRequest'], ("referral", str), "referral", pk_setter="referral")
         related = EmbeddedAttribute(type="ClaimRelated", getter="related", setter="related", searcher=StringSearch("related"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subType = EmbeddedAttribute(type="CodeableConcept", getter="subType", setter="subType", searcher=StringSearch("subType"))
@@ -1892,7 +1893,7 @@ class ClaimAccident(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         date = DateAttribute("date")
         locationAddress = EmbeddedAttribute(type="Address", getter="locationAddress", setter="locationAddress", searcher=StringSearch("locationAddress"))
-        locationReference = ObjectIdReferenceAttribute({'Location'}, ("locationReference", str), "locationReference", pk_setter="locationReference")
+        locationReference = ObjectIdReferenceAttribute(['Location'], ("locationReference", str), "locationReference", pk_setter="locationReference")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class ClaimCareTeam(FhirBaseModel, EmbeddedMongoModel):
@@ -1908,7 +1909,7 @@ class ClaimCareTeam(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        provider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("provider", str), "provider", pk_setter="provider")
+        provider = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("provider", str), "provider", pk_setter="provider")
         qualification = EmbeddedAttribute(type="CodeableConcept", getter="qualification", setter="qualification", searcher=StringSearch("qualification"))
         responsible = Attribute(getter="responsible", setter="responsible", searcher=StringSearch("responsible"))
         role = EmbeddedAttribute(type="CodeableConcept", getter="role", setter="role", searcher=StringSearch("role"))
@@ -1918,8 +1919,8 @@ class ClaimDiagnosis(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    diagnosisCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    diagnosisReference = fields.ObjectIdField(blank=False, required=True)
+    diagnosisCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    diagnosisReference = fields.ObjectIdField(blank=True, required=False)
     onAdmission = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
     packageCode = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
     sequence = fields.IntegerField(blank=False, required=True)
@@ -1929,7 +1930,7 @@ class ClaimDiagnosis(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         diagnosisCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="diagnosisCodeableConcept", setter="diagnosisCodeableConcept", searcher=StringSearch("diagnosisCodeableConcept"))
-        diagnosisReference = ObjectIdReferenceAttribute({'Condition'}, ("diagnosisReference", str), "diagnosisReference", pk_setter="diagnosisReference")
+        diagnosisReference = ObjectIdReferenceAttribute(['Condition'], ("diagnosisReference", str), "diagnosisReference", pk_setter="diagnosisReference")
         onAdmission = EmbeddedAttribute(type="CodeableConcept", getter="onAdmission", setter="onAdmission", searcher=StringSearch("onAdmission"))
         packageCode = EmbeddedAttribute(type="CodeableConcept", getter="packageCode", setter="packageCode", searcher=StringSearch("packageCode"))
         sequence = Attribute(getter="sequence", setter="sequence", searcher=NumericSearch("sequence"))
@@ -1951,8 +1952,8 @@ class ClaimInsurance(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         businessArrangement = Attribute(getter="businessArrangement", setter="businessArrangement", searcher=StringSearch("businessArrangement"))
-        claimResponse = ObjectIdReferenceAttribute({'ClaimResponse'}, ("claimResponse", str), "claimResponse", pk_setter="claimResponse")
-        coverage = ObjectIdReferenceAttribute({'Coverage'}, ("coverage", str), "coverage", pk_setter="coverage")
+        claimResponse = ObjectIdReferenceAttribute(['ClaimResponse'], ("claimResponse", str), "claimResponse", pk_setter="claimResponse")
+        coverage = ObjectIdReferenceAttribute(['Coverage'], ("coverage", str), "coverage", pk_setter="coverage")
         focal = Attribute(getter="focal", setter="focal", searcher=StringSearch("focal"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         preAuthRef = Attribute(getter="preAuthRef", setter="preAuthRef", searcher=StringSearch("preAuthRef"))
@@ -1995,12 +1996,12 @@ class ClaimItem(FhirBaseModel, EmbeddedMongoModel):
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         detail = EmbeddedAttribute(type="ClaimItemDetail", getter="detail", setter="detail", searcher=StringSearch("detail"))
         diagnosisSequence = Attribute(getter="diagnosisSequence", setter="diagnosisSequence", searcher=NumericSearch("diagnosisSequence"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         factor = Attribute(getter="factor", setter="factor", searcher=NumericSearch("factor"))
         informationSequence = Attribute(getter="informationSequence", setter="informationSequence", searcher=NumericSearch("informationSequence"))
         locationAddress = EmbeddedAttribute(type="Address", getter="locationAddress", setter="locationAddress", searcher=StringSearch("locationAddress"))
         locationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="locationCodeableConcept", setter="locationCodeableConcept", searcher=StringSearch("locationCodeableConcept"))
-        locationReference = ObjectIdReferenceAttribute({'Location'}, ("locationReference", str), "locationReference", pk_setter="locationReference")
+        locationReference = ObjectIdReferenceAttribute(['Location'], ("locationReference", str), "locationReference", pk_setter="locationReference")
         modifier = EmbeddedAttribute(type="CodeableConcept", getter="modifier", setter="modifier", searcher=StringSearch("modifier"))
         net = EmbeddedAttribute(type="Money", getter="net", setter="net", searcher=StringSearch("net"))
         procedureSequence = Attribute(getter="procedureSequence", setter="procedureSequence", searcher=NumericSearch("procedureSequence"))
@@ -2012,7 +2013,7 @@ class ClaimItem(FhirBaseModel, EmbeddedMongoModel):
         servicedDate = DateAttribute("servicedDate")
         servicedPeriod = EmbeddedAttribute(type="Period", getter="servicedPeriod", setter="servicedPeriod", searcher=StringSearch("servicedPeriod"))
         subSite = EmbeddedAttribute(type="CodeableConcept", getter="subSite", setter="subSite", searcher=StringSearch("subSite"))
-        udi = ObjectIdReferenceAttribute({'Device'}, ("udi", str), "udi", pk_setter="udi")
+        udi = ObjectIdReferenceAttribute(['Device'], ("udi", str), "udi", pk_setter="udi")
         unitPrice = EmbeddedAttribute(type="Money", getter="unitPrice", setter="unitPrice", searcher=StringSearch("unitPrice"))
 
 class ClaimItemDetail(FhirBaseModel, EmbeddedMongoModel):
@@ -2045,7 +2046,7 @@ class ClaimItemDetail(FhirBaseModel, EmbeddedMongoModel):
         revenue = EmbeddedAttribute(type="CodeableConcept", getter="revenue", setter="revenue", searcher=StringSearch("revenue"))
         sequence = Attribute(getter="sequence", setter="sequence", searcher=NumericSearch("sequence"))
         subDetail = EmbeddedAttribute(type="ClaimItemDetailSubDetail", getter="subDetail", setter="subDetail", searcher=StringSearch("subDetail"))
-        udi = ObjectIdReferenceAttribute({'Device'}, ("udi", str), "udi", pk_setter="udi")
+        udi = ObjectIdReferenceAttribute(['Device'], ("udi", str), "udi", pk_setter="udi")
         unitPrice = EmbeddedAttribute(type="Money", getter="unitPrice", setter="unitPrice", searcher=StringSearch("unitPrice"))
 
 class ClaimItemDetailSubDetail(FhirBaseModel, EmbeddedMongoModel):
@@ -2076,7 +2077,7 @@ class ClaimItemDetailSubDetail(FhirBaseModel, EmbeddedMongoModel):
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         revenue = EmbeddedAttribute(type="CodeableConcept", getter="revenue", setter="revenue", searcher=StringSearch("revenue"))
         sequence = Attribute(getter="sequence", setter="sequence", searcher=NumericSearch("sequence"))
-        udi = ObjectIdReferenceAttribute({'Device'}, ("udi", str), "udi", pk_setter="udi")
+        udi = ObjectIdReferenceAttribute(['Device'], ("udi", str), "udi", pk_setter="udi")
         unitPrice = EmbeddedAttribute(type="Money", getter="unitPrice", setter="unitPrice", searcher=StringSearch("unitPrice"))
 
 class ClaimPayee(FhirBaseModel, EmbeddedMongoModel):
@@ -2089,7 +2090,7 @@ class ClaimPayee(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        party = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("party", str), "party", pk_setter="party")
+        party = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("party", str), "party", pk_setter="party")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class ClaimProcedure(FhirBaseModel, EmbeddedMongoModel):
@@ -2097,8 +2098,8 @@ class ClaimProcedure(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     date = fields.DateTimeField(blank=True, required=False)
-    procedureCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    procedureReference = fields.ObjectIdField(blank=False, required=True)
+    procedureCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    procedureReference = fields.ObjectIdField(blank=True, required=False)
     sequence = fields.IntegerField(blank=False, required=True)
     type = fields.EmbeddedDocumentListField("CodeableConcept", blank=True, required=False)
     udi = fields.ObjectIdField(blank=True, required=False)
@@ -2108,10 +2109,10 @@ class ClaimProcedure(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         date = DateAttribute("date")
         procedureCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="procedureCodeableConcept", setter="procedureCodeableConcept", searcher=StringSearch("procedureCodeableConcept"))
-        procedureReference = ObjectIdReferenceAttribute({'Procedure'}, ("procedureReference", str), "procedureReference", pk_setter="procedureReference")
+        procedureReference = ObjectIdReferenceAttribute(['Procedure'], ("procedureReference", str), "procedureReference", pk_setter="procedureReference")
         sequence = Attribute(getter="sequence", setter="sequence", searcher=NumericSearch("sequence"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
-        udi = ObjectIdReferenceAttribute({'Device'}, ("udi", str), "udi", pk_setter="udi")
+        udi = ObjectIdReferenceAttribute(['Device'], ("udi", str), "udi", pk_setter="udi")
 
 class ClaimRelated(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -2124,12 +2125,12 @@ class ClaimRelated(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        claim = ObjectIdReferenceAttribute({'Claim'}, ("claim", str), "claim", pk_setter="claim")
+        claim = ObjectIdReferenceAttribute(['Claim'], ("claim", str), "claim", pk_setter="claim")
         reference = EmbeddedAttribute(type="Identifier", getter="reference", setter="reference", searcher=StringSearch("reference"))
         relationship = EmbeddedAttribute(type="CodeableConcept", getter="relationship", setter="relationship", searcher=StringSearch("relationship"))
 
 class ClaimResponse(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -2173,7 +2174,7 @@ class ClaimResponse(FhirBaseModel, MongoModel):
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         addItem = EmbeddedAttribute(type="ClaimResponseAddItem", getter="addItem", setter="addItem", searcher=StringSearch("addItem"))
         adjudication = EmbeddedAttribute(type="ClaimResponseItemAdjudication", getter="adjudication", setter="adjudication", searcher=StringSearch("adjudication"))
-        communicationRequest = ObjectIdReferenceAttribute({'CommunicationRequest'}, ("communicationRequest", str), "communicationRequest", pk_setter="communicationRequest")
+        communicationRequest = ObjectIdReferenceAttribute(['CommunicationRequest'], ("communicationRequest", str), "communicationRequest", pk_setter="communicationRequest")
         created = DateAttribute("created")
         disposition = Attribute(getter="disposition", setter="disposition", searcher=StringSearch("disposition"))
         error = EmbeddedAttribute(type="ClaimResponseError", getter="error", setter="error", searcher=StringSearch("error"))
@@ -2182,17 +2183,17 @@ class ClaimResponse(FhirBaseModel, MongoModel):
         fundsReserve = EmbeddedAttribute(type="CodeableConcept", getter="fundsReserve", setter="fundsReserve", searcher=StringSearch("fundsReserve"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         insurance = EmbeddedAttribute(type="ClaimResponseInsurance", getter="insurance", setter="insurance", searcher=StringSearch("insurance"))
-        insurer = ObjectIdReferenceAttribute({'Organization'}, ("insurer", str), "insurer", pk_setter="insurer")
+        insurer = ObjectIdReferenceAttribute(['Organization'], ("insurer", str), "insurer", pk_setter="insurer")
         item = EmbeddedAttribute(type="ClaimResponseItem", getter="item", setter="item", searcher=StringSearch("item"))
         outcome = Attribute(getter="outcome", setter="outcome", searcher=StringSearch("outcome"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         payeeType = EmbeddedAttribute(type="CodeableConcept", getter="payeeType", setter="payeeType", searcher=StringSearch("payeeType"))
         payment = EmbeddedAttribute(type="ClaimResponsePayment", getter="payment", setter="payment", searcher=StringSearch("payment"))
         preAuthPeriod = EmbeddedAttribute(type="Period", getter="preAuthPeriod", setter="preAuthPeriod", searcher=StringSearch("preAuthPeriod"))
         preAuthRef = Attribute(getter="preAuthRef", setter="preAuthRef", searcher=StringSearch("preAuthRef"))
         processNote = EmbeddedAttribute(type="ClaimResponseProcessNote", getter="processNote", setter="processNote", searcher=StringSearch("processNote"))
-        request = ObjectIdReferenceAttribute({'Claim'}, ("request", str), "request", pk_setter="request")
-        requestor = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("requestor", str), "requestor", pk_setter="requestor")
+        request = ObjectIdReferenceAttribute(['Claim'], ("request", str), "request", pk_setter="request")
+        requestor = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("requestor", str), "requestor", pk_setter="requestor")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subType = EmbeddedAttribute(type="CodeableConcept", getter="subType", setter="subType", searcher=StringSearch("subType"))
         total = EmbeddedAttribute(type="ClaimResponseTotal", getter="total", setter="total", searcher=StringSearch("total"))
@@ -2236,13 +2237,13 @@ class ClaimResponseAddItem(FhirBaseModel, EmbeddedMongoModel):
         itemSequence = Attribute(getter="itemSequence", setter="itemSequence", searcher=NumericSearch("itemSequence"))
         locationAddress = EmbeddedAttribute(type="Address", getter="locationAddress", setter="locationAddress", searcher=StringSearch("locationAddress"))
         locationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="locationCodeableConcept", setter="locationCodeableConcept", searcher=StringSearch("locationCodeableConcept"))
-        locationReference = ObjectIdReferenceAttribute({'Location'}, ("locationReference", str), "locationReference", pk_setter="locationReference")
+        locationReference = ObjectIdReferenceAttribute(['Location'], ("locationReference", str), "locationReference", pk_setter="locationReference")
         modifier = EmbeddedAttribute(type="CodeableConcept", getter="modifier", setter="modifier", searcher=StringSearch("modifier"))
         net = EmbeddedAttribute(type="Money", getter="net", setter="net", searcher=StringSearch("net"))
         noteNumber = Attribute(getter="noteNumber", setter="noteNumber", searcher=NumericSearch("noteNumber"))
         productOrService = EmbeddedAttribute(type="CodeableConcept", getter="productOrService", setter="productOrService", searcher=StringSearch("productOrService"))
         programCode = EmbeddedAttribute(type="CodeableConcept", getter="programCode", setter="programCode", searcher=StringSearch("programCode"))
-        provider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("provider", str), "provider", pk_setter="provider")
+        provider = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("provider", str), "provider", pk_setter="provider")
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         servicedDate = DateAttribute("servicedDate")
         servicedPeriod = EmbeddedAttribute(type="Period", getter="servicedPeriod", setter="servicedPeriod", searcher=StringSearch("servicedPeriod"))
@@ -2333,8 +2334,8 @@ class ClaimResponseInsurance(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         businessArrangement = Attribute(getter="businessArrangement", setter="businessArrangement", searcher=StringSearch("businessArrangement"))
-        claimResponse = ObjectIdReferenceAttribute({'ClaimResponse'}, ("claimResponse", str), "claimResponse", pk_setter="claimResponse")
-        coverage = ObjectIdReferenceAttribute({'Coverage'}, ("coverage", str), "coverage", pk_setter="coverage")
+        claimResponse = ObjectIdReferenceAttribute(['ClaimResponse'], ("claimResponse", str), "claimResponse", pk_setter="claimResponse")
+        coverage = ObjectIdReferenceAttribute(['Coverage'], ("coverage", str), "coverage", pk_setter="coverage")
         focal = Attribute(getter="focal", setter="focal", searcher=StringSearch("focal"))
         sequence = Attribute(getter="sequence", setter="sequence", searcher=NumericSearch("sequence"))
 
@@ -2483,11 +2484,11 @@ class ClaimSupportingInfo(FhirBaseModel, EmbeddedMongoModel):
         valueAttachment = EmbeddedAttribute(type="Attachment", getter="valueAttachment", setter="valueAttachment", searcher=StringSearch("valueAttachment"))
         valueBoolean = Attribute(getter="valueBoolean", setter="valueBoolean", searcher=StringSearch("valueBoolean"))
         valueQuantity = EmbeddedAttribute(type="Quantity", getter="valueQuantity", setter="valueQuantity", searcher=StringSearch("valueQuantity"))
-        valueReference = ObjectIdReferenceAttribute({'Resource'}, ("valueReference", str), "valueReference", pk_setter="valueReference")
+        valueReference = ObjectIdReferenceAttribute(['Resource'], ("valueReference", str), "valueReference", pk_setter="valueReference")
         valueString = Attribute(getter="valueString", setter="valueString", searcher=StringSearch("valueString"))
 
 class ClinicalImpression(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -2523,27 +2524,27 @@ class ClinicalImpression(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        assessor = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("assessor", str), "assessor", pk_setter="assessor")
+        assessor = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("assessor", str), "assessor", pk_setter="assessor")
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         date = DateAttribute("date")
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         effectiveDateTime = DateAttribute("effectiveDateTime")
         effectivePeriod = EmbeddedAttribute(type="Period", getter="effectivePeriod", setter="effectivePeriod", searcher=StringSearch("effectivePeriod"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         finding = EmbeddedAttribute(type="ClinicalImpressionFinding", getter="finding", setter="finding", searcher=StringSearch("finding"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         investigation = EmbeddedAttribute(type="ClinicalImpressionInvestigation", getter="investigation", setter="investigation", searcher=StringSearch("investigation"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        previous = ObjectIdReferenceAttribute({'ClinicalImpression'}, ("previous", str), "previous", pk_setter="previous")
-        problem = ObjectIdReferenceAttribute({'Condition', 'AllergyIntolerance'}, ("problem", str), "problem", pk_setter="problem")
+        previous = ObjectIdReferenceAttribute(['ClinicalImpression'], ("previous", str), "previous", pk_setter="previous")
+        problem = ObjectIdReferenceAttribute(['AllergyIntolerance', 'Condition'], ("problem", str), "problem", pk_setter="problem")
         prognosisCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="prognosisCodeableConcept", setter="prognosisCodeableConcept", searcher=StringSearch("prognosisCodeableConcept"))
-        prognosisReference = ObjectIdReferenceAttribute({'RiskAssessment'}, ("prognosisReference", str), "prognosisReference", pk_setter="prognosisReference")
+        prognosisReference = ObjectIdReferenceAttribute(['RiskAssessment'], ("prognosisReference", str), "prognosisReference", pk_setter="prognosisReference")
         protocol = Attribute(getter="protocol", setter="protocol", searcher=StringSearch("protocol"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusReason = EmbeddedAttribute(type="CodeableConcept", getter="statusReason", setter="statusReason", searcher=StringSearch("statusReason"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         summary = Attribute(getter="summary", setter="summary", searcher=StringSearch("summary"))
-        supportingInfo = ObjectIdReferenceAttribute({'Resource'}, ("supportingInfo", str), "supportingInfo", pk_setter="supportingInfo")
+        supportingInfo = ObjectIdReferenceAttribute(['Resource'], ("supportingInfo", str), "supportingInfo", pk_setter="supportingInfo")
 
 class ClinicalImpressionFinding(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -2558,7 +2559,7 @@ class ClinicalImpressionFinding(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         basis = Attribute(getter="basis", setter="basis", searcher=StringSearch("basis"))
         itemCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="itemCodeableConcept", setter="itemCodeableConcept", searcher=StringSearch("itemCodeableConcept"))
-        itemReference = ObjectIdReferenceAttribute({'Condition', 'Observation', 'Media'}, ("itemReference", str), "itemReference", pk_setter="itemReference")
+        itemReference = ObjectIdReferenceAttribute(['Condition', 'Media', 'Observation'], ("itemReference", str), "itemReference", pk_setter="itemReference")
 
 class ClinicalImpressionInvestigation(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -2571,10 +2572,10 @@ class ClinicalImpressionInvestigation(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        item = ObjectIdReferenceAttribute({'DiagnosticReport', 'Observation', 'ImagingStudy', 'QuestionnaireResponse', 'FamilyMemberHistory', 'Media', 'RiskAssessment'}, ("item", str), "item", pk_setter="item")
+        item = ObjectIdReferenceAttribute(['DiagnosticReport', 'FamilyMemberHistory', 'ImagingStudy', 'Media', 'Observation', 'QuestionnaireResponse', 'RiskAssessment'], ("item", str), "item", pk_setter="item")
 
 class CodeSystem(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -2683,13 +2684,13 @@ class CodeSystemConceptProperty(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     code = fields.CharField(blank=False, required=True)
-    valueBoolean = fields.BooleanField(blank=False, required=True)
-    valueCode = fields.CharField(blank=False, required=True)
-    valueCoding = fields.EmbeddedDocumentField("Coding", blank=False, required=True)
-    valueDateTime = fields.DateTimeField(blank=False, required=True)
-    valueDecimal = fields.FloatField(blank=False, required=True)
-    valueInteger = fields.IntegerField(blank=False, required=True)
-    valueString = fields.CharField(blank=False, required=True)
+    valueBoolean = fields.BooleanField(blank=True, required=False)
+    valueCode = fields.CharField(blank=True, required=False)
+    valueCoding = fields.EmbeddedDocumentField("Coding", blank=True, required=False)
+    valueDateTime = fields.DateTimeField(blank=True, required=False)
+    valueDecimal = fields.FloatField(blank=True, required=False)
+    valueInteger = fields.IntegerField(blank=True, required=False)
+    valueString = fields.CharField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -2766,7 +2767,7 @@ class Coding(FhirBaseModel, EmbeddedMongoModel):
         version = Attribute(getter="version", setter="version", searcher=StringSearch("version"))
 
 class Communication(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -2804,47 +2805,47 @@ class Communication(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        about = ObjectIdReferenceAttribute({'Resource'}, ("about", str), "about", pk_setter="about")
-        basedOn = ObjectIdReferenceAttribute({'Resource'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        about = ObjectIdReferenceAttribute(['Resource'], ("about", str), "about", pk_setter="about")
+        basedOn = ObjectIdReferenceAttribute(['Resource'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        inResponseTo = ObjectIdReferenceAttribute({'Communication'}, ("inResponseTo", str), "inResponseTo", pk_setter="inResponseTo")
+        inResponseTo = ObjectIdReferenceAttribute(['Communication'], ("inResponseTo", str), "inResponseTo", pk_setter="inResponseTo")
         instantiatesCanonical = Attribute(getter="instantiatesCanonical", setter="instantiatesCanonical", searcher=StringSearch("instantiatesCanonical"))
         instantiatesUri = Attribute(getter="instantiatesUri", setter="instantiatesUri", searcher=StringSearch("instantiatesUri"))
         medium = EmbeddedAttribute(type="CodeableConcept", getter="medium", setter="medium", searcher=StringSearch("medium"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        partOf = ObjectIdReferenceAttribute({'Resource'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['Resource'], ("partOf", str), "partOf", pk_setter="partOf")
         payload = EmbeddedAttribute(type="CommunicationPayload", getter="payload", setter="payload", searcher=StringSearch("payload"))
         priority = Attribute(getter="priority", setter="priority", searcher=StringSearch("priority"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation', 'DocumentReference'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
         received = DateAttribute("received")
-        recipient = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Group', 'HealthcareService', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("recipient", str), "recipient", pk_setter="recipient")
-        sender = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'HealthcareService', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("sender", str), "sender", pk_setter="sender")
+        recipient = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'Group', 'HealthcareService', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("recipient", str), "recipient", pk_setter="recipient")
+        sender = ObjectIdReferenceAttribute(['Device', 'HealthcareService', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("sender", str), "sender", pk_setter="sender")
         sent = DateAttribute("sent")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusReason = EmbeddedAttribute(type="CodeableConcept", getter="statusReason", setter="statusReason", searcher=StringSearch("statusReason"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         topic = EmbeddedAttribute(type="CodeableConcept", getter="topic", setter="topic", searcher=StringSearch("topic"))
 
 class CommunicationPayload(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    contentAttachment = fields.EmbeddedDocumentField("Attachment", blank=False, required=True)
-    contentReference = fields.ObjectIdField(blank=False, required=True)
-    contentString = fields.CharField(blank=False, required=True)
+    contentAttachment = fields.EmbeddedDocumentField("Attachment", blank=True, required=False)
+    contentReference = fields.ObjectIdField(blank=True, required=False)
+    contentString = fields.CharField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         contentAttachment = EmbeddedAttribute(type="Attachment", getter="contentAttachment", setter="contentAttachment", searcher=StringSearch("contentAttachment"))
-        contentReference = ObjectIdReferenceAttribute({'Resource'}, ("contentReference", str), "contentReference", pk_setter="contentReference")
+        contentReference = ObjectIdReferenceAttribute(['Resource'], ("contentReference", str), "contentReference", pk_setter="contentReference")
         contentString = Attribute(getter="contentString", setter="contentString", searcher=StringSearch("contentString"))
 
 class CommunicationRequest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -2882,12 +2883,12 @@ class CommunicationRequest(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        about = ObjectIdReferenceAttribute({'Resource'}, ("about", str), "about", pk_setter="about")
+        about = ObjectIdReferenceAttribute(['Resource'], ("about", str), "about", pk_setter="about")
         authoredOn = DateAttribute("authoredOn")
-        basedOn = ObjectIdReferenceAttribute({'Resource'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['Resource'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         doNotPerform = Attribute(getter="doNotPerform", setter="doNotPerform", searcher=StringSearch("doNotPerform"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         groupIdentifier = EmbeddedAttribute(type="Identifier", getter="groupIdentifier", setter="groupIdentifier", searcher=StringSearch("groupIdentifier"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         medium = EmbeddedAttribute(type="CodeableConcept", getter="medium", setter="medium", searcher=StringSearch("medium"))
@@ -2897,32 +2898,32 @@ class CommunicationRequest(FhirBaseModel, MongoModel):
         payload = EmbeddedAttribute(type="CommunicationRequestPayload", getter="payload", setter="payload", searcher=StringSearch("payload"))
         priority = Attribute(getter="priority", setter="priority", searcher=StringSearch("priority"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation', 'DocumentReference'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        recipient = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Group', 'HealthcareService', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("recipient", str), "recipient", pk_setter="recipient")
-        replaces = ObjectIdReferenceAttribute({'CommunicationRequest'}, ("replaces", str), "replaces", pk_setter="replaces")
-        requester = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("requester", str), "requester", pk_setter="requester")
-        sender = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'HealthcareService', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("sender", str), "sender", pk_setter="sender")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        recipient = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'Group', 'HealthcareService', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("recipient", str), "recipient", pk_setter="recipient")
+        replaces = ObjectIdReferenceAttribute(['CommunicationRequest'], ("replaces", str), "replaces", pk_setter="replaces")
+        requester = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("requester", str), "requester", pk_setter="requester")
+        sender = ObjectIdReferenceAttribute(['Device', 'HealthcareService', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("sender", str), "sender", pk_setter="sender")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusReason = EmbeddedAttribute(type="CodeableConcept", getter="statusReason", setter="statusReason", searcher=StringSearch("statusReason"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
 
 class CommunicationRequestPayload(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    contentAttachment = fields.EmbeddedDocumentField("Attachment", blank=False, required=True)
-    contentReference = fields.ObjectIdField(blank=False, required=True)
-    contentString = fields.CharField(blank=False, required=True)
+    contentAttachment = fields.EmbeddedDocumentField("Attachment", blank=True, required=False)
+    contentReference = fields.ObjectIdField(blank=True, required=False)
+    contentString = fields.CharField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         contentAttachment = EmbeddedAttribute(type="Attachment", getter="contentAttachment", setter="contentAttachment", searcher=StringSearch("contentAttachment"))
-        contentReference = ObjectIdReferenceAttribute({'Resource'}, ("contentReference", str), "contentReference", pk_setter="contentReference")
+        contentReference = ObjectIdReferenceAttribute(['Resource'], ("contentReference", str), "contentReference", pk_setter="contentReference")
         contentString = Attribute(getter="contentString", setter="contentString", searcher=StringSearch("contentString"))
 
 class CompartmentDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -2982,7 +2983,7 @@ class CompartmentDefinitionResource(FhirBaseModel, EmbeddedMongoModel):
         param = Attribute(getter="param", setter="param", searcher=StringSearch("param"))
 
 class Composition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -3013,18 +3014,18 @@ class Composition(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         attester = EmbeddedAttribute(type="CompositionAttester", getter="attester", setter="attester", searcher=StringSearch("attester"))
-        author = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("author", str), "author", pk_setter="author")
+        author = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("author", str), "author", pk_setter="author")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         confidentiality = Attribute(getter="confidentiality", setter="confidentiality", searcher=StringSearch("confidentiality"))
-        custodian = ObjectIdReferenceAttribute({'Organization'}, ("custodian", str), "custodian", pk_setter="custodian")
+        custodian = ObjectIdReferenceAttribute(['Organization'], ("custodian", str), "custodian", pk_setter="custodian")
         date = DateAttribute("date")
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         event = EmbeddedAttribute(type="CompositionEvent", getter="event", setter="event", searcher=StringSearch("event"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         relatesTo = EmbeddedAttribute(type="CompositionRelatesTo", getter="relatesTo", setter="relatesTo", searcher=StringSearch("relatesTo"))
         section = EmbeddedAttribute(type="CompositionSection", getter="section", setter="section", searcher=StringSearch("section"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Resource', 'Location', 'Group', 'Practitioner', 'Device', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Location', 'Patient', 'Practitioner', 'Resource'], ("subject", str), "subject", pk_setter="subject")
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
@@ -3040,7 +3041,7 @@ class CompositionAttester(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         mode = Attribute(getter="mode", setter="mode", searcher=StringSearch("mode"))
-        party = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("party", str), "party", pk_setter="party")
+        party = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("party", str), "party", pk_setter="party")
         time = DateAttribute("time")
 
 class CompositionEvent(FhirBaseModel, EmbeddedMongoModel):
@@ -3055,7 +3056,7 @@ class CompositionEvent(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        detail = ObjectIdReferenceAttribute({'Resource'}, ("detail", str), "detail", pk_setter="detail")
+        detail = ObjectIdReferenceAttribute(['Resource'], ("detail", str), "detail", pk_setter="detail")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
 
 class CompositionRelatesTo(FhirBaseModel, EmbeddedMongoModel):
@@ -3063,15 +3064,15 @@ class CompositionRelatesTo(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     code = fields.CharField(blank=False, required=True)
-    targetIdentifier = fields.EmbeddedDocumentField("Identifier", blank=False, required=True)
-    targetReference = fields.ObjectIdField(blank=False, required=True)
+    targetIdentifier = fields.EmbeddedDocumentField("Identifier", blank=True, required=False)
+    targetReference = fields.ObjectIdField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         code = Attribute(getter="code", setter="code", searcher=StringSearch("code"))
         targetIdentifier = EmbeddedAttribute(type="Identifier", getter="targetIdentifier", setter="targetIdentifier", searcher=StringSearch("targetIdentifier"))
-        targetReference = ObjectIdReferenceAttribute({'Composition'}, ("targetReference", str), "targetReference", pk_setter="targetReference")
+        targetReference = ObjectIdReferenceAttribute(['Composition'], ("targetReference", str), "targetReference", pk_setter="targetReference")
 
 class CompositionSection(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -3091,11 +3092,11 @@ class CompositionSection(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        author = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("author", str), "author", pk_setter="author")
+        author = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("author", str), "author", pk_setter="author")
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         emptyReason = EmbeddedAttribute(type="CodeableConcept", getter="emptyReason", setter="emptyReason", searcher=StringSearch("emptyReason"))
-        entry = ObjectIdReferenceAttribute({'CatalogEntry', 'Resource'}, ("entry", str), "entry", pk_setter="entry")
-        focus = ObjectIdReferenceAttribute({'Resource'}, ("focus", str), "focus", pk_setter="focus")
+        entry = ObjectIdReferenceAttribute(['CatalogEntry', 'Resource'], ("entry", str), "entry", pk_setter="entry")
+        focus = ObjectIdReferenceAttribute(['Resource'], ("focus", str), "focus", pk_setter="focus")
         mode = Attribute(getter="mode", setter="mode", searcher=StringSearch("mode"))
         orderedBy = EmbeddedAttribute(type="CodeableConcept", getter="orderedBy", setter="orderedBy", searcher=StringSearch("orderedBy"))
         section = EmbeddedAttribute(type="CompositionSection", getter="section", setter="section", searcher=StringSearch("section"))
@@ -3103,7 +3104,7 @@ class CompositionSection(FhirBaseModel, EmbeddedMongoModel):
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
 
 class ConceptMap(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -3251,7 +3252,7 @@ class ConceptMapGroupUnmapped(FhirBaseModel, EmbeddedMongoModel):
         url = Attribute(getter="url", setter="url", searcher=StringSearch("url"))
 
 class Condition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -3296,12 +3297,12 @@ class Condition(FhirBaseModel, MongoModel):
         abatementPeriod = EmbeddedAttribute(type="Period", getter="abatementPeriod", setter="abatementPeriod", searcher=StringSearch("abatementPeriod"))
         abatementRange = EmbeddedAttribute(type="Range", getter="abatementRange", setter="abatementRange", searcher=StringSearch("abatementRange"))
         abatementString = Attribute(getter="abatementString", setter="abatementString", searcher=StringSearch("abatementString"))
-        asserter = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Patient'}, ("asserter", str), "asserter", pk_setter="asserter")
+        asserter = ObjectIdReferenceAttribute(['Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("asserter", str), "asserter", pk_setter="asserter")
         bodySite = EmbeddedAttribute(type="CodeableConcept", getter="bodySite", setter="bodySite", searcher=StringSearch("bodySite"))
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         clinicalStatus = EmbeddedAttribute(type="CodeableConcept", getter="clinicalStatus", setter="clinicalStatus", searcher=StringSearch("clinicalStatus"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         evidence = EmbeddedAttribute(type="ConditionEvidence", getter="evidence", setter="evidence", searcher=StringSearch("evidence"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
@@ -3311,10 +3312,10 @@ class Condition(FhirBaseModel, MongoModel):
         onsetRange = EmbeddedAttribute(type="Range", getter="onsetRange", setter="onsetRange", searcher=StringSearch("onsetRange"))
         onsetString = Attribute(getter="onsetString", setter="onsetString", searcher=StringSearch("onsetString"))
         recordedDate = DateAttribute("recordedDate")
-        recorder = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Patient'}, ("recorder", str), "recorder", pk_setter="recorder")
+        recorder = ObjectIdReferenceAttribute(['Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("recorder", str), "recorder", pk_setter="recorder")
         severity = EmbeddedAttribute(type="CodeableConcept", getter="severity", setter="severity", searcher=StringSearch("severity"))
         stage = EmbeddedAttribute(type="ConditionStage", getter="stage", setter="stage", searcher=StringSearch("stage"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         verificationStatus = EmbeddedAttribute(type="CodeableConcept", getter="verificationStatus", setter="verificationStatus", searcher=StringSearch("verificationStatus"))
 
 class ConditionEvidence(FhirBaseModel, EmbeddedMongoModel):
@@ -3328,7 +3329,7 @@ class ConditionEvidence(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        detail = ObjectIdReferenceAttribute({'Resource'}, ("detail", str), "detail", pk_setter="detail")
+        detail = ObjectIdReferenceAttribute(['Resource'], ("detail", str), "detail", pk_setter="detail")
 
 class ConditionStage(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -3341,12 +3342,12 @@ class ConditionStage(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        assessment = ObjectIdReferenceAttribute({'DiagnosticReport', 'ClinicalImpression', 'Observation'}, ("assessment", str), "assessment", pk_setter="assessment")
+        assessment = ObjectIdReferenceAttribute(['ClinicalImpression', 'DiagnosticReport', 'Observation'], ("assessment", str), "assessment", pk_setter="assessment")
         summary = EmbeddedAttribute(type="CodeableConcept", getter="summary", setter="summary", searcher=StringSearch("summary"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class Consent(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -3378,15 +3379,15 @@ class Consent(FhirBaseModel, MongoModel):
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         dateTime = DateAttribute("dateTime")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        organization = ObjectIdReferenceAttribute({'Organization'}, ("organization", str), "organization", pk_setter="organization")
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
-        performer = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("performer", str), "performer", pk_setter="performer")
+        organization = ObjectIdReferenceAttribute(['Organization'], ("organization", str), "organization", pk_setter="organization")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
+        performer = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("performer", str), "performer", pk_setter="performer")
         policy = EmbeddedAttribute(type="ConsentPolicy", getter="policy", setter="policy", searcher=StringSearch("policy"))
         policyRule = EmbeddedAttribute(type="CodeableConcept", getter="policyRule", setter="policyRule", searcher=StringSearch("policyRule"))
         provision = EmbeddedAttribute(type="ConsentProvision", getter="provision", setter="provision", searcher=StringSearch("provision"))
         scope = EmbeddedAttribute(type="CodeableConcept", getter="scope", setter="scope", searcher=StringSearch("scope"))
         sourceAttachment = EmbeddedAttribute(type="Attachment", getter="sourceAttachment", setter="sourceAttachment", searcher=StringSearch("sourceAttachment"))
-        sourceReference = ObjectIdReferenceAttribute({'Contract', 'Consent', 'QuestionnaireResponse', 'DocumentReference'}, ("sourceReference", str), "sourceReference", pk_setter="sourceReference")
+        sourceReference = ObjectIdReferenceAttribute(['Consent', 'Contract', 'DocumentReference', 'QuestionnaireResponse'], ("sourceReference", str), "sourceReference", pk_setter="sourceReference")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         verification = EmbeddedAttribute(type="ConsentVerification", getter="verification", setter="verification", searcher=StringSearch("verification"))
 
@@ -3444,7 +3445,7 @@ class ConsentProvisionActor(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        reference = ObjectIdReferenceAttribute({'PractitionerRole', 'Group', 'RelatedPerson', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("reference", str), "reference", pk_setter="reference")
+        reference = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'Group', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("reference", str), "reference", pk_setter="reference")
         role = EmbeddedAttribute(type="CodeableConcept", getter="role", setter="role", searcher=StringSearch("role"))
 
 class ConsentProvisionData(FhirBaseModel, EmbeddedMongoModel):
@@ -3458,7 +3459,7 @@ class ConsentProvisionData(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         meaning = Attribute(getter="meaning", setter="meaning", searcher=StringSearch("meaning"))
-        reference = ObjectIdReferenceAttribute({'Resource'}, ("reference", str), "reference", pk_setter="reference")
+        reference = ObjectIdReferenceAttribute(['Resource'], ("reference", str), "reference", pk_setter="reference")
 
 class ConsentVerification(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -3473,7 +3474,7 @@ class ConsentVerification(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         verificationDate = DateAttribute("verificationDate")
         verified = Attribute(getter="verified", setter="verified", searcher=StringSearch("verified"))
-        verifiedWith = ObjectIdReferenceAttribute({'RelatedPerson', 'Patient'}, ("verifiedWith", str), "verifiedWith", pk_setter="verifiedWith")
+        verifiedWith = ObjectIdReferenceAttribute(['Patient', 'RelatedPerson'], ("verifiedWith", str), "verifiedWith", pk_setter="verifiedWith")
 
 class ContactDetail(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -3504,7 +3505,7 @@ class ContactPoint(FhirBaseModel, EmbeddedMongoModel):
         value = Attribute(getter="value", setter="value", searcher=StringSearch("value"))
 
 class Contract(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -3556,36 +3557,36 @@ class Contract(FhirBaseModel, MongoModel):
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         alias = Attribute(getter="alias", setter="alias", searcher=StringSearch("alias"))
         applies = EmbeddedAttribute(type="Period", getter="applies", setter="applies", searcher=StringSearch("applies"))
-        author = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization', 'Patient'}, ("author", str), "author", pk_setter="author")
-        authority = ObjectIdReferenceAttribute({'Organization'}, ("authority", str), "authority", pk_setter="authority")
+        author = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole'], ("author", str), "author", pk_setter="author")
+        authority = ObjectIdReferenceAttribute(['Organization'], ("authority", str), "authority", pk_setter="authority")
         contentDefinition = EmbeddedAttribute(type="ContractContentDefinition", getter="contentDefinition", setter="contentDefinition", searcher=StringSearch("contentDefinition"))
         contentDerivative = EmbeddedAttribute(type="CodeableConcept", getter="contentDerivative", setter="contentDerivative", searcher=StringSearch("contentDerivative"))
-        domain = ObjectIdReferenceAttribute({'Location'}, ("domain", str), "domain", pk_setter="domain")
+        domain = ObjectIdReferenceAttribute(['Location'], ("domain", str), "domain", pk_setter="domain")
         expirationType = EmbeddedAttribute(type="CodeableConcept", getter="expirationType", setter="expirationType", searcher=StringSearch("expirationType"))
         friendly = EmbeddedAttribute(type="ContractFriendly", getter="friendly", setter="friendly", searcher=StringSearch("friendly"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        instantiatesCanonical = ObjectIdReferenceAttribute({'Contract'}, ("instantiatesCanonical", str), "instantiatesCanonical", pk_setter="instantiatesCanonical")
+        instantiatesCanonical = ObjectIdReferenceAttribute(['Contract'], ("instantiatesCanonical", str), "instantiatesCanonical", pk_setter="instantiatesCanonical")
         instantiatesUri = Attribute(getter="instantiatesUri", setter="instantiatesUri", searcher=StringSearch("instantiatesUri"))
         issued = DateAttribute("issued")
         legal = EmbeddedAttribute(type="ContractLegal", getter="legal", setter="legal", searcher=StringSearch("legal"))
         legalState = EmbeddedAttribute(type="CodeableConcept", getter="legalState", setter="legalState", searcher=StringSearch("legalState"))
         legallyBindingAttachment = EmbeddedAttribute(type="Attachment", getter="legallyBindingAttachment", setter="legallyBindingAttachment", searcher=StringSearch("legallyBindingAttachment"))
-        legallyBindingReference = ObjectIdReferenceAttribute({'Contract', 'QuestionnaireResponse', 'Composition', 'DocumentReference'}, ("legallyBindingReference", str), "legallyBindingReference", pk_setter="legallyBindingReference")
+        legallyBindingReference = ObjectIdReferenceAttribute(['Composition', 'Contract', 'DocumentReference', 'QuestionnaireResponse'], ("legallyBindingReference", str), "legallyBindingReference", pk_setter="legallyBindingReference")
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
-        relevantHistory = ObjectIdReferenceAttribute({'Provenance'}, ("relevantHistory", str), "relevantHistory", pk_setter="relevantHistory")
+        relevantHistory = ObjectIdReferenceAttribute(['Provenance'], ("relevantHistory", str), "relevantHistory", pk_setter="relevantHistory")
         rule = EmbeddedAttribute(type="ContractRule", getter="rule", setter="rule", searcher=StringSearch("rule"))
         scope = EmbeddedAttribute(type="CodeableConcept", getter="scope", setter="scope", searcher=StringSearch("scope"))
         signer = EmbeddedAttribute(type="ContractSigner", getter="signer", setter="signer", searcher=StringSearch("signer"))
-        site = ObjectIdReferenceAttribute({'Location'}, ("site", str), "site", pk_setter="site")
+        site = ObjectIdReferenceAttribute(['Location'], ("site", str), "site", pk_setter="site")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subType = EmbeddedAttribute(type="CodeableConcept", getter="subType", setter="subType", searcher=StringSearch("subType"))
-        subject = ObjectIdReferenceAttribute({'Resource'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Resource'], ("subject", str), "subject", pk_setter="subject")
         subtitle = Attribute(getter="subtitle", setter="subtitle", searcher=StringSearch("subtitle"))
-        supportingInfo = ObjectIdReferenceAttribute({'Resource'}, ("supportingInfo", str), "supportingInfo", pk_setter="supportingInfo")
+        supportingInfo = ObjectIdReferenceAttribute(['Resource'], ("supportingInfo", str), "supportingInfo", pk_setter="supportingInfo")
         term = EmbeddedAttribute(type="ContractTerm", getter="term", setter="term", searcher=StringSearch("term"))
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
         topicCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="topicCodeableConcept", setter="topicCodeableConcept", searcher=StringSearch("topicCodeableConcept"))
-        topicReference = ObjectIdReferenceAttribute({'Resource'}, ("topicReference", str), "topicReference", pk_setter="topicReference")
+        topicReference = ObjectIdReferenceAttribute(['Resource'], ("topicReference", str), "topicReference", pk_setter="topicReference")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
         url = Attribute(getter="url", setter="url", searcher=StringSearch("url"))
         version = Attribute(getter="version", setter="version", searcher=StringSearch("version"))
@@ -3607,7 +3608,7 @@ class ContractContentDefinition(FhirBaseModel, EmbeddedMongoModel):
         copyright = Attribute(getter="copyright", setter="copyright", searcher=StringSearch("copyright"))
         publicationDate = DateAttribute("publicationDate")
         publicationStatus = Attribute(getter="publicationStatus", setter="publicationStatus", searcher=StringSearch("publicationStatus"))
-        publisher = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("publisher", str), "publisher", pk_setter="publisher")
+        publisher = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("publisher", str), "publisher", pk_setter="publisher")
         subType = EmbeddedAttribute(type="CodeableConcept", getter="subType", setter="subType", searcher=StringSearch("subType"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
@@ -3615,40 +3616,40 @@ class ContractFriendly(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    contentAttachment = fields.EmbeddedDocumentField("Attachment", blank=False, required=True)
-    contentReference = fields.ObjectIdField(blank=False, required=True)
+    contentAttachment = fields.EmbeddedDocumentField("Attachment", blank=True, required=False)
+    contentReference = fields.ObjectIdField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         contentAttachment = EmbeddedAttribute(type="Attachment", getter="contentAttachment", setter="contentAttachment", searcher=StringSearch("contentAttachment"))
-        contentReference = ObjectIdReferenceAttribute({'QuestionnaireResponse', 'Composition', 'DocumentReference'}, ("contentReference", str), "contentReference", pk_setter="contentReference")
+        contentReference = ObjectIdReferenceAttribute(['Composition', 'DocumentReference', 'QuestionnaireResponse'], ("contentReference", str), "contentReference", pk_setter="contentReference")
 
 class ContractLegal(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    contentAttachment = fields.EmbeddedDocumentField("Attachment", blank=False, required=True)
-    contentReference = fields.ObjectIdField(blank=False, required=True)
+    contentAttachment = fields.EmbeddedDocumentField("Attachment", blank=True, required=False)
+    contentReference = fields.ObjectIdField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         contentAttachment = EmbeddedAttribute(type="Attachment", getter="contentAttachment", setter="contentAttachment", searcher=StringSearch("contentAttachment"))
-        contentReference = ObjectIdReferenceAttribute({'QuestionnaireResponse', 'Composition', 'DocumentReference'}, ("contentReference", str), "contentReference", pk_setter="contentReference")
+        contentReference = ObjectIdReferenceAttribute(['Composition', 'DocumentReference', 'QuestionnaireResponse'], ("contentReference", str), "contentReference", pk_setter="contentReference")
 
 class ContractRule(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    contentAttachment = fields.EmbeddedDocumentField("Attachment", blank=False, required=True)
-    contentReference = fields.ObjectIdField(blank=False, required=True)
+    contentAttachment = fields.EmbeddedDocumentField("Attachment", blank=True, required=False)
+    contentReference = fields.ObjectIdField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         contentAttachment = EmbeddedAttribute(type="Attachment", getter="contentAttachment", setter="contentAttachment", searcher=StringSearch("contentAttachment"))
-        contentReference = ObjectIdReferenceAttribute({'DocumentReference'}, ("contentReference", str), "contentReference", pk_setter="contentReference")
+        contentReference = ObjectIdReferenceAttribute(['DocumentReference'], ("contentReference", str), "contentReference", pk_setter="contentReference")
 
 class ContractSigner(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -3661,7 +3662,7 @@ class ContractSigner(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        party = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("party", str), "party", pk_setter="party")
+        party = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("party", str), "party", pk_setter="party")
         signature = EmbeddedAttribute(type="Signature", getter="signature", setter="signature", searcher=StringSearch("signature"))
         type = EmbeddedAttribute(type="Coding", getter="type", setter="type", searcher=StringSearch("type"))
 
@@ -3697,7 +3698,7 @@ class ContractTerm(FhirBaseModel, EmbeddedMongoModel):
         subType = EmbeddedAttribute(type="CodeableConcept", getter="subType", setter="subType", searcher=StringSearch("subType"))
         text = Attribute(getter="text", setter="text", searcher=StringSearch("text"))
         topicCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="topicCodeableConcept", setter="topicCodeableConcept", searcher=StringSearch("topicCodeableConcept"))
-        topicReference = ObjectIdReferenceAttribute({'Resource'}, ("topicReference", str), "topicReference", pk_setter="topicReference")
+        topicReference = ObjectIdReferenceAttribute(['Resource'], ("topicReference", str), "topicReference", pk_setter="topicReference")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class ContractTermAction(FhirBaseModel, EmbeddedMongoModel):
@@ -3731,7 +3732,7 @@ class ContractTermAction(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        context = ObjectIdReferenceAttribute({'Encounter', 'EpisodeOfCare'}, ("context", str), "context", pk_setter="context")
+        context = ObjectIdReferenceAttribute(['Encounter', 'EpisodeOfCare'], ("context", str), "context", pk_setter="context")
         contextLinkId = Attribute(getter="contextLinkId", setter="contextLinkId", searcher=StringSearch("contextLinkId"))
         doNotPerform = Attribute(getter="doNotPerform", setter="doNotPerform", searcher=StringSearch("doNotPerform"))
         intent = EmbeddedAttribute(type="CodeableConcept", getter="intent", setter="intent", searcher=StringSearch("intent"))
@@ -3740,15 +3741,15 @@ class ContractTermAction(FhirBaseModel, EmbeddedMongoModel):
         occurrenceDateTime = DateAttribute("occurrenceDateTime")
         occurrencePeriod = EmbeddedAttribute(type="Period", getter="occurrencePeriod", setter="occurrencePeriod", searcher=StringSearch("occurrencePeriod"))
         occurrenceTiming = EmbeddedAttribute(type="Timing", getter="occurrenceTiming", setter="occurrenceTiming", searcher=StringSearch("occurrenceTiming"))
-        performer = ObjectIdReferenceAttribute({'PractitionerRole', 'Location', 'RelatedPerson', 'Practitioner', 'CareTeam', 'Substance', 'Device', 'Organization', 'Patient'}, ("performer", str), "performer", pk_setter="performer")
+        performer = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'Location', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Substance'], ("performer", str), "performer", pk_setter="performer")
         performerLinkId = Attribute(getter="performerLinkId", setter="performerLinkId", searcher=StringSearch("performerLinkId"))
         performerRole = EmbeddedAttribute(type="CodeableConcept", getter="performerRole", setter="performerRole", searcher=StringSearch("performerRole"))
         performerType = EmbeddedAttribute(type="CodeableConcept", getter="performerType", setter="performerType", searcher=StringSearch("performerType"))
         reason = Attribute(getter="reason", setter="reason", searcher=StringSearch("reason"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
         reasonLinkId = Attribute(getter="reasonLinkId", setter="reasonLinkId", searcher=StringSearch("reasonLinkId"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Questionnaire', 'DocumentReference', 'Observation', 'QuestionnaireResponse', 'Condition'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        requester = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Group', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("requester", str), "requester", pk_setter="requester")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Observation', 'Questionnaire', 'QuestionnaireResponse'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        requester = ObjectIdReferenceAttribute(['Device', 'Group', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("requester", str), "requester", pk_setter="requester")
         requesterLinkId = Attribute(getter="requesterLinkId", setter="requesterLinkId", searcher=StringSearch("requesterLinkId"))
         securityLabelNumber = Attribute(getter="securityLabelNumber", setter="securityLabelNumber", searcher=NumericSearch("securityLabelNumber"))
         status = EmbeddedAttribute(type="CodeableConcept", getter="status", setter="status", searcher=StringSearch("status"))
@@ -3765,7 +3766,7 @@ class ContractTermActionSubject(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        reference = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Group', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("reference", str), "reference", pk_setter="reference")
+        reference = ObjectIdReferenceAttribute(['Device', 'Group', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("reference", str), "reference", pk_setter="reference")
         role = EmbeddedAttribute(type="CodeableConcept", getter="role", setter="role", searcher=StringSearch("role"))
 
 class ContractTermAsset(FhirBaseModel, EmbeddedMongoModel):
@@ -3803,7 +3804,7 @@ class ContractTermAsset(FhirBaseModel, EmbeddedMongoModel):
         subtype = EmbeddedAttribute(type="CodeableConcept", getter="subtype", setter="subtype", searcher=StringSearch("subtype"))
         text = Attribute(getter="text", setter="text", searcher=StringSearch("text"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
-        typeReference = ObjectIdReferenceAttribute({'Resource'}, ("typeReference", str), "typeReference", pk_setter="typeReference")
+        typeReference = ObjectIdReferenceAttribute(['Resource'], ("typeReference", str), "typeReference", pk_setter="typeReference")
         usePeriod = EmbeddedAttribute(type="Period", getter="usePeriod", setter="usePeriod", searcher=StringSearch("usePeriod"))
         valuedItem = EmbeddedAttribute(type="ContractTermAssetValuedItem", getter="valuedItem", setter="valuedItem", searcher=StringSearch("valuedItem"))
 
@@ -3819,7 +3820,7 @@ class ContractTermAssetContext(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        reference = ObjectIdReferenceAttribute({'Resource'}, ("reference", str), "reference", pk_setter="reference")
+        reference = ObjectIdReferenceAttribute(['Resource'], ("reference", str), "reference", pk_setter="reference")
         text = Attribute(getter="text", setter="text", searcher=StringSearch("text"))
 
 class ContractTermAssetValuedItem(FhirBaseModel, EmbeddedMongoModel):
@@ -3847,7 +3848,7 @@ class ContractTermAssetValuedItem(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         effectiveTime = DateAttribute("effectiveTime")
         entityCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="entityCodeableConcept", setter="entityCodeableConcept", searcher=StringSearch("entityCodeableConcept"))
-        entityReference = ObjectIdReferenceAttribute({'Resource'}, ("entityReference", str), "entityReference", pk_setter="entityReference")
+        entityReference = ObjectIdReferenceAttribute(['Resource'], ("entityReference", str), "entityReference", pk_setter="entityReference")
         factor = Attribute(getter="factor", setter="factor", searcher=NumericSearch("factor"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         linkId = Attribute(getter="linkId", setter="linkId", searcher=StringSearch("linkId"))
@@ -3856,8 +3857,8 @@ class ContractTermAssetValuedItem(FhirBaseModel, EmbeddedMongoModel):
         paymentDate = DateAttribute("paymentDate")
         points = Attribute(getter="points", setter="points", searcher=NumericSearch("points"))
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
-        recipient = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("recipient", str), "recipient", pk_setter="recipient")
-        responsible = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("responsible", str), "responsible", pk_setter="responsible")
+        recipient = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("recipient", str), "recipient", pk_setter="recipient")
+        responsible = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("responsible", str), "responsible", pk_setter="responsible")
         securityLabelNumber = Attribute(getter="securityLabelNumber", setter="securityLabelNumber", searcher=NumericSearch("securityLabelNumber"))
         unitPrice = EmbeddedAttribute(type="Money", getter="unitPrice", setter="unitPrice", searcher=StringSearch("unitPrice"))
 
@@ -3887,25 +3888,25 @@ class ContractTermOffer(FhirBaseModel, EmbeddedMongoModel):
         party = EmbeddedAttribute(type="ContractTermOfferParty", getter="party", setter="party", searcher=StringSearch("party"))
         securityLabelNumber = Attribute(getter="securityLabelNumber", setter="securityLabelNumber", searcher=NumericSearch("securityLabelNumber"))
         text = Attribute(getter="text", setter="text", searcher=StringSearch("text"))
-        topic = ObjectIdReferenceAttribute({'Resource'}, ("topic", str), "topic", pk_setter="topic")
+        topic = ObjectIdReferenceAttribute(['Resource'], ("topic", str), "topic", pk_setter="topic")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class ContractTermOfferAnswer(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    valueAttachment = fields.EmbeddedDocumentField("Attachment", blank=False, required=True)
-    valueBoolean = fields.BooleanField(blank=False, required=True)
-    valueCoding = fields.EmbeddedDocumentField("Coding", blank=False, required=True)
-    valueDate = fields.DateTimeField(blank=False, required=True)
-    valueDateTime = fields.DateTimeField(blank=False, required=True)
-    valueDecimal = fields.FloatField(blank=False, required=True)
-    valueInteger = fields.IntegerField(blank=False, required=True)
-    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=False, required=True)
-    valueReference = fields.ObjectIdField(blank=False, required=True)
-    valueString = fields.CharField(blank=False, required=True)
-    valueTime = fields.DateTimeField(blank=False, required=True)
-    valueUri = fields.CharField(blank=False, required=True)
+    valueAttachment = fields.EmbeddedDocumentField("Attachment", blank=True, required=False)
+    valueBoolean = fields.BooleanField(blank=True, required=False)
+    valueCoding = fields.EmbeddedDocumentField("Coding", blank=True, required=False)
+    valueDate = fields.DateTimeField(blank=True, required=False)
+    valueDateTime = fields.DateTimeField(blank=True, required=False)
+    valueDecimal = fields.FloatField(blank=True, required=False)
+    valueInteger = fields.IntegerField(blank=True, required=False)
+    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=True, required=False)
+    valueReference = fields.ObjectIdField(blank=True, required=False)
+    valueString = fields.CharField(blank=True, required=False)
+    valueTime = fields.DateTimeField(blank=True, required=False)
+    valueUri = fields.CharField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -3918,7 +3919,7 @@ class ContractTermOfferAnswer(FhirBaseModel, EmbeddedMongoModel):
         valueDecimal = Attribute(getter="valueDecimal", setter="valueDecimal", searcher=NumericSearch("valueDecimal"))
         valueInteger = Attribute(getter="valueInteger", setter="valueInteger", searcher=NumericSearch("valueInteger"))
         valueQuantity = EmbeddedAttribute(type="Quantity", getter="valueQuantity", setter="valueQuantity", searcher=StringSearch("valueQuantity"))
-        valueReference = ObjectIdReferenceAttribute({'Resource'}, ("valueReference", str), "valueReference", pk_setter="valueReference")
+        valueReference = ObjectIdReferenceAttribute(['Resource'], ("valueReference", str), "valueReference", pk_setter="valueReference")
         valueString = Attribute(getter="valueString", setter="valueString", searcher=StringSearch("valueString"))
         valueTime = DateAttribute("valueTime")
         valueUri = Attribute(getter="valueUri", setter="valueUri", searcher=StringSearch("valueUri"))
@@ -3933,7 +3934,7 @@ class ContractTermOfferParty(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        reference = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Group', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("reference", str), "reference", pk_setter="reference")
+        reference = ObjectIdReferenceAttribute(['Device', 'Group', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("reference", str), "reference", pk_setter="reference")
         role = EmbeddedAttribute(type="CodeableConcept", getter="role", setter="role", searcher=StringSearch("role"))
 
 class ContractTermSecurityLabel(FhirBaseModel, EmbeddedMongoModel):
@@ -3984,7 +3985,7 @@ class Count(FhirBaseModel, EmbeddedMongoModel):
         value = Attribute(getter="value", setter="value", searcher=NumericSearch("value"))
 
 class Coverage(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -4016,21 +4017,21 @@ class Coverage(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        beneficiary = ObjectIdReferenceAttribute({'Patient'}, ("beneficiary", str), "beneficiary", pk_setter="beneficiary")
+        beneficiary = ObjectIdReferenceAttribute(['Patient'], ("beneficiary", str), "beneficiary", pk_setter="beneficiary")
         class_ = EmbeddedAttribute(type="CoverageClass", getter="class_", setter="class_", searcher=StringSearch("class_"))
-        contract = ObjectIdReferenceAttribute({'Contract'}, ("contract", str), "contract", pk_setter="contract")
+        contract = ObjectIdReferenceAttribute(['Contract'], ("contract", str), "contract", pk_setter="contract")
         costToBeneficiary = EmbeddedAttribute(type="CoverageCostToBeneficiary", getter="costToBeneficiary", setter="costToBeneficiary", searcher=StringSearch("costToBeneficiary"))
         dependent = Attribute(getter="dependent", setter="dependent", searcher=StringSearch("dependent"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         network = Attribute(getter="network", setter="network", searcher=StringSearch("network"))
         order = Attribute(getter="order", setter="order", searcher=NumericSearch("order"))
-        payor = ObjectIdReferenceAttribute({'RelatedPerson', 'Organization', 'Patient'}, ("payor", str), "payor", pk_setter="payor")
+        payor = ObjectIdReferenceAttribute(['Organization', 'Patient', 'RelatedPerson'], ("payor", str), "payor", pk_setter="payor")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
-        policyHolder = ObjectIdReferenceAttribute({'Organization', 'RelatedPerson', 'Patient'}, ("policyHolder", str), "policyHolder", pk_setter="policyHolder")
+        policyHolder = ObjectIdReferenceAttribute(['Organization', 'Patient', 'RelatedPerson'], ("policyHolder", str), "policyHolder", pk_setter="policyHolder")
         relationship = EmbeddedAttribute(type="CodeableConcept", getter="relationship", setter="relationship", searcher=StringSearch("relationship"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subrogation = Attribute(getter="subrogation", setter="subrogation", searcher=StringSearch("subrogation"))
-        subscriber = ObjectIdReferenceAttribute({'RelatedPerson', 'Patient'}, ("subscriber", str), "subscriber", pk_setter="subscriber")
+        subscriber = ObjectIdReferenceAttribute(['Patient', 'RelatedPerson'], ("subscriber", str), "subscriber", pk_setter="subscriber")
         subscriberId = Attribute(getter="subscriberId", setter="subscriberId", searcher=StringSearch("subscriberId"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
@@ -4055,8 +4056,8 @@ class CoverageCostToBeneficiary(FhirBaseModel, EmbeddedMongoModel):
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     exception = fields.EmbeddedDocumentListField("CoverageCostToBeneficiaryException", blank=True, required=False)
     type = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
-    valueMoney = fields.EmbeddedDocumentField("Money", blank=False, required=True)
-    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=False, required=True)
+    valueMoney = fields.EmbeddedDocumentField("Money", blank=True, required=False)
+    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -4080,7 +4081,7 @@ class CoverageCostToBeneficiaryException(FhirBaseModel, EmbeddedMongoModel):
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class CoverageEligibilityRequest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -4111,15 +4112,15 @@ class CoverageEligibilityRequest(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         created = DateAttribute("created")
-        enterer = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("enterer", str), "enterer", pk_setter="enterer")
-        facility = ObjectIdReferenceAttribute({'Location'}, ("facility", str), "facility", pk_setter="facility")
+        enterer = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("enterer", str), "enterer", pk_setter="enterer")
+        facility = ObjectIdReferenceAttribute(['Location'], ("facility", str), "facility", pk_setter="facility")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         insurance = EmbeddedAttribute(type="CoverageEligibilityRequestInsurance", getter="insurance", setter="insurance", searcher=StringSearch("insurance"))
-        insurer = ObjectIdReferenceAttribute({'Organization'}, ("insurer", str), "insurer", pk_setter="insurer")
+        insurer = ObjectIdReferenceAttribute(['Organization'], ("insurer", str), "insurer", pk_setter="insurer")
         item = EmbeddedAttribute(type="CoverageEligibilityRequestItem", getter="item", setter="item", searcher=StringSearch("item"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         priority = EmbeddedAttribute(type="CodeableConcept", getter="priority", setter="priority", searcher=StringSearch("priority"))
-        provider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("provider", str), "provider", pk_setter="provider")
+        provider = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("provider", str), "provider", pk_setter="provider")
         purpose = Attribute(getter="purpose", setter="purpose", searcher=StringSearch("purpose"))
         servicedDate = DateAttribute("servicedDate")
         servicedPeriod = EmbeddedAttribute(type="Period", getter="servicedPeriod", setter="servicedPeriod", searcher=StringSearch("servicedPeriod"))
@@ -4138,7 +4139,7 @@ class CoverageEligibilityRequestInsurance(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         businessArrangement = Attribute(getter="businessArrangement", setter="businessArrangement", searcher=StringSearch("businessArrangement"))
-        coverage = ObjectIdReferenceAttribute({'Coverage'}, ("coverage", str), "coverage", pk_setter="coverage")
+        coverage = ObjectIdReferenceAttribute(['Coverage'], ("coverage", str), "coverage", pk_setter="coverage")
         focal = Attribute(getter="focal", setter="focal", searcher=StringSearch("focal"))
 
 class CoverageEligibilityRequestItem(FhirBaseModel, EmbeddedMongoModel):
@@ -4160,12 +4161,12 @@ class CoverageEligibilityRequestItem(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
-        detail = ObjectIdReferenceAttribute({'Resource'}, ("detail", str), "detail", pk_setter="detail")
+        detail = ObjectIdReferenceAttribute(['Resource'], ("detail", str), "detail", pk_setter="detail")
         diagnosis = EmbeddedAttribute(type="CoverageEligibilityRequestItemDiagnosis", getter="diagnosis", setter="diagnosis", searcher=StringSearch("diagnosis"))
-        facility = ObjectIdReferenceAttribute({'Location', 'Organization'}, ("facility", str), "facility", pk_setter="facility")
+        facility = ObjectIdReferenceAttribute(['Location', 'Organization'], ("facility", str), "facility", pk_setter="facility")
         modifier = EmbeddedAttribute(type="CodeableConcept", getter="modifier", setter="modifier", searcher=StringSearch("modifier"))
         productOrService = EmbeddedAttribute(type="CodeableConcept", getter="productOrService", setter="productOrService", searcher=StringSearch("productOrService"))
-        provider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("provider", str), "provider", pk_setter="provider")
+        provider = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("provider", str), "provider", pk_setter="provider")
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         supportingInfoSequence = Attribute(getter="supportingInfoSequence", setter="supportingInfoSequence", searcher=NumericSearch("supportingInfoSequence"))
         unitPrice = EmbeddedAttribute(type="Money", getter="unitPrice", setter="unitPrice", searcher=StringSearch("unitPrice"))
@@ -4181,7 +4182,7 @@ class CoverageEligibilityRequestItemDiagnosis(FhirBaseModel, EmbeddedMongoModel)
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         diagnosisCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="diagnosisCodeableConcept", setter="diagnosisCodeableConcept", searcher=StringSearch("diagnosisCodeableConcept"))
-        diagnosisReference = ObjectIdReferenceAttribute({'Condition'}, ("diagnosisReference", str), "diagnosisReference", pk_setter="diagnosisReference")
+        diagnosisReference = ObjectIdReferenceAttribute(['Condition'], ("diagnosisReference", str), "diagnosisReference", pk_setter="diagnosisReference")
 
 class CoverageEligibilityRequestSupportingInfo(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -4195,11 +4196,11 @@ class CoverageEligibilityRequestSupportingInfo(FhirBaseModel, EmbeddedMongoModel
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         appliesToAll = Attribute(getter="appliesToAll", setter="appliesToAll", searcher=StringSearch("appliesToAll"))
-        information = ObjectIdReferenceAttribute({'Resource'}, ("information", str), "information", pk_setter="information")
+        information = ObjectIdReferenceAttribute(['Resource'], ("information", str), "information", pk_setter="information")
         sequence = Attribute(getter="sequence", setter="sequence", searcher=NumericSearch("sequence"))
 
 class CoverageEligibilityResponse(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -4236,13 +4237,13 @@ class CoverageEligibilityResponse(FhirBaseModel, MongoModel):
         form = EmbeddedAttribute(type="CodeableConcept", getter="form", setter="form", searcher=StringSearch("form"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         insurance = EmbeddedAttribute(type="CoverageEligibilityResponseInsurance", getter="insurance", setter="insurance", searcher=StringSearch("insurance"))
-        insurer = ObjectIdReferenceAttribute({'Organization'}, ("insurer", str), "insurer", pk_setter="insurer")
+        insurer = ObjectIdReferenceAttribute(['Organization'], ("insurer", str), "insurer", pk_setter="insurer")
         outcome = Attribute(getter="outcome", setter="outcome", searcher=StringSearch("outcome"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         preAuthRef = Attribute(getter="preAuthRef", setter="preAuthRef", searcher=StringSearch("preAuthRef"))
         purpose = Attribute(getter="purpose", setter="purpose", searcher=StringSearch("purpose"))
-        request = ObjectIdReferenceAttribute({'CoverageEligibilityRequest'}, ("request", str), "request", pk_setter="request")
-        requestor = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("requestor", str), "requestor", pk_setter="requestor")
+        request = ObjectIdReferenceAttribute(['CoverageEligibilityRequest'], ("request", str), "request", pk_setter="request")
+        requestor = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("requestor", str), "requestor", pk_setter="requestor")
         servicedDate = DateAttribute("servicedDate")
         servicedPeriod = EmbeddedAttribute(type="Period", getter="servicedPeriod", setter="servicedPeriod", searcher=StringSearch("servicedPeriod"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
@@ -4271,7 +4272,7 @@ class CoverageEligibilityResponseInsurance(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         benefitPeriod = EmbeddedAttribute(type="Period", getter="benefitPeriod", setter="benefitPeriod", searcher=StringSearch("benefitPeriod"))
-        coverage = ObjectIdReferenceAttribute({'Coverage'}, ("coverage", str), "coverage", pk_setter="coverage")
+        coverage = ObjectIdReferenceAttribute(['Coverage'], ("coverage", str), "coverage", pk_setter="coverage")
         inforce = Attribute(getter="inforce", setter="inforce", searcher=StringSearch("inforce"))
         item = EmbeddedAttribute(type="CoverageEligibilityResponseInsuranceItem", getter="item", setter="item", searcher=StringSearch("item"))
 
@@ -4308,7 +4309,7 @@ class CoverageEligibilityResponseInsuranceItem(FhirBaseModel, EmbeddedMongoModel
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         network = EmbeddedAttribute(type="CodeableConcept", getter="network", setter="network", searcher=StringSearch("network"))
         productOrService = EmbeddedAttribute(type="CodeableConcept", getter="productOrService", setter="productOrService", searcher=StringSearch("productOrService"))
-        provider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("provider", str), "provider", pk_setter="provider")
+        provider = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("provider", str), "provider", pk_setter="provider")
         term = EmbeddedAttribute(type="CodeableConcept", getter="term", setter="term", searcher=StringSearch("term"))
         unit = EmbeddedAttribute(type="CodeableConcept", getter="unit", setter="unit", searcher=StringSearch("unit"))
 
@@ -4336,7 +4337,7 @@ class CoverageEligibilityResponseInsuranceItemBenefit(FhirBaseModel, EmbeddedMon
         usedUnsignedInt = Attribute(getter="usedUnsignedInt", setter="usedUnsignedInt", searcher=NumericSearch("usedUnsignedInt"))
 
 class DataElement(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -4423,7 +4424,7 @@ class DataRequirement(FhirBaseModel, EmbeddedMongoModel):
         profile = Attribute(getter="profile", setter="profile", searcher=StringSearch("profile"))
         sort = EmbeddedAttribute(type="DataRequirementSort", getter="sort", setter="sort", searcher=StringSearch("sort"))
         subjectCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="subjectCodeableConcept", setter="subjectCodeableConcept", searcher=StringSearch("subjectCodeableConcept"))
-        subjectReference = ObjectIdReferenceAttribute({'Group'}, ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
+        subjectReference = ObjectIdReferenceAttribute(['Group'], ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
 
 class DataRequirementCodeFilter(FhirBaseModel, EmbeddedMongoModel):
@@ -4470,7 +4471,7 @@ class DataRequirementSort(FhirBaseModel, EmbeddedMongoModel):
         path = Attribute(getter="path", setter="path", searcher=StringSearch("path"))
 
 class DetectedIssue(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -4498,16 +4499,16 @@ class DetectedIssue(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        author = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Device'}, ("author", str), "author", pk_setter="author")
+        author = ObjectIdReferenceAttribute(['Device', 'Practitioner', 'PractitionerRole'], ("author", str), "author", pk_setter="author")
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         detail = Attribute(getter="detail", setter="detail", searcher=StringSearch("detail"))
         evidence = EmbeddedAttribute(type="DetectedIssueEvidence", getter="evidence", setter="evidence", searcher=StringSearch("evidence"))
         identifiedDateTime = DateAttribute("identifiedDateTime")
         identifiedPeriod = EmbeddedAttribute(type="Period", getter="identifiedPeriod", setter="identifiedPeriod", searcher=StringSearch("identifiedPeriod"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        implicated = ObjectIdReferenceAttribute({'Resource'}, ("implicated", str), "implicated", pk_setter="implicated")
+        implicated = ObjectIdReferenceAttribute(['Resource'], ("implicated", str), "implicated", pk_setter="implicated")
         mitigation = EmbeddedAttribute(type="DetectedIssueMitigation", getter="mitigation", setter="mitigation", searcher=StringSearch("mitigation"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         reference = Attribute(getter="reference", setter="reference", searcher=StringSearch("reference"))
         severity = Attribute(getter="severity", setter="severity", searcher=StringSearch("severity"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
@@ -4523,7 +4524,7 @@ class DetectedIssueEvidence(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        detail = ObjectIdReferenceAttribute({'Resource'}, ("detail", str), "detail", pk_setter="detail")
+        detail = ObjectIdReferenceAttribute(['Resource'], ("detail", str), "detail", pk_setter="detail")
 
 class DetectedIssueMitigation(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -4537,11 +4538,11 @@ class DetectedIssueMitigation(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         action = EmbeddedAttribute(type="CodeableConcept", getter="action", setter="action", searcher=StringSearch("action"))
-        author = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("author", str), "author", pk_setter="author")
+        author = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("author", str), "author", pk_setter="author")
         date = DateAttribute("date")
 
 class Device(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -4583,21 +4584,21 @@ class Device(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         contact = EmbeddedAttribute(type="ContactPoint", getter="contact", setter="contact", searcher=StringSearch("contact"))
-        definition = ObjectIdReferenceAttribute({'DeviceDefinition'}, ("definition", str), "definition", pk_setter="definition")
+        definition = ObjectIdReferenceAttribute(['DeviceDefinition'], ("definition", str), "definition", pk_setter="definition")
         deviceName = EmbeddedAttribute(type="DeviceDeviceName", getter="deviceName", setter="deviceName", searcher=StringSearch("deviceName"))
         distinctIdentifier = Attribute(getter="distinctIdentifier", setter="distinctIdentifier", searcher=StringSearch("distinctIdentifier"))
         expirationDate = DateAttribute("expirationDate")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         lotNumber = Attribute(getter="lotNumber", setter="lotNumber", searcher=StringSearch("lotNumber"))
         manufactureDate = DateAttribute("manufactureDate")
         manufacturer = Attribute(getter="manufacturer", setter="manufacturer", searcher=StringSearch("manufacturer"))
         modelNumber = Attribute(getter="modelNumber", setter="modelNumber", searcher=StringSearch("modelNumber"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        owner = ObjectIdReferenceAttribute({'Organization'}, ("owner", str), "owner", pk_setter="owner")
-        parent = ObjectIdReferenceAttribute({'Device'}, ("parent", str), "parent", pk_setter="parent")
+        owner = ObjectIdReferenceAttribute(['Organization'], ("owner", str), "owner", pk_setter="owner")
+        parent = ObjectIdReferenceAttribute(['Device'], ("parent", str), "parent", pk_setter="parent")
         partNumber = Attribute(getter="partNumber", setter="partNumber", searcher=StringSearch("partNumber"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         property = EmbeddedAttribute(type="DeviceProperty", getter="property", setter="property", searcher=StringSearch("property"))
         safety = EmbeddedAttribute(type="CodeableConcept", getter="safety", setter="safety", searcher=StringSearch("safety"))
         serialNumber = Attribute(getter="serialNumber", setter="serialNumber", searcher=StringSearch("serialNumber"))
@@ -4610,7 +4611,7 @@ class Device(FhirBaseModel, MongoModel):
         version = EmbeddedAttribute(type="DeviceVersion", getter="version", setter="version", searcher=StringSearch("version"))
 
 class DeviceComponent(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -4662,7 +4663,7 @@ class DeviceComponentProductionSpecification(FhirBaseModel, EmbeddedMongoModel):
         specType = EmbeddedAttribute(type="CodeableConcept", getter="specType", setter="specType", searcher=StringSearch("specType"))
 
 class DeviceDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -4705,14 +4706,14 @@ class DeviceDefinition(FhirBaseModel, MongoModel):
         deviceName = EmbeddedAttribute(type="DeviceDefinitionDeviceName", getter="deviceName", setter="deviceName", searcher=StringSearch("deviceName"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         languageCode = EmbeddedAttribute(type="CodeableConcept", getter="languageCode", setter="languageCode", searcher=StringSearch("languageCode"))
-        manufacturerReference = ObjectIdReferenceAttribute({'Organization'}, ("manufacturerReference", str), "manufacturerReference", pk_setter="manufacturerReference")
+        manufacturerReference = ObjectIdReferenceAttribute(['Organization'], ("manufacturerReference", str), "manufacturerReference", pk_setter="manufacturerReference")
         manufacturerString = Attribute(getter="manufacturerString", setter="manufacturerString", searcher=StringSearch("manufacturerString"))
         material = EmbeddedAttribute(type="DeviceDefinitionMaterial", getter="material", setter="material", searcher=StringSearch("material"))
         modelNumber = Attribute(getter="modelNumber", setter="modelNumber", searcher=StringSearch("modelNumber"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         onlineInformation = Attribute(getter="onlineInformation", setter="onlineInformation", searcher=StringSearch("onlineInformation"))
-        owner = ObjectIdReferenceAttribute({'Organization'}, ("owner", str), "owner", pk_setter="owner")
-        parentDevice = ObjectIdReferenceAttribute({'DeviceDefinition'}, ("parentDevice", str), "parentDevice", pk_setter="parentDevice")
+        owner = ObjectIdReferenceAttribute(['Organization'], ("owner", str), "owner", pk_setter="owner")
+        parentDevice = ObjectIdReferenceAttribute(['DeviceDefinition'], ("parentDevice", str), "parentDevice", pk_setter="parentDevice")
         physicalCharacteristics = EmbeddedAttribute(type="ProdCharacteristic", getter="physicalCharacteristics", setter="physicalCharacteristics", searcher=StringSearch("physicalCharacteristics"))
         property = EmbeddedAttribute(type="DeviceDefinitionProperty", getter="property", setter="property", searcher=StringSearch("property"))
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
@@ -4822,7 +4823,7 @@ class DeviceDeviceName(FhirBaseModel, EmbeddedMongoModel):
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
 
 class DeviceMetric(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -4853,8 +4854,8 @@ class DeviceMetric(FhirBaseModel, MongoModel):
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         measurementPeriod = EmbeddedAttribute(type="Timing", getter="measurementPeriod", setter="measurementPeriod", searcher=StringSearch("measurementPeriod"))
         operationalStatus = Attribute(getter="operationalStatus", setter="operationalStatus", searcher=StringSearch("operationalStatus"))
-        parent = ObjectIdReferenceAttribute({'Device'}, ("parent", str), "parent", pk_setter="parent")
-        source = ObjectIdReferenceAttribute({'Device'}, ("source", str), "source", pk_setter="source")
+        parent = ObjectIdReferenceAttribute(['Device'], ("parent", str), "parent", pk_setter="parent")
+        source = ObjectIdReferenceAttribute(['Device'], ("source", str), "source", pk_setter="source")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
         unit = EmbeddedAttribute(type="CodeableConcept", getter="unit", setter="unit", searcher=StringSearch("unit"))
 
@@ -4889,7 +4890,7 @@ class DeviceProperty(FhirBaseModel, EmbeddedMongoModel):
         valueQuantity = EmbeddedAttribute(type="Quantity", getter="valueQuantity", setter="valueQuantity", searcher=StringSearch("valueQuantity"))
 
 class DeviceRequest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -4898,8 +4899,8 @@ class DeviceRequest(FhirBaseModel, MongoModel):
     text = fields.EmbeddedDocumentField("Narrative", blank=True, required=False)
     authoredOn = fields.DateTimeField(blank=True, required=False)
     basedOn = fields.ObjectIdField(blank=True, required=False)
-    codeCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    codeReference = fields.ObjectIdField(blank=False, required=True)
+    codeCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    codeReference = fields.ObjectIdField(blank=True, required=False)
     encounter = fields.ObjectIdField(blank=True, required=False)
     groupIdentifier = fields.EmbeddedDocumentField("Identifier", blank=True, required=False)
     identifier = fields.EmbeddedDocumentListField("Identifier", blank=True, required=False)
@@ -4932,32 +4933,32 @@ class DeviceRequest(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         authoredOn = DateAttribute("authoredOn")
-        basedOn = ObjectIdReferenceAttribute({'Resource'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['Resource'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         codeCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="codeCodeableConcept", setter="codeCodeableConcept", searcher=StringSearch("codeCodeableConcept"))
-        codeReference = ObjectIdReferenceAttribute({'Device'}, ("codeReference", str), "codeReference", pk_setter="codeReference")
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        codeReference = ObjectIdReferenceAttribute(['Device'], ("codeReference", str), "codeReference", pk_setter="codeReference")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         groupIdentifier = EmbeddedAttribute(type="Identifier", getter="groupIdentifier", setter="groupIdentifier", searcher=StringSearch("groupIdentifier"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         instantiatesCanonical = Attribute(getter="instantiatesCanonical", setter="instantiatesCanonical", searcher=StringSearch("instantiatesCanonical"))
         instantiatesUri = Attribute(getter="instantiatesUri", setter="instantiatesUri", searcher=StringSearch("instantiatesUri"))
-        insurance = ObjectIdReferenceAttribute({'ClaimResponse', 'Coverage'}, ("insurance", str), "insurance", pk_setter="insurance")
+        insurance = ObjectIdReferenceAttribute(['ClaimResponse', 'Coverage'], ("insurance", str), "insurance", pk_setter="insurance")
         intent = Attribute(getter="intent", setter="intent", searcher=StringSearch("intent"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         occurrenceDateTime = DateAttribute("occurrenceDateTime")
         occurrencePeriod = EmbeddedAttribute(type="Period", getter="occurrencePeriod", setter="occurrencePeriod", searcher=StringSearch("occurrencePeriod"))
         occurrenceTiming = EmbeddedAttribute(type="Timing", getter="occurrenceTiming", setter="occurrenceTiming", searcher=StringSearch("occurrenceTiming"))
         parameter = EmbeddedAttribute(type="DeviceRequestParameter", getter="parameter", setter="parameter", searcher=StringSearch("parameter"))
-        performer = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'HealthcareService', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("performer", str), "performer", pk_setter="performer")
+        performer = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'HealthcareService', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("performer", str), "performer", pk_setter="performer")
         performerType = EmbeddedAttribute(type="CodeableConcept", getter="performerType", setter="performerType", searcher=StringSearch("performerType"))
-        priorRequest = ObjectIdReferenceAttribute({'Resource'}, ("priorRequest", str), "priorRequest", pk_setter="priorRequest")
+        priorRequest = ObjectIdReferenceAttribute(['Resource'], ("priorRequest", str), "priorRequest", pk_setter="priorRequest")
         priority = Attribute(getter="priority", setter="priority", searcher=StringSearch("priority"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation', 'DocumentReference'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        relevantHistory = ObjectIdReferenceAttribute({'Provenance'}, ("relevantHistory", str), "relevantHistory", pk_setter="relevantHistory")
-        requester = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Device', 'Organization'}, ("requester", str), "requester", pk_setter="requester")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        relevantHistory = ObjectIdReferenceAttribute(['Provenance'], ("relevantHistory", str), "relevantHistory", pk_setter="relevantHistory")
+        requester = ObjectIdReferenceAttribute(['Device', 'Organization', 'Practitioner', 'PractitionerRole'], ("requester", str), "requester", pk_setter="requester")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Device', 'Location', 'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
-        supportingInfo = ObjectIdReferenceAttribute({'Resource'}, ("supportingInfo", str), "supportingInfo", pk_setter="supportingInfo")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Location', 'Patient'], ("subject", str), "subject", pk_setter="subject")
+        supportingInfo = ObjectIdReferenceAttribute(['Resource'], ("supportingInfo", str), "supportingInfo", pk_setter="supportingInfo")
 
 class DeviceRequestParameter(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -5013,7 +5014,7 @@ class DeviceUdiCarrier(FhirBaseModel, EmbeddedMongoModel):
         jurisdiction = Attribute(getter="jurisdiction", setter="jurisdiction", searcher=StringSearch("jurisdiction"))
 
 class DeviceUseStatement(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -5043,18 +5044,18 @@ class DeviceUseStatement(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        basedOn = ObjectIdReferenceAttribute({'ServiceRequest'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['ServiceRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         bodySite = EmbeddedAttribute(type="CodeableConcept", getter="bodySite", setter="bodySite", searcher=StringSearch("bodySite"))
-        derivedFrom = ObjectIdReferenceAttribute({'Claim', 'DocumentReference', 'Observation', 'Procedure', 'QuestionnaireResponse', 'ServiceRequest'}, ("derivedFrom", str), "derivedFrom", pk_setter="derivedFrom")
-        device = ObjectIdReferenceAttribute({'Device'}, ("device", str), "device", pk_setter="device")
+        derivedFrom = ObjectIdReferenceAttribute(['Claim', 'DocumentReference', 'Observation', 'Procedure', 'QuestionnaireResponse', 'ServiceRequest'], ("derivedFrom", str), "derivedFrom", pk_setter="derivedFrom")
+        device = ObjectIdReferenceAttribute(['Device'], ("device", str), "device", pk_setter="device")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'DocumentReference', 'Observation', 'Media', 'Condition'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Media', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
         recordedOn = DateAttribute("recordedOn")
-        source = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Patient'}, ("source", str), "source", pk_setter="source")
+        source = ObjectIdReferenceAttribute(['Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("source", str), "source", pk_setter="source")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         timingDateTime = DateAttribute("timingDateTime")
         timingPeriod = EmbeddedAttribute(type="Period", getter="timingPeriod", setter="timingPeriod", searcher=StringSearch("timingPeriod"))
         timingTiming = EmbeddedAttribute(type="Timing", getter="timingTiming", setter="timingTiming", searcher=StringSearch("timingTiming"))
@@ -5075,7 +5076,7 @@ class DeviceVersion(FhirBaseModel, EmbeddedMongoModel):
         value = Attribute(getter="value", setter="value", searcher=StringSearch("value"))
 
 class DiagnosticReport(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -5109,25 +5110,25 @@ class DiagnosticReport(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        basedOn = ObjectIdReferenceAttribute({'MedicationRequest', 'CarePlan', 'NutritionOrder', 'ServiceRequest', 'ImmunizationRecommendation'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['CarePlan', 'ImmunizationRecommendation', 'MedicationRequest', 'NutritionOrder', 'ServiceRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         conclusion = Attribute(getter="conclusion", setter="conclusion", searcher=StringSearch("conclusion"))
         conclusionCode = EmbeddedAttribute(type="CodeableConcept", getter="conclusionCode", setter="conclusionCode", searcher=StringSearch("conclusionCode"))
         effectiveDateTime = DateAttribute("effectiveDateTime")
         effectivePeriod = EmbeddedAttribute(type="Period", getter="effectivePeriod", setter="effectivePeriod", searcher=StringSearch("effectivePeriod"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        imagingStudy = ObjectIdReferenceAttribute({'ImagingStudy'}, ("imagingStudy", str), "imagingStudy", pk_setter="imagingStudy")
+        imagingStudy = ObjectIdReferenceAttribute(['ImagingStudy'], ("imagingStudy", str), "imagingStudy", pk_setter="imagingStudy")
         issued = DateAttribute("issued")
         media = EmbeddedAttribute(type="DiagnosticReportMedia", getter="media", setter="media", searcher=StringSearch("media"))
-        performer = ObjectIdReferenceAttribute({'CareTeam', 'Practitioner', 'PractitionerRole', 'Organization'}, ("performer", str), "performer", pk_setter="performer")
+        performer = ObjectIdReferenceAttribute(['CareTeam', 'Organization', 'Practitioner', 'PractitionerRole'], ("performer", str), "performer", pk_setter="performer")
         presentedForm = EmbeddedAttribute(type="Attachment", getter="presentedForm", setter="presentedForm", searcher=StringSearch("presentedForm"))
-        result = ObjectIdReferenceAttribute({'triglyceride', 'Observation', 'cholesterol', 'hdlcholesterol', 'ldlcholesterol'}, ("result", str), "result", pk_setter="result")
-        resultsInterpreter = ObjectIdReferenceAttribute({'CareTeam', 'Practitioner', 'PractitionerRole', 'Organization'}, ("resultsInterpreter", str), "resultsInterpreter", pk_setter="resultsInterpreter")
-        specimen = ObjectIdReferenceAttribute({'Specimen'}, ("specimen", str), "specimen", pk_setter="specimen")
+        result = ObjectIdReferenceAttribute(['Observation', 'cholesterol', 'hdlcholesterol', 'ldlcholesterol', 'triglyceride'], ("result", str), "result", pk_setter="result")
+        resultsInterpreter = ObjectIdReferenceAttribute(['CareTeam', 'Organization', 'Practitioner', 'PractitionerRole'], ("resultsInterpreter", str), "resultsInterpreter", pk_setter="resultsInterpreter")
+        specimen = ObjectIdReferenceAttribute(['Specimen'], ("specimen", str), "specimen", pk_setter="specimen")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Location', 'Device', 'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Location', 'Patient'], ("subject", str), "subject", pk_setter="subject")
 
 class DiagnosticReportMedia(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -5140,7 +5141,7 @@ class DiagnosticReportMedia(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         comment = Attribute(getter="comment", setter="comment", searcher=StringSearch("comment"))
-        link = ObjectIdReferenceAttribute({'Media'}, ("link", str), "link", pk_setter="link")
+        link = ObjectIdReferenceAttribute(['Media'], ("link", str), "link", pk_setter="link")
 
 class Distance(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -5160,7 +5161,7 @@ class Distance(FhirBaseModel, EmbeddedMongoModel):
         value = Attribute(getter="value", setter="value", searcher=NumericSearch("value"))
 
 class DocumentManifest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -5187,17 +5188,17 @@ class DocumentManifest(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        author = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("author", str), "author", pk_setter="author")
-        content = ObjectIdReferenceAttribute({'Resource'}, ("content", str), "content", pk_setter="content")
+        author = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("author", str), "author", pk_setter="author")
+        content = ObjectIdReferenceAttribute(['Resource'], ("content", str), "content", pk_setter="content")
         created = DateAttribute("created")
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         masterIdentifier = EmbeddedAttribute(type="Identifier", getter="masterIdentifier", setter="masterIdentifier", searcher=StringSearch("masterIdentifier"))
-        recipient = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("recipient", str), "recipient", pk_setter="recipient")
+        recipient = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("recipient", str), "recipient", pk_setter="recipient")
         related = EmbeddedAttribute(type="DocumentManifestRelated", getter="related", setter="related", searcher=StringSearch("related"))
         source = Attribute(getter="source", setter="source", searcher=StringSearch("source"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Practitioner', 'Device', 'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Patient', 'Practitioner'], ("subject", str), "subject", pk_setter="subject")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class DocumentManifestRelated(FhirBaseModel, EmbeddedMongoModel):
@@ -5211,10 +5212,10 @@ class DocumentManifestRelated(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        ref = ObjectIdReferenceAttribute({'Resource'}, ("ref", str), "ref", pk_setter="ref")
+        ref = ObjectIdReferenceAttribute(['Resource'], ("ref", str), "ref", pk_setter="ref")
 
 class DocumentReference(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -5245,12 +5246,12 @@ class DocumentReference(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        authenticator = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("authenticator", str), "authenticator", pk_setter="authenticator")
-        author = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("author", str), "author", pk_setter="author")
+        authenticator = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("authenticator", str), "authenticator", pk_setter="authenticator")
+        author = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("author", str), "author", pk_setter="author")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         content = EmbeddedAttribute(type="DocumentReferenceContent", getter="content", setter="content", searcher=StringSearch("content"))
         context = EmbeddedAttribute(type="DocumentReferenceContext", getter="context", setter="context", searcher=StringSearch("context"))
-        custodian = ObjectIdReferenceAttribute({'Organization'}, ("custodian", str), "custodian", pk_setter="custodian")
+        custodian = ObjectIdReferenceAttribute(['Organization'], ("custodian", str), "custodian", pk_setter="custodian")
         date = DateAttribute("date")
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         docStatus = Attribute(getter="docStatus", setter="docStatus", searcher=StringSearch("docStatus"))
@@ -5259,7 +5260,7 @@ class DocumentReference(FhirBaseModel, MongoModel):
         relatesTo = EmbeddedAttribute(type="DocumentReferenceRelatesTo", getter="relatesTo", setter="relatesTo", searcher=StringSearch("relatesTo"))
         securityLabel = EmbeddedAttribute(type="CodeableConcept", getter="securityLabel", setter="securityLabel", searcher=StringSearch("securityLabel"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Practitioner', 'Device', 'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Patient', 'Practitioner'], ("subject", str), "subject", pk_setter="subject")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class DocumentReferenceContent(FhirBaseModel, EmbeddedMongoModel):
@@ -5290,13 +5291,13 @@ class DocumentReferenceContext(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        encounter = ObjectIdReferenceAttribute({'Encounter', 'EpisodeOfCare'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter', 'EpisodeOfCare'], ("encounter", str), "encounter", pk_setter="encounter")
         event = EmbeddedAttribute(type="CodeableConcept", getter="event", setter="event", searcher=StringSearch("event"))
         facilityType = EmbeddedAttribute(type="CodeableConcept", getter="facilityType", setter="facilityType", searcher=StringSearch("facilityType"))
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         practiceSetting = EmbeddedAttribute(type="CodeableConcept", getter="practiceSetting", setter="practiceSetting", searcher=StringSearch("practiceSetting"))
-        related = ObjectIdReferenceAttribute({'Resource'}, ("related", str), "related", pk_setter="related")
-        sourcePatientInfo = ObjectIdReferenceAttribute({'Patient'}, ("sourcePatientInfo", str), "sourcePatientInfo", pk_setter="sourcePatientInfo")
+        related = ObjectIdReferenceAttribute(['Resource'], ("related", str), "related", pk_setter="related")
+        sourcePatientInfo = ObjectIdReferenceAttribute(['Patient'], ("sourcePatientInfo", str), "sourcePatientInfo", pk_setter="sourcePatientInfo")
 
 class DocumentReferenceRelatesTo(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -5309,10 +5310,10 @@ class DocumentReferenceRelatesTo(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         code = Attribute(getter="code", setter="code", searcher=StringSearch("code"))
-        target = ObjectIdReferenceAttribute({'DocumentReference'}, ("target", str), "target", pk_setter="target")
+        target = ObjectIdReferenceAttribute(['DocumentReference'], ("target", str), "target", pk_setter="target")
 
 class DomainResource(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -5402,7 +5403,7 @@ class Duration(FhirBaseModel, EmbeddedMongoModel):
         value = Attribute(getter="value", setter="value", searcher=NumericSearch("value"))
 
 class EffectEvidenceSynthesis(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -5461,15 +5462,15 @@ class EffectEvidenceSynthesis(FhirBaseModel, MongoModel):
         effectEstimate = EmbeddedAttribute(type="EffectEvidenceSynthesisEffectEstimate", getter="effectEstimate", setter="effectEstimate", searcher=StringSearch("effectEstimate"))
         effectivePeriod = EmbeddedAttribute(type="Period", getter="effectivePeriod", setter="effectivePeriod", searcher=StringSearch("effectivePeriod"))
         endorser = EmbeddedAttribute(type="ContactDetail", getter="endorser", setter="endorser", searcher=StringSearch("endorser"))
-        exposure = ObjectIdReferenceAttribute({'EvidenceVariable'}, ("exposure", str), "exposure", pk_setter="exposure")
-        exposureAlternative = ObjectIdReferenceAttribute({'EvidenceVariable'}, ("exposureAlternative", str), "exposureAlternative", pk_setter="exposureAlternative")
+        exposure = ObjectIdReferenceAttribute(['EvidenceVariable'], ("exposure", str), "exposure", pk_setter="exposure")
+        exposureAlternative = ObjectIdReferenceAttribute(['EvidenceVariable'], ("exposureAlternative", str), "exposureAlternative", pk_setter="exposureAlternative")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         jurisdiction = EmbeddedAttribute(type="CodeableConcept", getter="jurisdiction", setter="jurisdiction", searcher=StringSearch("jurisdiction"))
         lastReviewDate = DateAttribute("lastReviewDate")
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        outcome = ObjectIdReferenceAttribute({'EvidenceVariable'}, ("outcome", str), "outcome", pk_setter="outcome")
-        population = ObjectIdReferenceAttribute({'EvidenceVariable'}, ("population", str), "population", pk_setter="population")
+        outcome = ObjectIdReferenceAttribute(['EvidenceVariable'], ("outcome", str), "outcome", pk_setter="outcome")
+        population = ObjectIdReferenceAttribute(['EvidenceVariable'], ("population", str), "population", pk_setter="population")
         publisher = Attribute(getter="publisher", setter="publisher", searcher=StringSearch("publisher"))
         relatedArtifact = EmbeddedAttribute(type="RelatedArtifact", getter="relatedArtifact", setter="relatedArtifact", searcher=StringSearch("relatedArtifact"))
         resultsByExposure = EmbeddedAttribute(type="EffectEvidenceSynthesisResultsByExposure", getter="resultsByExposure", setter="resultsByExposure", searcher=StringSearch("resultsByExposure"))
@@ -5566,7 +5567,7 @@ class EffectEvidenceSynthesisResultsByExposure(FhirBaseModel, EmbeddedMongoModel
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         exposureState = Attribute(getter="exposureState", setter="exposureState", searcher=StringSearch("exposureState"))
-        riskEvidenceSynthesis = ObjectIdReferenceAttribute({'RiskEvidenceSynthesis'}, ("riskEvidenceSynthesis", str), "riskEvidenceSynthesis", pk_setter="riskEvidenceSynthesis")
+        riskEvidenceSynthesis = ObjectIdReferenceAttribute(['RiskEvidenceSynthesis'], ("riskEvidenceSynthesis", str), "riskEvidenceSynthesis", pk_setter="riskEvidenceSynthesis")
         variantState = EmbeddedAttribute(type="CodeableConcept", getter="variantState", setter="variantState", searcher=StringSearch("variantState"))
 
 class EffectEvidenceSynthesisSampleSize(FhirBaseModel, EmbeddedMongoModel):
@@ -6039,55 +6040,55 @@ class ElementDefinitionExample(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     label = fields.CharField(blank=False, required=True)
-    valueAddress = fields.EmbeddedDocumentField("Address", blank=False, required=True)
-    valueAge = fields.EmbeddedDocumentField("Age", blank=False, required=True)
-    valueAnnotation = fields.EmbeddedDocumentField("Annotation", blank=False, required=True)
-    valueAttachment = fields.EmbeddedDocumentField("Attachment", blank=False, required=True)
-    valueBase64Binary = fields.CharField(blank=False, required=True)
-    valueBoolean = fields.BooleanField(blank=False, required=True)
-    valueCanonical = fields.CharField(blank=False, required=True)
-    valueCode = fields.CharField(blank=False, required=True)
-    valueCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    valueCoding = fields.EmbeddedDocumentField("Coding", blank=False, required=True)
-    valueContactDetail = fields.EmbeddedDocumentField("ContactDetail", blank=False, required=True)
-    valueContactPoint = fields.EmbeddedDocumentField("ContactPoint", blank=False, required=True)
-    valueContributor = fields.EmbeddedDocumentField("Contributor", blank=False, required=True)
-    valueCount = fields.EmbeddedDocumentField("Count", blank=False, required=True)
-    valueDataRequirement = fields.EmbeddedDocumentField("DataRequirement", blank=False, required=True)
-    valueDate = fields.DateTimeField(blank=False, required=True)
-    valueDateTime = fields.DateTimeField(blank=False, required=True)
-    valueDecimal = fields.FloatField(blank=False, required=True)
-    valueDistance = fields.EmbeddedDocumentField("Distance", blank=False, required=True)
-    valueDosage = fields.EmbeddedDocumentField("Dosage", blank=False, required=True)
-    valueDuration = fields.EmbeddedDocumentField("Duration", blank=False, required=True)
-    valueExpression = fields.EmbeddedDocumentField("Expression", blank=False, required=True)
-    valueHumanName = fields.EmbeddedDocumentField("HumanName", blank=False, required=True)
-    valueId = fields.CharField(blank=False, required=True)
-    valueIdentifier = fields.EmbeddedDocumentField("Identifier", blank=False, required=True)
-    valueInstant = fields.DateTimeField(blank=False, required=True)
-    valueInteger = fields.IntegerField(blank=False, required=True)
-    valueMarkdown = fields.CharField(blank=False, required=True)
-    valueMoney = fields.EmbeddedDocumentField("Money", blank=False, required=True)
-    valueOid = fields.CharField(blank=False, required=True)
-    valueParameterDefinition = fields.EmbeddedDocumentField("ParameterDefinition", blank=False, required=True)
-    valuePeriod = fields.EmbeddedDocumentField("Period", blank=False, required=True)
-    valuePositiveInt = fields.IntegerField(blank=False, required=True)
-    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=False, required=True)
-    valueRange = fields.EmbeddedDocumentField("Range", blank=False, required=True)
-    valueRatio = fields.EmbeddedDocumentField("Ratio", blank=False, required=True)
-    # valueReference = fields.ReferenceField(, blank=False, required=True)
-    valueRelatedArtifact = fields.EmbeddedDocumentField("RelatedArtifact", blank=False, required=True)
-    valueSampledData = fields.EmbeddedDocumentField("SampledData", blank=False, required=True)
-    valueSignature = fields.EmbeddedDocumentField("Signature", blank=False, required=True)
-    valueString = fields.CharField(blank=False, required=True)
-    valueTime = fields.DateTimeField(blank=False, required=True)
-    valueTiming = fields.EmbeddedDocumentField("Timing", blank=False, required=True)
-    valueTriggerDefinition = fields.EmbeddedDocumentField("TriggerDefinition", blank=False, required=True)
-    valueUnsignedInt = fields.IntegerField(blank=False, required=True)
-    valueUri = fields.CharField(blank=False, required=True)
-    valueUrl = fields.CharField(blank=False, required=True)
-    valueUsageContext = fields.EmbeddedDocumentField("UsageContext", blank=False, required=True)
-    valueUuid = fields.CharField(blank=False, required=True)
+    valueAddress = fields.EmbeddedDocumentField("Address", blank=True, required=False)
+    valueAge = fields.EmbeddedDocumentField("Age", blank=True, required=False)
+    valueAnnotation = fields.EmbeddedDocumentField("Annotation", blank=True, required=False)
+    valueAttachment = fields.EmbeddedDocumentField("Attachment", blank=True, required=False)
+    valueBase64Binary = fields.CharField(blank=True, required=False)
+    valueBoolean = fields.BooleanField(blank=True, required=False)
+    valueCanonical = fields.CharField(blank=True, required=False)
+    valueCode = fields.CharField(blank=True, required=False)
+    valueCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    valueCoding = fields.EmbeddedDocumentField("Coding", blank=True, required=False)
+    valueContactDetail = fields.EmbeddedDocumentField("ContactDetail", blank=True, required=False)
+    valueContactPoint = fields.EmbeddedDocumentField("ContactPoint", blank=True, required=False)
+    valueContributor = fields.EmbeddedDocumentField("Contributor", blank=True, required=False)
+    valueCount = fields.EmbeddedDocumentField("Count", blank=True, required=False)
+    valueDataRequirement = fields.EmbeddedDocumentField("DataRequirement", blank=True, required=False)
+    valueDate = fields.DateTimeField(blank=True, required=False)
+    valueDateTime = fields.DateTimeField(blank=True, required=False)
+    valueDecimal = fields.FloatField(blank=True, required=False)
+    valueDistance = fields.EmbeddedDocumentField("Distance", blank=True, required=False)
+    valueDosage = fields.EmbeddedDocumentField("Dosage", blank=True, required=False)
+    valueDuration = fields.EmbeddedDocumentField("Duration", blank=True, required=False)
+    valueExpression = fields.EmbeddedDocumentField("Expression", blank=True, required=False)
+    valueHumanName = fields.EmbeddedDocumentField("HumanName", blank=True, required=False)
+    valueId = fields.CharField(blank=True, required=False)
+    valueIdentifier = fields.EmbeddedDocumentField("Identifier", blank=True, required=False)
+    valueInstant = fields.DateTimeField(blank=True, required=False)
+    valueInteger = fields.IntegerField(blank=True, required=False)
+    valueMarkdown = fields.CharField(blank=True, required=False)
+    valueMoney = fields.EmbeddedDocumentField("Money", blank=True, required=False)
+    valueOid = fields.CharField(blank=True, required=False)
+    valueParameterDefinition = fields.EmbeddedDocumentField("ParameterDefinition", blank=True, required=False)
+    valuePeriod = fields.EmbeddedDocumentField("Period", blank=True, required=False)
+    valuePositiveInt = fields.IntegerField(blank=True, required=False)
+    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=True, required=False)
+    valueRange = fields.EmbeddedDocumentField("Range", blank=True, required=False)
+    valueRatio = fields.EmbeddedDocumentField("Ratio", blank=True, required=False)
+    # valueReference = fields.ReferenceField(, blank=True, required=False)
+    valueRelatedArtifact = fields.EmbeddedDocumentField("RelatedArtifact", blank=True, required=False)
+    valueSampledData = fields.EmbeddedDocumentField("SampledData", blank=True, required=False)
+    valueSignature = fields.EmbeddedDocumentField("Signature", blank=True, required=False)
+    valueString = fields.CharField(blank=True, required=False)
+    valueTime = fields.DateTimeField(blank=True, required=False)
+    valueTiming = fields.EmbeddedDocumentField("Timing", blank=True, required=False)
+    valueTriggerDefinition = fields.EmbeddedDocumentField("TriggerDefinition", blank=True, required=False)
+    valueUnsignedInt = fields.IntegerField(blank=True, required=False)
+    valueUri = fields.CharField(blank=True, required=False)
+    valueUrl = fields.CharField(blank=True, required=False)
+    valueUsageContext = fields.EmbeddedDocumentField("UsageContext", blank=True, required=False)
+    valueUuid = fields.CharField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -6201,7 +6202,7 @@ class ElementDefinitionType(FhirBaseModel, EmbeddedMongoModel):
         versioning = Attribute(getter="versioning", setter="versioning", searcher=StringSearch("versioning"))
 
 class EligibilityRequest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -6250,7 +6251,7 @@ class EligibilityRequest(FhirBaseModel, MongoModel):
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class EligibilityResponse(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -6367,7 +6368,7 @@ class EligibilityResponseInsuranceBenefitBalanceFinancial(FhirBaseModel, Embedde
         usedUnsignedInt = Attribute(getter="usedUnsignedInt", setter="usedUnsignedInt", searcher=NumericSearch("usedUnsignedInt"))
 
 class Encounter(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -6405,28 +6406,28 @@ class Encounter(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        account = ObjectIdReferenceAttribute({'Account'}, ("account", str), "account", pk_setter="account")
-        appointment = ObjectIdReferenceAttribute({'Appointment'}, ("appointment", str), "appointment", pk_setter="appointment")
-        basedOn = ObjectIdReferenceAttribute({'ServiceRequest'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        account = ObjectIdReferenceAttribute(['Account'], ("account", str), "account", pk_setter="account")
+        appointment = ObjectIdReferenceAttribute(['Appointment'], ("appointment", str), "appointment", pk_setter="appointment")
+        basedOn = ObjectIdReferenceAttribute(['ServiceRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         classHistory = EmbeddedAttribute(type="EncounterClassHistory", getter="classHistory", setter="classHistory", searcher=StringSearch("classHistory"))
         class_ = EmbeddedAttribute(type="Coding", getter="class_", setter="class_", searcher=StringSearch("class_"))
         diagnosis = EmbeddedAttribute(type="EncounterDiagnosis", getter="diagnosis", setter="diagnosis", searcher=StringSearch("diagnosis"))
-        episodeOfCare = ObjectIdReferenceAttribute({'EpisodeOfCare'}, ("episodeOfCare", str), "episodeOfCare", pk_setter="episodeOfCare")
+        episodeOfCare = ObjectIdReferenceAttribute(['EpisodeOfCare'], ("episodeOfCare", str), "episodeOfCare", pk_setter="episodeOfCare")
         hospitalization = EmbeddedAttribute(type="EncounterHospitalization", getter="hospitalization", setter="hospitalization", searcher=StringSearch("hospitalization"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         length = EmbeddedAttribute(type="Duration", getter="length", setter="length", searcher=StringSearch("length"))
         location = EmbeddedAttribute(type="EncounterLocation", getter="location", setter="location", searcher=StringSearch("location"))
-        partOf = ObjectIdReferenceAttribute({'Encounter'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['Encounter'], ("partOf", str), "partOf", pk_setter="partOf")
         participant = EmbeddedAttribute(type="EncounterParticipant", getter="participant", setter="participant", searcher=StringSearch("participant"))
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         priority = EmbeddedAttribute(type="CodeableConcept", getter="priority", setter="priority", searcher=StringSearch("priority"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'Condition', 'Observation', 'Procedure', 'ImmunizationRecommendation'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        serviceProvider = ObjectIdReferenceAttribute({'Organization'}, ("serviceProvider", str), "serviceProvider", pk_setter="serviceProvider")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'ImmunizationRecommendation', 'Observation', 'Procedure'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        serviceProvider = ObjectIdReferenceAttribute(['Organization'], ("serviceProvider", str), "serviceProvider", pk_setter="serviceProvider")
         serviceType = EmbeddedAttribute(type="CodeableConcept", getter="serviceType", setter="serviceType", searcher=StringSearch("serviceType"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusHistory = EmbeddedAttribute(type="EncounterStatusHistory", getter="statusHistory", setter="statusHistory", searcher=StringSearch("statusHistory"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class EncounterClassHistory(FhirBaseModel, EmbeddedMongoModel):
@@ -6453,7 +6454,7 @@ class EncounterDiagnosis(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        condition = ObjectIdReferenceAttribute({'Condition', 'Procedure'}, ("condition", str), "condition", pk_setter="condition")
+        condition = ObjectIdReferenceAttribute(['Condition', 'Procedure'], ("condition", str), "condition", pk_setter="condition")
         rank = Attribute(getter="rank", setter="rank", searcher=NumericSearch("rank"))
         use = EmbeddedAttribute(type="CodeableConcept", getter="use", setter="use", searcher=StringSearch("use"))
 
@@ -6475,10 +6476,10 @@ class EncounterHospitalization(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         admitSource = EmbeddedAttribute(type="CodeableConcept", getter="admitSource", setter="admitSource", searcher=StringSearch("admitSource"))
-        destination = ObjectIdReferenceAttribute({'Location', 'Organization'}, ("destination", str), "destination", pk_setter="destination")
+        destination = ObjectIdReferenceAttribute(['Location', 'Organization'], ("destination", str), "destination", pk_setter="destination")
         dietPreference = EmbeddedAttribute(type="CodeableConcept", getter="dietPreference", setter="dietPreference", searcher=StringSearch("dietPreference"))
         dischargeDisposition = EmbeddedAttribute(type="CodeableConcept", getter="dischargeDisposition", setter="dischargeDisposition", searcher=StringSearch("dischargeDisposition"))
-        origin = ObjectIdReferenceAttribute({'Location', 'Organization'}, ("origin", str), "origin", pk_setter="origin")
+        origin = ObjectIdReferenceAttribute(['Location', 'Organization'], ("origin", str), "origin", pk_setter="origin")
         preAdmissionIdentifier = EmbeddedAttribute(type="Identifier", getter="preAdmissionIdentifier", setter="preAdmissionIdentifier", searcher=StringSearch("preAdmissionIdentifier"))
         reAdmission = EmbeddedAttribute(type="CodeableConcept", getter="reAdmission", setter="reAdmission", searcher=StringSearch("reAdmission"))
         specialArrangement = EmbeddedAttribute(type="CodeableConcept", getter="specialArrangement", setter="specialArrangement", searcher=StringSearch("specialArrangement"))
@@ -6496,7 +6497,7 @@ class EncounterLocation(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         physicalType = EmbeddedAttribute(type="CodeableConcept", getter="physicalType", setter="physicalType", searcher=StringSearch("physicalType"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
@@ -6512,7 +6513,7 @@ class EncounterParticipant(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        individual = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson'}, ("individual", str), "individual", pk_setter="individual")
+        individual = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole', 'RelatedPerson'], ("individual", str), "individual", pk_setter="individual")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
@@ -6530,7 +6531,7 @@ class EncounterStatusHistory(FhirBaseModel, EmbeddedMongoModel):
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class Endpoint(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -6561,7 +6562,7 @@ class Endpoint(FhirBaseModel, MongoModel):
         contact = EmbeddedAttribute(type="ContactPoint", getter="contact", setter="contact", searcher=StringSearch("contact"))
         header = Attribute(getter="header", setter="header", searcher=StringSearch("header"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        managingOrganization = ObjectIdReferenceAttribute({'Organization'}, ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
+        managingOrganization = ObjectIdReferenceAttribute(['Organization'], ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         payloadMimeType = Attribute(getter="payloadMimeType", setter="payloadMimeType", searcher=StringSearch("payloadMimeType"))
         payloadType = EmbeddedAttribute(type="CodeableConcept", getter="payloadType", setter="payloadType", searcher=StringSearch("payloadType"))
@@ -6569,7 +6570,7 @@ class Endpoint(FhirBaseModel, MongoModel):
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class EnrollmentRequest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -6591,16 +6592,16 @@ class EnrollmentRequest(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        candidate = ObjectIdReferenceAttribute({'Patient'}, ("candidate", str), "candidate", pk_setter="candidate")
-        coverage = ObjectIdReferenceAttribute({'Coverage'}, ("coverage", str), "coverage", pk_setter="coverage")
+        candidate = ObjectIdReferenceAttribute(['Patient'], ("candidate", str), "candidate", pk_setter="candidate")
+        coverage = ObjectIdReferenceAttribute(['Coverage'], ("coverage", str), "coverage", pk_setter="coverage")
         created = DateAttribute("created")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        insurer = ObjectIdReferenceAttribute({'Organization'}, ("insurer", str), "insurer", pk_setter="insurer")
-        provider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("provider", str), "provider", pk_setter="provider")
+        insurer = ObjectIdReferenceAttribute(['Organization'], ("insurer", str), "insurer", pk_setter="insurer")
+        provider = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("provider", str), "provider", pk_setter="provider")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class EnrollmentResponse(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -6626,14 +6627,14 @@ class EnrollmentResponse(FhirBaseModel, MongoModel):
         created = DateAttribute("created")
         disposition = Attribute(getter="disposition", setter="disposition", searcher=StringSearch("disposition"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        organization = ObjectIdReferenceAttribute({'Organization'}, ("organization", str), "organization", pk_setter="organization")
+        organization = ObjectIdReferenceAttribute(['Organization'], ("organization", str), "organization", pk_setter="organization")
         outcome = Attribute(getter="outcome", setter="outcome", searcher=StringSearch("outcome"))
-        request = ObjectIdReferenceAttribute({'EnrollmentRequest'}, ("request", str), "request", pk_setter="request")
-        requestProvider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("requestProvider", str), "requestProvider", pk_setter="requestProvider")
+        request = ObjectIdReferenceAttribute(['EnrollmentRequest'], ("request", str), "request", pk_setter="request")
+        requestProvider = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("requestProvider", str), "requestProvider", pk_setter="requestProvider")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class EpisodeOfCare(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -6660,17 +6661,17 @@ class EpisodeOfCare(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        account = ObjectIdReferenceAttribute({'Account'}, ("account", str), "account", pk_setter="account")
-        careManager = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("careManager", str), "careManager", pk_setter="careManager")
+        account = ObjectIdReferenceAttribute(['Account'], ("account", str), "account", pk_setter="account")
+        careManager = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("careManager", str), "careManager", pk_setter="careManager")
         diagnosis = EmbeddedAttribute(type="EpisodeOfCareDiagnosis", getter="diagnosis", setter="diagnosis", searcher=StringSearch("diagnosis"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        managingOrganization = ObjectIdReferenceAttribute({'Organization'}, ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        managingOrganization = ObjectIdReferenceAttribute(['Organization'], ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
-        referralRequest = ObjectIdReferenceAttribute({'ServiceRequest'}, ("referralRequest", str), "referralRequest", pk_setter="referralRequest")
+        referralRequest = ObjectIdReferenceAttribute(['ServiceRequest'], ("referralRequest", str), "referralRequest", pk_setter="referralRequest")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusHistory = EmbeddedAttribute(type="EpisodeOfCareStatusHistory", getter="statusHistory", setter="statusHistory", searcher=StringSearch("statusHistory"))
-        team = ObjectIdReferenceAttribute({'CareTeam'}, ("team", str), "team", pk_setter="team")
+        team = ObjectIdReferenceAttribute(['CareTeam'], ("team", str), "team", pk_setter="team")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class EpisodeOfCareDiagnosis(FhirBaseModel, EmbeddedMongoModel):
@@ -6684,7 +6685,7 @@ class EpisodeOfCareDiagnosis(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        condition = ObjectIdReferenceAttribute({'Condition'}, ("condition", str), "condition", pk_setter="condition")
+        condition = ObjectIdReferenceAttribute(['Condition'], ("condition", str), "condition", pk_setter="condition")
         rank = Attribute(getter="rank", setter="rank", searcher=NumericSearch("rank"))
         role = EmbeddedAttribute(type="CodeableConcept", getter="role", setter="role", searcher=StringSearch("role"))
 
@@ -6702,7 +6703,7 @@ class EpisodeOfCareStatusHistory(FhirBaseModel, EmbeddedMongoModel):
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class EventDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -6766,7 +6767,7 @@ class EventDefinition(FhirBaseModel, MongoModel):
         reviewer = EmbeddedAttribute(type="ContactDetail", getter="reviewer", setter="reviewer", searcher=StringSearch("reviewer"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subjectCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="subjectCodeableConcept", setter="subjectCodeableConcept", searcher=StringSearch("subjectCodeableConcept"))
-        subjectReference = ObjectIdReferenceAttribute({'Group'}, ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
+        subjectReference = ObjectIdReferenceAttribute(['Group'], ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
         subtitle = Attribute(getter="subtitle", setter="subtitle", searcher=StringSearch("subtitle"))
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
         topic = EmbeddedAttribute(type="CodeableConcept", getter="topic", setter="topic", searcher=StringSearch("topic"))
@@ -6777,7 +6778,7 @@ class EventDefinition(FhirBaseModel, MongoModel):
         version = Attribute(getter="version", setter="version", searcher=StringSearch("version"))
 
 class Evidence(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -6829,14 +6830,14 @@ class Evidence(FhirBaseModel, MongoModel):
         editor = EmbeddedAttribute(type="ContactDetail", getter="editor", setter="editor", searcher=StringSearch("editor"))
         effectivePeriod = EmbeddedAttribute(type="Period", getter="effectivePeriod", setter="effectivePeriod", searcher=StringSearch("effectivePeriod"))
         endorser = EmbeddedAttribute(type="ContactDetail", getter="endorser", setter="endorser", searcher=StringSearch("endorser"))
-        exposureBackground = ObjectIdReferenceAttribute({'EvidenceVariable'}, ("exposureBackground", str), "exposureBackground", pk_setter="exposureBackground")
-        exposureVariant = ObjectIdReferenceAttribute({'EvidenceVariable'}, ("exposureVariant", str), "exposureVariant", pk_setter="exposureVariant")
+        exposureBackground = ObjectIdReferenceAttribute(['EvidenceVariable'], ("exposureBackground", str), "exposureBackground", pk_setter="exposureBackground")
+        exposureVariant = ObjectIdReferenceAttribute(['EvidenceVariable'], ("exposureVariant", str), "exposureVariant", pk_setter="exposureVariant")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         jurisdiction = EmbeddedAttribute(type="CodeableConcept", getter="jurisdiction", setter="jurisdiction", searcher=StringSearch("jurisdiction"))
         lastReviewDate = DateAttribute("lastReviewDate")
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        outcome = ObjectIdReferenceAttribute({'EvidenceVariable'}, ("outcome", str), "outcome", pk_setter="outcome")
+        outcome = ObjectIdReferenceAttribute(['EvidenceVariable'], ("outcome", str), "outcome", pk_setter="outcome")
         publisher = Attribute(getter="publisher", setter="publisher", searcher=StringSearch("publisher"))
         relatedArtifact = EmbeddedAttribute(type="RelatedArtifact", getter="relatedArtifact", setter="relatedArtifact", searcher=StringSearch("relatedArtifact"))
         reviewer = EmbeddedAttribute(type="ContactDetail", getter="reviewer", setter="reviewer", searcher=StringSearch("reviewer"))
@@ -6850,7 +6851,7 @@ class Evidence(FhirBaseModel, MongoModel):
         version = Attribute(getter="version", setter="version", searcher=StringSearch("version"))
 
 class EvidenceVariable(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -6924,12 +6925,12 @@ class EvidenceVariableCharacteristic(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    definitionCanonical = fields.CharField(blank=False, required=True)
-    definitionCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    definitionDataRequirement = fields.EmbeddedDocumentField("DataRequirement", blank=False, required=True)
-    definitionExpression = fields.EmbeddedDocumentField("Expression", blank=False, required=True)
-    definitionReference = fields.ObjectIdField(blank=False, required=True)
-    definitionTriggerDefinition = fields.EmbeddedDocumentField("TriggerDefinition", blank=False, required=True)
+    definitionCanonical = fields.CharField(blank=True, required=False)
+    definitionCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    definitionDataRequirement = fields.EmbeddedDocumentField("DataRequirement", blank=True, required=False)
+    definitionExpression = fields.EmbeddedDocumentField("Expression", blank=True, required=False)
+    definitionReference = fields.ObjectIdField(blank=True, required=False)
+    definitionTriggerDefinition = fields.EmbeddedDocumentField("TriggerDefinition", blank=True, required=False)
     description = fields.CharField(blank=True, required=False)
     exclude = fields.BooleanField(blank=True, required=False)
     groupMeasure = fields.CharField(blank=True, required=False)
@@ -6947,7 +6948,7 @@ class EvidenceVariableCharacteristic(FhirBaseModel, EmbeddedMongoModel):
         definitionCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="definitionCodeableConcept", setter="definitionCodeableConcept", searcher=StringSearch("definitionCodeableConcept"))
         definitionDataRequirement = EmbeddedAttribute(type="DataRequirement", getter="definitionDataRequirement", setter="definitionDataRequirement", searcher=StringSearch("definitionDataRequirement"))
         definitionExpression = EmbeddedAttribute(type="Expression", getter="definitionExpression", setter="definitionExpression", searcher=StringSearch("definitionExpression"))
-        definitionReference = ObjectIdReferenceAttribute({'Group'}, ("definitionReference", str), "definitionReference", pk_setter="definitionReference")
+        definitionReference = ObjectIdReferenceAttribute(['Group'], ("definitionReference", str), "definitionReference", pk_setter="definitionReference")
         definitionTriggerDefinition = EmbeddedAttribute(type="TriggerDefinition", getter="definitionTriggerDefinition", setter="definitionTriggerDefinition", searcher=StringSearch("definitionTriggerDefinition"))
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         exclude = Attribute(getter="exclude", setter="exclude", searcher=StringSearch("exclude"))
@@ -6960,7 +6961,7 @@ class EvidenceVariableCharacteristic(FhirBaseModel, EmbeddedMongoModel):
         usageContext = EmbeddedAttribute(type="UsageContext", getter="usageContext", setter="usageContext", searcher=StringSearch("usageContext"))
 
 class ExampleScenario(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -7155,7 +7156,7 @@ class ExampleScenarioProcessStepOperation(FhirBaseModel, EmbeddedMongoModel):
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
 
 class ExpansionProfile(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -7307,7 +7308,7 @@ class ExpansionProfileFixedVersion(FhirBaseModel, EmbeddedMongoModel):
         version = Attribute(getter="version", setter="version", searcher=StringSearch("version"))
 
 class ExplanationOfBenefit(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -7372,35 +7373,35 @@ class ExplanationOfBenefit(FhirBaseModel, MongoModel):
         benefitPeriod = EmbeddedAttribute(type="Period", getter="benefitPeriod", setter="benefitPeriod", searcher=StringSearch("benefitPeriod"))
         billablePeriod = EmbeddedAttribute(type="Period", getter="billablePeriod", setter="billablePeriod", searcher=StringSearch("billablePeriod"))
         careTeam = EmbeddedAttribute(type="ExplanationOfBenefitCareTeam", getter="careTeam", setter="careTeam", searcher=StringSearch("careTeam"))
-        claim = ObjectIdReferenceAttribute({'Claim'}, ("claim", str), "claim", pk_setter="claim")
-        claimResponse = ObjectIdReferenceAttribute({'ClaimResponse'}, ("claimResponse", str), "claimResponse", pk_setter="claimResponse")
+        claim = ObjectIdReferenceAttribute(['Claim'], ("claim", str), "claim", pk_setter="claim")
+        claimResponse = ObjectIdReferenceAttribute(['ClaimResponse'], ("claimResponse", str), "claimResponse", pk_setter="claimResponse")
         created = DateAttribute("created")
         diagnosis = EmbeddedAttribute(type="ExplanationOfBenefitDiagnosis", getter="diagnosis", setter="diagnosis", searcher=StringSearch("diagnosis"))
         disposition = Attribute(getter="disposition", setter="disposition", searcher=StringSearch("disposition"))
-        enterer = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("enterer", str), "enterer", pk_setter="enterer")
-        facility = ObjectIdReferenceAttribute({'Location'}, ("facility", str), "facility", pk_setter="facility")
+        enterer = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("enterer", str), "enterer", pk_setter="enterer")
+        facility = ObjectIdReferenceAttribute(['Location'], ("facility", str), "facility", pk_setter="facility")
         form = EmbeddedAttribute(type="Attachment", getter="form", setter="form", searcher=StringSearch("form"))
         formCode = EmbeddedAttribute(type="CodeableConcept", getter="formCode", setter="formCode", searcher=StringSearch("formCode"))
         fundsReserve = EmbeddedAttribute(type="CodeableConcept", getter="fundsReserve", setter="fundsReserve", searcher=StringSearch("fundsReserve"))
         fundsReserveRequested = EmbeddedAttribute(type="CodeableConcept", getter="fundsReserveRequested", setter="fundsReserveRequested", searcher=StringSearch("fundsReserveRequested"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         insurance = EmbeddedAttribute(type="ExplanationOfBenefitInsurance", getter="insurance", setter="insurance", searcher=StringSearch("insurance"))
-        insurer = ObjectIdReferenceAttribute({'Organization'}, ("insurer", str), "insurer", pk_setter="insurer")
+        insurer = ObjectIdReferenceAttribute(['Organization'], ("insurer", str), "insurer", pk_setter="insurer")
         item = EmbeddedAttribute(type="ExplanationOfBenefitItem", getter="item", setter="item", searcher=StringSearch("item"))
-        originalPrescription = ObjectIdReferenceAttribute({'MedicationRequest'}, ("originalPrescription", str), "originalPrescription", pk_setter="originalPrescription")
+        originalPrescription = ObjectIdReferenceAttribute(['MedicationRequest'], ("originalPrescription", str), "originalPrescription", pk_setter="originalPrescription")
         outcome = Attribute(getter="outcome", setter="outcome", searcher=StringSearch("outcome"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         payee = EmbeddedAttribute(type="ExplanationOfBenefitPayee", getter="payee", setter="payee", searcher=StringSearch("payee"))
         payment = EmbeddedAttribute(type="ExplanationOfBenefitPayment", getter="payment", setter="payment", searcher=StringSearch("payment"))
         preAuthRef = Attribute(getter="preAuthRef", setter="preAuthRef", searcher=StringSearch("preAuthRef"))
         preAuthRefPeriod = EmbeddedAttribute(type="Period", getter="preAuthRefPeriod", setter="preAuthRefPeriod", searcher=StringSearch("preAuthRefPeriod"))
         precedence = Attribute(getter="precedence", setter="precedence", searcher=NumericSearch("precedence"))
-        prescription = ObjectIdReferenceAttribute({'VisionPrescription', 'MedicationRequest'}, ("prescription", str), "prescription", pk_setter="prescription")
+        prescription = ObjectIdReferenceAttribute(['MedicationRequest', 'VisionPrescription'], ("prescription", str), "prescription", pk_setter="prescription")
         priority = EmbeddedAttribute(type="CodeableConcept", getter="priority", setter="priority", searcher=StringSearch("priority"))
         procedure = EmbeddedAttribute(type="ExplanationOfBenefitProcedure", getter="procedure", setter="procedure", searcher=StringSearch("procedure"))
         processNote = EmbeddedAttribute(type="ExplanationOfBenefitProcessNote", getter="processNote", setter="processNote", searcher=StringSearch("processNote"))
-        provider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("provider", str), "provider", pk_setter="provider")
-        referral = ObjectIdReferenceAttribute({'ServiceRequest'}, ("referral", str), "referral", pk_setter="referral")
+        provider = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("provider", str), "provider", pk_setter="provider")
+        referral = ObjectIdReferenceAttribute(['ServiceRequest'], ("referral", str), "referral", pk_setter="referral")
         related = EmbeddedAttribute(type="ExplanationOfBenefitRelated", getter="related", setter="related", searcher=StringSearch("related"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subType = EmbeddedAttribute(type="CodeableConcept", getter="subType", setter="subType", searcher=StringSearch("subType"))
@@ -7423,7 +7424,7 @@ class ExplanationOfBenefitAccident(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         date = DateAttribute("date")
         locationAddress = EmbeddedAttribute(type="Address", getter="locationAddress", setter="locationAddress", searcher=StringSearch("locationAddress"))
-        locationReference = ObjectIdReferenceAttribute({'Location'}, ("locationReference", str), "locationReference", pk_setter="locationReference")
+        locationReference = ObjectIdReferenceAttribute(['Location'], ("locationReference", str), "locationReference", pk_setter="locationReference")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class ExplanationOfBenefitAddItem(FhirBaseModel, EmbeddedMongoModel):
@@ -7463,13 +7464,13 @@ class ExplanationOfBenefitAddItem(FhirBaseModel, EmbeddedMongoModel):
         itemSequence = Attribute(getter="itemSequence", setter="itemSequence", searcher=NumericSearch("itemSequence"))
         locationAddress = EmbeddedAttribute(type="Address", getter="locationAddress", setter="locationAddress", searcher=StringSearch("locationAddress"))
         locationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="locationCodeableConcept", setter="locationCodeableConcept", searcher=StringSearch("locationCodeableConcept"))
-        locationReference = ObjectIdReferenceAttribute({'Location'}, ("locationReference", str), "locationReference", pk_setter="locationReference")
+        locationReference = ObjectIdReferenceAttribute(['Location'], ("locationReference", str), "locationReference", pk_setter="locationReference")
         modifier = EmbeddedAttribute(type="CodeableConcept", getter="modifier", setter="modifier", searcher=StringSearch("modifier"))
         net = EmbeddedAttribute(type="Money", getter="net", setter="net", searcher=StringSearch("net"))
         noteNumber = Attribute(getter="noteNumber", setter="noteNumber", searcher=NumericSearch("noteNumber"))
         productOrService = EmbeddedAttribute(type="CodeableConcept", getter="productOrService", setter="productOrService", searcher=StringSearch("productOrService"))
         programCode = EmbeddedAttribute(type="CodeableConcept", getter="programCode", setter="programCode", searcher=StringSearch("programCode"))
-        provider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("provider", str), "provider", pk_setter="provider")
+        provider = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("provider", str), "provider", pk_setter="provider")
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         servicedDate = DateAttribute("servicedDate")
         servicedPeriod = EmbeddedAttribute(type="Period", getter="servicedPeriod", setter="servicedPeriod", searcher=StringSearch("servicedPeriod"))
@@ -7588,7 +7589,7 @@ class ExplanationOfBenefitCareTeam(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        provider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("provider", str), "provider", pk_setter="provider")
+        provider = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("provider", str), "provider", pk_setter="provider")
         qualification = EmbeddedAttribute(type="CodeableConcept", getter="qualification", setter="qualification", searcher=StringSearch("qualification"))
         responsible = Attribute(getter="responsible", setter="responsible", searcher=StringSearch("responsible"))
         role = EmbeddedAttribute(type="CodeableConcept", getter="role", setter="role", searcher=StringSearch("role"))
@@ -7598,8 +7599,8 @@ class ExplanationOfBenefitDiagnosis(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    diagnosisCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    diagnosisReference = fields.ObjectIdField(blank=False, required=True)
+    diagnosisCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    diagnosisReference = fields.ObjectIdField(blank=True, required=False)
     onAdmission = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
     packageCode = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
     sequence = fields.IntegerField(blank=False, required=True)
@@ -7609,7 +7610,7 @@ class ExplanationOfBenefitDiagnosis(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         diagnosisCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="diagnosisCodeableConcept", setter="diagnosisCodeableConcept", searcher=StringSearch("diagnosisCodeableConcept"))
-        diagnosisReference = ObjectIdReferenceAttribute({'Condition'}, ("diagnosisReference", str), "diagnosisReference", pk_setter="diagnosisReference")
+        diagnosisReference = ObjectIdReferenceAttribute(['Condition'], ("diagnosisReference", str), "diagnosisReference", pk_setter="diagnosisReference")
         onAdmission = EmbeddedAttribute(type="CodeableConcept", getter="onAdmission", setter="onAdmission", searcher=StringSearch("onAdmission"))
         packageCode = EmbeddedAttribute(type="CodeableConcept", getter="packageCode", setter="packageCode", searcher=StringSearch("packageCode"))
         sequence = Attribute(getter="sequence", setter="sequence", searcher=NumericSearch("sequence"))
@@ -7626,7 +7627,7 @@ class ExplanationOfBenefitInsurance(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        coverage = ObjectIdReferenceAttribute({'Coverage'}, ("coverage", str), "coverage", pk_setter="coverage")
+        coverage = ObjectIdReferenceAttribute(['Coverage'], ("coverage", str), "coverage", pk_setter="coverage")
         focal = Attribute(getter="focal", setter="focal", searcher=StringSearch("focal"))
         preAuthRef = Attribute(getter="preAuthRef", setter="preAuthRef", searcher=StringSearch("preAuthRef"))
 
@@ -7670,12 +7671,12 @@ class ExplanationOfBenefitItem(FhirBaseModel, EmbeddedMongoModel):
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         detail = EmbeddedAttribute(type="ExplanationOfBenefitItemDetail", getter="detail", setter="detail", searcher=StringSearch("detail"))
         diagnosisSequence = Attribute(getter="diagnosisSequence", setter="diagnosisSequence", searcher=NumericSearch("diagnosisSequence"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         factor = Attribute(getter="factor", setter="factor", searcher=NumericSearch("factor"))
         informationSequence = Attribute(getter="informationSequence", setter="informationSequence", searcher=NumericSearch("informationSequence"))
         locationAddress = EmbeddedAttribute(type="Address", getter="locationAddress", setter="locationAddress", searcher=StringSearch("locationAddress"))
         locationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="locationCodeableConcept", setter="locationCodeableConcept", searcher=StringSearch("locationCodeableConcept"))
-        locationReference = ObjectIdReferenceAttribute({'Location'}, ("locationReference", str), "locationReference", pk_setter="locationReference")
+        locationReference = ObjectIdReferenceAttribute(['Location'], ("locationReference", str), "locationReference", pk_setter="locationReference")
         modifier = EmbeddedAttribute(type="CodeableConcept", getter="modifier", setter="modifier", searcher=StringSearch("modifier"))
         net = EmbeddedAttribute(type="Money", getter="net", setter="net", searcher=StringSearch("net"))
         noteNumber = Attribute(getter="noteNumber", setter="noteNumber", searcher=NumericSearch("noteNumber"))
@@ -7688,7 +7689,7 @@ class ExplanationOfBenefitItem(FhirBaseModel, EmbeddedMongoModel):
         servicedDate = DateAttribute("servicedDate")
         servicedPeriod = EmbeddedAttribute(type="Period", getter="servicedPeriod", setter="servicedPeriod", searcher=StringSearch("servicedPeriod"))
         subSite = EmbeddedAttribute(type="CodeableConcept", getter="subSite", setter="subSite", searcher=StringSearch("subSite"))
-        udi = ObjectIdReferenceAttribute({'Device'}, ("udi", str), "udi", pk_setter="udi")
+        udi = ObjectIdReferenceAttribute(['Device'], ("udi", str), "udi", pk_setter="udi")
         unitPrice = EmbeddedAttribute(type="Money", getter="unitPrice", setter="unitPrice", searcher=StringSearch("unitPrice"))
 
 class ExplanationOfBenefitItemAdjudication(FhirBaseModel, EmbeddedMongoModel):
@@ -7742,7 +7743,7 @@ class ExplanationOfBenefitItemDetail(FhirBaseModel, EmbeddedMongoModel):
         revenue = EmbeddedAttribute(type="CodeableConcept", getter="revenue", setter="revenue", searcher=StringSearch("revenue"))
         sequence = Attribute(getter="sequence", setter="sequence", searcher=NumericSearch("sequence"))
         subDetail = EmbeddedAttribute(type="ExplanationOfBenefitItemDetailSubDetail", getter="subDetail", setter="subDetail", searcher=StringSearch("subDetail"))
-        udi = ObjectIdReferenceAttribute({'Device'}, ("udi", str), "udi", pk_setter="udi")
+        udi = ObjectIdReferenceAttribute(['Device'], ("udi", str), "udi", pk_setter="udi")
         unitPrice = EmbeddedAttribute(type="Money", getter="unitPrice", setter="unitPrice", searcher=StringSearch("unitPrice"))
 
 class ExplanationOfBenefitItemDetailSubDetail(FhirBaseModel, EmbeddedMongoModel):
@@ -7777,7 +7778,7 @@ class ExplanationOfBenefitItemDetailSubDetail(FhirBaseModel, EmbeddedMongoModel)
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         revenue = EmbeddedAttribute(type="CodeableConcept", getter="revenue", setter="revenue", searcher=StringSearch("revenue"))
         sequence = Attribute(getter="sequence", setter="sequence", searcher=NumericSearch("sequence"))
-        udi = ObjectIdReferenceAttribute({'Device'}, ("udi", str), "udi", pk_setter="udi")
+        udi = ObjectIdReferenceAttribute(['Device'], ("udi", str), "udi", pk_setter="udi")
         unitPrice = EmbeddedAttribute(type="Money", getter="unitPrice", setter="unitPrice", searcher=StringSearch("unitPrice"))
 
 class ExplanationOfBenefitPayee(FhirBaseModel, EmbeddedMongoModel):
@@ -7790,7 +7791,7 @@ class ExplanationOfBenefitPayee(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        party = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("party", str), "party", pk_setter="party")
+        party = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("party", str), "party", pk_setter="party")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class ExplanationOfBenefitPayment(FhirBaseModel, EmbeddedMongoModel):
@@ -7819,8 +7820,8 @@ class ExplanationOfBenefitProcedure(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     date = fields.DateTimeField(blank=True, required=False)
-    procedureCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    procedureReference = fields.ObjectIdField(blank=False, required=True)
+    procedureCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    procedureReference = fields.ObjectIdField(blank=True, required=False)
     sequence = fields.IntegerField(blank=False, required=True)
     type = fields.EmbeddedDocumentListField("CodeableConcept", blank=True, required=False)
     udi = fields.ObjectIdField(blank=True, required=False)
@@ -7830,10 +7831,10 @@ class ExplanationOfBenefitProcedure(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         date = DateAttribute("date")
         procedureCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="procedureCodeableConcept", setter="procedureCodeableConcept", searcher=StringSearch("procedureCodeableConcept"))
-        procedureReference = ObjectIdReferenceAttribute({'Procedure'}, ("procedureReference", str), "procedureReference", pk_setter="procedureReference")
+        procedureReference = ObjectIdReferenceAttribute(['Procedure'], ("procedureReference", str), "procedureReference", pk_setter="procedureReference")
         sequence = Attribute(getter="sequence", setter="sequence", searcher=NumericSearch("sequence"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
-        udi = ObjectIdReferenceAttribute({'Device'}, ("udi", str), "udi", pk_setter="udi")
+        udi = ObjectIdReferenceAttribute(['Device'], ("udi", str), "udi", pk_setter="udi")
 
 class ExplanationOfBenefitProcessNote(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -7863,7 +7864,7 @@ class ExplanationOfBenefitRelated(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        claim = ObjectIdReferenceAttribute({'Claim'}, ("claim", str), "claim", pk_setter="claim")
+        claim = ObjectIdReferenceAttribute(['Claim'], ("claim", str), "claim", pk_setter="claim")
         reference = EmbeddedAttribute(type="Identifier", getter="reference", setter="reference", searcher=StringSearch("reference"))
         relationship = EmbeddedAttribute(type="CodeableConcept", getter="relationship", setter="relationship", searcher=StringSearch("relationship"))
 
@@ -7895,7 +7896,7 @@ class ExplanationOfBenefitSupportingInfo(FhirBaseModel, EmbeddedMongoModel):
         valueAttachment = EmbeddedAttribute(type="Attachment", getter="valueAttachment", setter="valueAttachment", searcher=StringSearch("valueAttachment"))
         valueBoolean = Attribute(getter="valueBoolean", setter="valueBoolean", searcher=StringSearch("valueBoolean"))
         valueQuantity = EmbeddedAttribute(type="Quantity", getter="valueQuantity", setter="valueQuantity", searcher=StringSearch("valueQuantity"))
-        valueReference = ObjectIdReferenceAttribute({'Resource'}, ("valueReference", str), "valueReference", pk_setter="valueReference")
+        valueReference = ObjectIdReferenceAttribute(['Resource'], ("valueReference", str), "valueReference", pk_setter="valueReference")
         valueString = Attribute(getter="valueString", setter="valueString", searcher=StringSearch("valueString"))
 
 class ExplanationOfBenefitTotal(FhirBaseModel, EmbeddedMongoModel):
@@ -7950,7 +7951,7 @@ class FHIRReference(FhirBaseModel, EmbeddedMongoModel):
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
 
 class FamilyMemberHistory(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8011,9 +8012,9 @@ class FamilyMemberHistory(FhirBaseModel, MongoModel):
         instantiatesUri = Attribute(getter="instantiatesUri", setter="instantiatesUri", searcher=StringSearch("instantiatesUri"))
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'AllergyIntolerance', 'DocumentReference', 'Observation', 'QuestionnaireResponse', 'Condition'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        reasonReference = ObjectIdReferenceAttribute(['AllergyIntolerance', 'Condition', 'DiagnosticReport', 'DocumentReference', 'Observation', 'QuestionnaireResponse'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
         relationship = EmbeddedAttribute(type="CodeableConcept", getter="relationship", setter="relationship", searcher=StringSearch("relationship"))
         sex = EmbeddedAttribute(type="CodeableConcept", getter="sex", setter="sex", searcher=StringSearch("sex"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
@@ -8044,7 +8045,7 @@ class FamilyMemberHistoryCondition(FhirBaseModel, EmbeddedMongoModel):
         outcome = EmbeddedAttribute(type="CodeableConcept", getter="outcome", setter="outcome", searcher=StringSearch("outcome"))
 
 class Flag(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8067,17 +8068,17 @@ class Flag(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        author = ObjectIdReferenceAttribute({'PractitionerRole', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("author", str), "author", pk_setter="author")
+        author = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole'], ("author", str), "author", pk_setter="author")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'PlanDefinition', 'Procedure', 'Location', 'Group', 'Medication', 'Practitioner', 'Organization', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Location', 'Medication', 'Organization', 'Patient', 'PlanDefinition', 'Practitioner', 'Procedure'], ("subject", str), "subject", pk_setter="subject")
 
 class Goal(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8110,21 +8111,21 @@ class Goal(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         achievementStatus = EmbeddedAttribute(type="CodeableConcept", getter="achievementStatus", setter="achievementStatus", searcher=StringSearch("achievementStatus"))
-        addresses = ObjectIdReferenceAttribute({'MedicationStatement', 'Observation', 'NutritionOrder', 'ServiceRequest', 'Condition', 'RiskAssessment'}, ("addresses", str), "addresses", pk_setter="addresses")
+        addresses = ObjectIdReferenceAttribute(['Condition', 'MedicationStatement', 'NutritionOrder', 'Observation', 'RiskAssessment', 'ServiceRequest'], ("addresses", str), "addresses", pk_setter="addresses")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         description = EmbeddedAttribute(type="CodeableConcept", getter="description", setter="description", searcher=StringSearch("description"))
-        expressedBy = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Patient'}, ("expressedBy", str), "expressedBy", pk_setter="expressedBy")
+        expressedBy = ObjectIdReferenceAttribute(['Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("expressedBy", str), "expressedBy", pk_setter="expressedBy")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         lifecycleStatus = Attribute(getter="lifecycleStatus", setter="lifecycleStatus", searcher=StringSearch("lifecycleStatus"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         outcomeCode = EmbeddedAttribute(type="CodeableConcept", getter="outcomeCode", setter="outcomeCode", searcher=StringSearch("outcomeCode"))
-        outcomeReference = ObjectIdReferenceAttribute({'Observation'}, ("outcomeReference", str), "outcomeReference", pk_setter="outcomeReference")
+        outcomeReference = ObjectIdReferenceAttribute(['Observation'], ("outcomeReference", str), "outcomeReference", pk_setter="outcomeReference")
         priority = EmbeddedAttribute(type="CodeableConcept", getter="priority", setter="priority", searcher=StringSearch("priority"))
         startCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="startCodeableConcept", setter="startCodeableConcept", searcher=StringSearch("startCodeableConcept"))
         startDate = DateAttribute("startDate")
         statusDate = DateAttribute("statusDate")
         statusReason = Attribute(getter="statusReason", setter="statusReason", searcher=StringSearch("statusReason"))
-        subject = ObjectIdReferenceAttribute({'Organization', 'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Organization', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         target = EmbeddedAttribute(type="GoalTarget", getter="target", setter="target", searcher=StringSearch("target"))
 
 class GoalTarget(FhirBaseModel, EmbeddedMongoModel):
@@ -8157,7 +8158,7 @@ class GoalTarget(FhirBaseModel, EmbeddedMongoModel):
         measure = EmbeddedAttribute(type="CodeableConcept", getter="measure", setter="measure", searcher=StringSearch("measure"))
 
 class GraphDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8263,7 +8264,7 @@ class GraphDefinitionLinkTargetCompartment(FhirBaseModel, EmbeddedMongoModel):
         use = Attribute(getter="use", setter="use", searcher=StringSearch("use"))
 
 class Group(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8293,7 +8294,7 @@ class Group(FhirBaseModel, MongoModel):
         characteristic = EmbeddedAttribute(type="GroupCharacteristic", getter="characteristic", setter="characteristic", searcher=StringSearch("characteristic"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        managingEntity = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Organization'}, ("managingEntity", str), "managingEntity", pk_setter="managingEntity")
+        managingEntity = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("managingEntity", str), "managingEntity", pk_setter="managingEntity")
         member = EmbeddedAttribute(type="GroupMember", getter="member", setter="member", searcher=StringSearch("member"))
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         quantity = Attribute(getter="quantity", setter="quantity", searcher=NumericSearch("quantity"))
@@ -8306,11 +8307,11 @@ class GroupCharacteristic(FhirBaseModel, EmbeddedMongoModel):
     code = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
     exclude = fields.BooleanField(blank=False, required=True)
     period = fields.EmbeddedDocumentField("Period", blank=True, required=False)
-    valueBoolean = fields.BooleanField(blank=False, required=True)
-    valueCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=False, required=True)
-    valueRange = fields.EmbeddedDocumentField("Range", blank=False, required=True)
-    # valueReference = fields.ReferenceField(, blank=False, required=True)
+    valueBoolean = fields.BooleanField(blank=True, required=False)
+    valueCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=True, required=False)
+    valueRange = fields.EmbeddedDocumentField("Range", blank=True, required=False)
+    # valueReference = fields.ReferenceField(, blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -8335,12 +8336,12 @@ class GroupMember(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        entity = ObjectIdReferenceAttribute({'PractitionerRole', 'Group', 'Medication', 'Practitioner', 'Substance', 'Device', 'Patient'}, ("entity", str), "entity", pk_setter="entity")
+        entity = ObjectIdReferenceAttribute(['Device', 'Group', 'Medication', 'Patient', 'Practitioner', 'PractitionerRole', 'Substance'], ("entity", str), "entity", pk_setter="entity")
         inactive = Attribute(getter="inactive", setter="inactive", searcher=StringSearch("inactive"))
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
 
 class GuidanceResponse(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8351,9 +8352,9 @@ class GuidanceResponse(FhirBaseModel, MongoModel):
     encounter = fields.ObjectIdField(blank=True, required=False)
     evaluationMessage = fields.ObjectIdField(blank=True, required=False)
     identifier = fields.EmbeddedDocumentListField("Identifier", blank=True, required=False)
-    moduleCanonical = fields.CharField(blank=False, required=True)
-    moduleCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    moduleUri = fields.CharField(blank=False, required=True)
+    moduleCanonical = fields.CharField(blank=True, required=False)
+    moduleCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    moduleUri = fields.CharField(blank=True, required=False)
     note = fields.EmbeddedDocumentListField("Annotation", blank=True, required=False)
     occurrenceDateTime = fields.DateTimeField(blank=True, required=False)
     outputParameters = fields.ObjectIdField(blank=True, required=False)
@@ -8373,25 +8374,25 @@ class GuidanceResponse(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         dataRequirement = EmbeddedAttribute(type="DataRequirement", getter="dataRequirement", setter="dataRequirement", searcher=StringSearch("dataRequirement"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
-        evaluationMessage = ObjectIdReferenceAttribute({'OperationOutcome'}, ("evaluationMessage", str), "evaluationMessage", pk_setter="evaluationMessage")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
+        evaluationMessage = ObjectIdReferenceAttribute(['OperationOutcome'], ("evaluationMessage", str), "evaluationMessage", pk_setter="evaluationMessage")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         moduleCanonical = Attribute(getter="moduleCanonical", setter="moduleCanonical", searcher=StringSearch("moduleCanonical"))
         moduleCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="moduleCodeableConcept", setter="moduleCodeableConcept", searcher=StringSearch("moduleCodeableConcept"))
         moduleUri = Attribute(getter="moduleUri", setter="moduleUri", searcher=StringSearch("moduleUri"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         occurrenceDateTime = DateAttribute("occurrenceDateTime")
-        outputParameters = ObjectIdReferenceAttribute({'Parameters'}, ("outputParameters", str), "outputParameters", pk_setter="outputParameters")
-        performer = ObjectIdReferenceAttribute({'Device'}, ("performer", str), "performer", pk_setter="performer")
+        outputParameters = ObjectIdReferenceAttribute(['Parameters'], ("outputParameters", str), "outputParameters", pk_setter="outputParameters")
+        performer = ObjectIdReferenceAttribute(['Device'], ("performer", str), "performer", pk_setter="performer")
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation', 'DocumentReference'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
         requestIdentifier = EmbeddedAttribute(type="Identifier", getter="requestIdentifier", setter="requestIdentifier", searcher=StringSearch("requestIdentifier"))
-        result = ObjectIdReferenceAttribute({'CarePlan', 'RequestGroup'}, ("result", str), "result", pk_setter="result")
+        result = ObjectIdReferenceAttribute(['CarePlan', 'RequestGroup'], ("result", str), "result", pk_setter="result")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
 
 class HealthcareService(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8438,17 +8439,17 @@ class HealthcareService(FhirBaseModel, MongoModel):
         characteristic = EmbeddedAttribute(type="CodeableConcept", getter="characteristic", setter="characteristic", searcher=StringSearch("characteristic"))
         comment = Attribute(getter="comment", setter="comment", searcher=StringSearch("comment"))
         communication = EmbeddedAttribute(type="CodeableConcept", getter="communication", setter="communication", searcher=StringSearch("communication"))
-        coverageArea = ObjectIdReferenceAttribute({'Location'}, ("coverageArea", str), "coverageArea", pk_setter="coverageArea")
+        coverageArea = ObjectIdReferenceAttribute(['Location'], ("coverageArea", str), "coverageArea", pk_setter="coverageArea")
         eligibility = EmbeddedAttribute(type="HealthcareServiceEligibility", getter="eligibility", setter="eligibility", searcher=StringSearch("eligibility"))
-        endpoint = ObjectIdReferenceAttribute({'Endpoint'}, ("endpoint", str), "endpoint", pk_setter="endpoint")
+        endpoint = ObjectIdReferenceAttribute(['Endpoint'], ("endpoint", str), "endpoint", pk_setter="endpoint")
         extraDetails = Attribute(getter="extraDetails", setter="extraDetails", searcher=StringSearch("extraDetails"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         notAvailable = EmbeddedAttribute(type="HealthcareServiceNotAvailable", getter="notAvailable", setter="notAvailable", searcher=StringSearch("notAvailable"))
         photo = EmbeddedAttribute(type="Attachment", getter="photo", setter="photo", searcher=StringSearch("photo"))
         program = EmbeddedAttribute(type="CodeableConcept", getter="program", setter="program", searcher=StringSearch("program"))
-        providedBy = ObjectIdReferenceAttribute({'Organization'}, ("providedBy", str), "providedBy", pk_setter="providedBy")
+        providedBy = ObjectIdReferenceAttribute(['Organization'], ("providedBy", str), "providedBy", pk_setter="providedBy")
         referralMethod = EmbeddedAttribute(type="CodeableConcept", getter="referralMethod", setter="referralMethod", searcher=StringSearch("referralMethod"))
         serviceProvisionCode = EmbeddedAttribute(type="CodeableConcept", getter="serviceProvisionCode", setter="serviceProvisionCode", searcher=StringSearch("serviceProvisionCode"))
         specialty = EmbeddedAttribute(type="CodeableConcept", getter="specialty", setter="specialty", searcher=StringSearch("specialty"))
@@ -8531,7 +8532,7 @@ class Identifier(FhirBaseModel, EmbeddedMongoModel):
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
-        assigner = ObjectIdReferenceAttribute({'Organization'}, ("assigner", str), "assigner", pk_setter="assigner")
+        assigner = ObjectIdReferenceAttribute(['Organization'], ("assigner", str), "assigner", pk_setter="assigner")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         system = Attribute(getter="system", setter="system", searcher=StringSearch("system"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
@@ -8539,7 +8540,7 @@ class Identifier(FhirBaseModel, EmbeddedMongoModel):
         value = Attribute(getter="value", setter="value", searcher=StringSearch("value"))
 
 class ImagingManifest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8613,7 +8614,7 @@ class ImagingManifestStudySeriesInstance(FhirBaseModel, EmbeddedMongoModel):
         uid = Attribute(getter="uid", setter="uid", searcher=StringSearch("uid"))
 
 class ImagingStudy(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8648,26 +8649,26 @@ class ImagingStudy(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        basedOn = ObjectIdReferenceAttribute({'CarePlan', 'Appointment', 'ServiceRequest', 'AppointmentResponse', 'Task'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['Appointment', 'AppointmentResponse', 'CarePlan', 'ServiceRequest', 'Task'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
-        endpoint = ObjectIdReferenceAttribute({'Endpoint'}, ("endpoint", str), "endpoint", pk_setter="endpoint")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
+        endpoint = ObjectIdReferenceAttribute(['Endpoint'], ("endpoint", str), "endpoint", pk_setter="endpoint")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        interpreter = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("interpreter", str), "interpreter", pk_setter="interpreter")
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        interpreter = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("interpreter", str), "interpreter", pk_setter="interpreter")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         modality = EmbeddedAttribute(type="Coding", getter="modality", setter="modality", searcher=StringSearch("modality"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         numberOfInstances = Attribute(getter="numberOfInstances", setter="numberOfInstances", searcher=NumericSearch("numberOfInstances"))
         numberOfSeries = Attribute(getter="numberOfSeries", setter="numberOfSeries", searcher=NumericSearch("numberOfSeries"))
         procedureCode = EmbeddedAttribute(type="CodeableConcept", getter="procedureCode", setter="procedureCode", searcher=StringSearch("procedureCode"))
-        procedureReference = ObjectIdReferenceAttribute({'Procedure'}, ("procedureReference", str), "procedureReference", pk_setter="procedureReference")
+        procedureReference = ObjectIdReferenceAttribute(['Procedure'], ("procedureReference", str), "procedureReference", pk_setter="procedureReference")
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'DocumentReference', 'Observation', 'Media', 'Condition'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        referrer = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("referrer", str), "referrer", pk_setter="referrer")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Media', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        referrer = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("referrer", str), "referrer", pk_setter="referrer")
         series = EmbeddedAttribute(type="ImagingStudySeries", getter="series", setter="series", searcher=StringSearch("series"))
         started = DateAttribute("started")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Device', 'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
 
 class ImagingStudySeries(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -8691,14 +8692,14 @@ class ImagingStudySeries(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         bodySite = EmbeddedAttribute(type="Coding", getter="bodySite", setter="bodySite", searcher=StringSearch("bodySite"))
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
-        endpoint = ObjectIdReferenceAttribute({'Endpoint'}, ("endpoint", str), "endpoint", pk_setter="endpoint")
+        endpoint = ObjectIdReferenceAttribute(['Endpoint'], ("endpoint", str), "endpoint", pk_setter="endpoint")
         instance = EmbeddedAttribute(type="ImagingStudySeriesInstance", getter="instance", setter="instance", searcher=StringSearch("instance"))
         laterality = EmbeddedAttribute(type="Coding", getter="laterality", setter="laterality", searcher=StringSearch("laterality"))
         modality = EmbeddedAttribute(type="Coding", getter="modality", setter="modality", searcher=StringSearch("modality"))
         number = Attribute(getter="number", setter="number", searcher=NumericSearch("number"))
         numberOfInstances = Attribute(getter="numberOfInstances", setter="numberOfInstances", searcher=NumericSearch("numberOfInstances"))
         performer = EmbeddedAttribute(type="ImagingStudySeriesPerformer", getter="performer", setter="performer", searcher=StringSearch("performer"))
-        specimen = ObjectIdReferenceAttribute({'Specimen'}, ("specimen", str), "specimen", pk_setter="specimen")
+        specimen = ObjectIdReferenceAttribute(['Specimen'], ("specimen", str), "specimen", pk_setter="specimen")
         started = DateAttribute("started")
         uid = Attribute(getter="uid", setter="uid", searcher=StringSearch("uid"))
 
@@ -8729,11 +8730,11 @@ class ImagingStudySeriesPerformer(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        actor = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("actor", str), "actor", pk_setter="actor")
+        actor = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("actor", str), "actor", pk_setter="actor")
         function = EmbeddedAttribute(type="CodeableConcept", getter="function", setter="function", searcher=StringSearch("function"))
 
 class Immunization(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8751,8 +8752,8 @@ class Immunization(FhirBaseModel, MongoModel):
     lotNumber = fields.CharField(blank=True, required=False)
     manufacturer = fields.ObjectIdField(blank=True, required=False)
     note = fields.EmbeddedDocumentListField("Annotation", blank=True, required=False)
-    occurrenceDateTime = fields.DateTimeField(blank=False, required=True)
-    occurrenceString = fields.CharField(blank=False, required=True)
+    occurrenceDateTime = fields.DateTimeField(blank=True, required=False)
+    occurrenceString = fields.CharField(blank=True, required=False)
     patient = fields.ObjectIdField(blank=False, required=True)
     performer = fields.EmbeddedDocumentListField("ImmunizationPerformer", blank=True, required=False)
     primarySource = fields.BooleanField(blank=True, required=False)
@@ -8779,25 +8780,25 @@ class Immunization(FhirBaseModel, MongoModel):
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         doseQuantity = EmbeddedAttribute(type="Quantity", getter="doseQuantity", setter="doseQuantity", searcher=StringSearch("doseQuantity"))
         education = EmbeddedAttribute(type="ImmunizationEducation", getter="education", setter="education", searcher=StringSearch("education"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         expirationDate = DateAttribute("expirationDate")
         fundingSource = EmbeddedAttribute(type="CodeableConcept", getter="fundingSource", setter="fundingSource", searcher=StringSearch("fundingSource"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         isSubpotent = Attribute(getter="isSubpotent", setter="isSubpotent", searcher=StringSearch("isSubpotent"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         lotNumber = Attribute(getter="lotNumber", setter="lotNumber", searcher=StringSearch("lotNumber"))
-        manufacturer = ObjectIdReferenceAttribute({'Organization'}, ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
+        manufacturer = ObjectIdReferenceAttribute(['Organization'], ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         occurrenceDateTime = DateAttribute("occurrenceDateTime")
         occurrenceString = Attribute(getter="occurrenceString", setter="occurrenceString", searcher=StringSearch("occurrenceString"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         performer = EmbeddedAttribute(type="ImmunizationPerformer", getter="performer", setter="performer", searcher=StringSearch("performer"))
         primarySource = Attribute(getter="primarySource", setter="primarySource", searcher=StringSearch("primarySource"))
         programEligibility = EmbeddedAttribute(type="CodeableConcept", getter="programEligibility", setter="programEligibility", searcher=StringSearch("programEligibility"))
         protocolApplied = EmbeddedAttribute(type="ImmunizationProtocolApplied", getter="protocolApplied", setter="protocolApplied", searcher=StringSearch("protocolApplied"))
         reaction = EmbeddedAttribute(type="ImmunizationReaction", getter="reaction", setter="reaction", searcher=StringSearch("reaction"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
         recorded = DateAttribute("recorded")
         reportOrigin = EmbeddedAttribute(type="CodeableConcept", getter="reportOrigin", setter="reportOrigin", searcher=StringSearch("reportOrigin"))
         route = EmbeddedAttribute(type="CodeableConcept", getter="route", setter="route", searcher=StringSearch("route"))
@@ -8825,7 +8826,7 @@ class ImmunizationEducation(FhirBaseModel, EmbeddedMongoModel):
         reference = Attribute(getter="reference", setter="reference", searcher=StringSearch("reference"))
 
 class ImmunizationEvaluation(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8855,7 +8856,7 @@ class ImmunizationEvaluation(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        authority = ObjectIdReferenceAttribute({'Organization'}, ("authority", str), "authority", pk_setter="authority")
+        authority = ObjectIdReferenceAttribute(['Organization'], ("authority", str), "authority", pk_setter="authority")
         date = DateAttribute("date")
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         doseNumberPositiveInt = Attribute(getter="doseNumberPositiveInt", setter="doseNumberPositiveInt", searcher=NumericSearch("doseNumberPositiveInt"))
@@ -8863,8 +8864,8 @@ class ImmunizationEvaluation(FhirBaseModel, MongoModel):
         doseStatus = EmbeddedAttribute(type="CodeableConcept", getter="doseStatus", setter="doseStatus", searcher=StringSearch("doseStatus"))
         doseStatusReason = EmbeddedAttribute(type="CodeableConcept", getter="doseStatusReason", setter="doseStatusReason", searcher=StringSearch("doseStatusReason"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        immunizationEvent = ObjectIdReferenceAttribute({'Immunization'}, ("immunizationEvent", str), "immunizationEvent", pk_setter="immunizationEvent")
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        immunizationEvent = ObjectIdReferenceAttribute(['Immunization'], ("immunizationEvent", str), "immunizationEvent", pk_setter="immunizationEvent")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         series = Attribute(getter="series", setter="series", searcher=StringSearch("series"))
         seriesDosesPositiveInt = Attribute(getter="seriesDosesPositiveInt", setter="seriesDosesPositiveInt", searcher=NumericSearch("seriesDosesPositiveInt"))
         seriesDosesString = Attribute(getter="seriesDosesString", setter="seriesDosesString", searcher=StringSearch("seriesDosesString"))
@@ -8881,7 +8882,7 @@ class ImmunizationPerformer(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        actor = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("actor", str), "actor", pk_setter="actor")
+        actor = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("actor", str), "actor", pk_setter="actor")
         function = EmbeddedAttribute(type="CodeableConcept", getter="function", setter="function", searcher=StringSearch("function"))
 
 class ImmunizationProtocolApplied(FhirBaseModel, EmbeddedMongoModel):
@@ -8889,8 +8890,8 @@ class ImmunizationProtocolApplied(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     authority = fields.ObjectIdField(blank=True, required=False)
-    doseNumberPositiveInt = fields.IntegerField(blank=False, required=True)
-    doseNumberString = fields.CharField(blank=False, required=True)
+    doseNumberPositiveInt = fields.IntegerField(blank=True, required=False)
+    doseNumberString = fields.CharField(blank=True, required=False)
     series = fields.CharField(blank=True, required=False)
     seriesDosesPositiveInt = fields.IntegerField(blank=True, required=False)
     seriesDosesString = fields.CharField(blank=True, required=False)
@@ -8899,7 +8900,7 @@ class ImmunizationProtocolApplied(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        authority = ObjectIdReferenceAttribute({'Organization'}, ("authority", str), "authority", pk_setter="authority")
+        authority = ObjectIdReferenceAttribute(['Organization'], ("authority", str), "authority", pk_setter="authority")
         doseNumberPositiveInt = Attribute(getter="doseNumberPositiveInt", setter="doseNumberPositiveInt", searcher=NumericSearch("doseNumberPositiveInt"))
         doseNumberString = Attribute(getter="doseNumberString", setter="doseNumberString", searcher=StringSearch("doseNumberString"))
         series = Attribute(getter="series", setter="series", searcher=StringSearch("series"))
@@ -8919,11 +8920,11 @@ class ImmunizationReaction(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         date = DateAttribute("date")
-        detail = ObjectIdReferenceAttribute({'Observation'}, ("detail", str), "detail", pk_setter="detail")
+        detail = ObjectIdReferenceAttribute(['Observation'], ("detail", str), "detail", pk_setter="detail")
         reported = Attribute(getter="reported", setter="reported", searcher=StringSearch("reported"))
 
 class ImmunizationRecommendation(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -8943,10 +8944,10 @@ class ImmunizationRecommendation(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        authority = ObjectIdReferenceAttribute({'Organization'}, ("authority", str), "authority", pk_setter="authority")
+        authority = ObjectIdReferenceAttribute(['Organization'], ("authority", str), "authority", pk_setter="authority")
         date = DateAttribute("date")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         recommendation = EmbeddedAttribute(type="ImmunizationRecommendationRecommendation", getter="recommendation", setter="recommendation", searcher=StringSearch("recommendation"))
 
 class ImmunizationRecommendationRecommendation(FhirBaseModel, EmbeddedMongoModel):
@@ -8981,8 +8982,8 @@ class ImmunizationRecommendationRecommendation(FhirBaseModel, EmbeddedMongoModel
         series = Attribute(getter="series", setter="series", searcher=StringSearch("series"))
         seriesDosesPositiveInt = Attribute(getter="seriesDosesPositiveInt", setter="seriesDosesPositiveInt", searcher=NumericSearch("seriesDosesPositiveInt"))
         seriesDosesString = Attribute(getter="seriesDosesString", setter="seriesDosesString", searcher=StringSearch("seriesDosesString"))
-        supportingImmunization = ObjectIdReferenceAttribute({'ImmunizationEvaluation', 'Immunization'}, ("supportingImmunization", str), "supportingImmunization", pk_setter="supportingImmunization")
-        supportingPatientInformation = ObjectIdReferenceAttribute({'Resource'}, ("supportingPatientInformation", str), "supportingPatientInformation", pk_setter="supportingPatientInformation")
+        supportingImmunization = ObjectIdReferenceAttribute(['Immunization', 'ImmunizationEvaluation'], ("supportingImmunization", str), "supportingImmunization", pk_setter="supportingImmunization")
+        supportingPatientInformation = ObjectIdReferenceAttribute(['Resource'], ("supportingPatientInformation", str), "supportingPatientInformation", pk_setter="supportingPatientInformation")
         targetDisease = EmbeddedAttribute(type="CodeableConcept", getter="targetDisease", setter="targetDisease", searcher=StringSearch("targetDisease"))
         vaccineCode = EmbeddedAttribute(type="CodeableConcept", getter="vaccineCode", setter="vaccineCode", searcher=StringSearch("vaccineCode"))
 
@@ -9000,7 +9001,7 @@ class ImmunizationRecommendationRecommendationDateCriterion(FhirBaseModel, Embed
         value = DateAttribute("value")
 
 class ImplementationGuide(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -9093,8 +9094,8 @@ class ImplementationGuideDefinitionPage(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     generation = fields.CharField(blank=False, required=True)
-    nameReference = fields.ObjectIdField(blank=False, required=True)
-    nameUrl = fields.CharField(blank=False, required=True)
+    nameReference = fields.ObjectIdField(blank=True, required=False)
+    nameUrl = fields.CharField(blank=True, required=False)
     page = fields.EmbeddedDocumentListField("ImplementationGuideDefinitionPage", blank=True, required=False)
     title = fields.CharField(blank=False, required=True)
     class FhirMap:
@@ -9102,7 +9103,7 @@ class ImplementationGuideDefinitionPage(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         generation = Attribute(getter="generation", setter="generation", searcher=StringSearch("generation"))
-        nameReference = ObjectIdReferenceAttribute({'Binary'}, ("nameReference", str), "nameReference", pk_setter="nameReference")
+        nameReference = ObjectIdReferenceAttribute(['Binary'], ("nameReference", str), "nameReference", pk_setter="nameReference")
         nameUrl = Attribute(getter="nameUrl", setter="nameUrl", searcher=StringSearch("nameUrl"))
         page = EmbeddedAttribute(type="ImplementationGuideDefinitionPage", getter="page", setter="page", searcher=StringSearch("page"))
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
@@ -9141,7 +9142,7 @@ class ImplementationGuideDefinitionResource(FhirBaseModel, EmbeddedMongoModel):
         fhirVersion = Attribute(getter="fhirVersion", setter="fhirVersion", searcher=StringSearch("fhirVersion"))
         groupingId = Attribute(getter="groupingId", setter="groupingId", searcher=StringSearch("groupingId"))
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
-        reference = ObjectIdReferenceAttribute({'Resource'}, ("reference", str), "reference", pk_setter="reference")
+        reference = ObjectIdReferenceAttribute(['Resource'], ("reference", str), "reference", pk_setter="reference")
 
 class ImplementationGuideDefinitionTemplate(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -9234,11 +9235,11 @@ class ImplementationGuideManifestResource(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         exampleBoolean = Attribute(getter="exampleBoolean", setter="exampleBoolean", searcher=StringSearch("exampleBoolean"))
         exampleCanonical = Attribute(getter="exampleCanonical", setter="exampleCanonical", searcher=StringSearch("exampleCanonical"))
-        reference = ObjectIdReferenceAttribute({'Resource'}, ("reference", str), "reference", pk_setter="reference")
+        reference = ObjectIdReferenceAttribute(['Resource'], ("reference", str), "reference", pk_setter="reference")
         relativePath = Attribute(getter="relativePath", setter="relativePath", searcher=StringSearch("relativePath"))
 
 class InsurancePlan(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -9267,16 +9268,16 @@ class InsurancePlan(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        administeredBy = ObjectIdReferenceAttribute({'Organization'}, ("administeredBy", str), "administeredBy", pk_setter="administeredBy")
+        administeredBy = ObjectIdReferenceAttribute(['Organization'], ("administeredBy", str), "administeredBy", pk_setter="administeredBy")
         alias = Attribute(getter="alias", setter="alias", searcher=StringSearch("alias"))
         contact = EmbeddedAttribute(type="InsurancePlanContact", getter="contact", setter="contact", searcher=StringSearch("contact"))
         coverage = EmbeddedAttribute(type="InsurancePlanCoverage", getter="coverage", setter="coverage", searcher=StringSearch("coverage"))
-        coverageArea = ObjectIdReferenceAttribute({'Location'}, ("coverageArea", str), "coverageArea", pk_setter="coverageArea")
-        endpoint = ObjectIdReferenceAttribute({'Endpoint'}, ("endpoint", str), "endpoint", pk_setter="endpoint")
+        coverageArea = ObjectIdReferenceAttribute(['Location'], ("coverageArea", str), "coverageArea", pk_setter="coverageArea")
+        endpoint = ObjectIdReferenceAttribute(['Endpoint'], ("endpoint", str), "endpoint", pk_setter="endpoint")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
-        network = ObjectIdReferenceAttribute({'Organization'}, ("network", str), "network", pk_setter="network")
-        ownedBy = ObjectIdReferenceAttribute({'Organization'}, ("ownedBy", str), "ownedBy", pk_setter="ownedBy")
+        network = ObjectIdReferenceAttribute(['Organization'], ("network", str), "network", pk_setter="network")
+        ownedBy = ObjectIdReferenceAttribute(['Organization'], ("ownedBy", str), "ownedBy", pk_setter="ownedBy")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         plan = EmbeddedAttribute(type="InsurancePlanPlan", getter="plan", setter="plan", searcher=StringSearch("plan"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
@@ -9311,7 +9312,7 @@ class InsurancePlanCoverage(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         benefit = EmbeddedAttribute(type="InsurancePlanCoverageBenefit", getter="benefit", setter="benefit", searcher=StringSearch("benefit"))
-        network = ObjectIdReferenceAttribute({'Organization'}, ("network", str), "network", pk_setter="network")
+        network = ObjectIdReferenceAttribute(['Organization'], ("network", str), "network", pk_setter="network")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class InsurancePlanCoverageBenefit(FhirBaseModel, EmbeddedMongoModel):
@@ -9356,10 +9357,10 @@ class InsurancePlanPlan(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        coverageArea = ObjectIdReferenceAttribute({'Location'}, ("coverageArea", str), "coverageArea", pk_setter="coverageArea")
+        coverageArea = ObjectIdReferenceAttribute(['Location'], ("coverageArea", str), "coverageArea", pk_setter="coverageArea")
         generalCost = EmbeddedAttribute(type="InsurancePlanPlanGeneralCost", getter="generalCost", setter="generalCost", searcher=StringSearch("generalCost"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        network = ObjectIdReferenceAttribute({'Organization'}, ("network", str), "network", pk_setter="network")
+        network = ObjectIdReferenceAttribute(['Organization'], ("network", str), "network", pk_setter="network")
         specificCost = EmbeddedAttribute(type="InsurancePlanPlanSpecificCost", getter="specificCost", setter="specificCost", searcher=StringSearch("specificCost"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
@@ -9424,7 +9425,7 @@ class InsurancePlanPlanSpecificCostBenefitCost(FhirBaseModel, EmbeddedMongoModel
         value = EmbeddedAttribute(type="Quantity", getter="value", setter="value", searcher=StringSearch("value"))
 
 class Invoice(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -9455,18 +9456,18 @@ class Invoice(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        account = ObjectIdReferenceAttribute({'Account'}, ("account", str), "account", pk_setter="account")
+        account = ObjectIdReferenceAttribute(['Account'], ("account", str), "account", pk_setter="account")
         cancelledReason = Attribute(getter="cancelledReason", setter="cancelledReason", searcher=StringSearch("cancelledReason"))
         date = DateAttribute("date")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        issuer = ObjectIdReferenceAttribute({'Organization'}, ("issuer", str), "issuer", pk_setter="issuer")
+        issuer = ObjectIdReferenceAttribute(['Organization'], ("issuer", str), "issuer", pk_setter="issuer")
         lineItem = EmbeddedAttribute(type="InvoiceLineItem", getter="lineItem", setter="lineItem", searcher=StringSearch("lineItem"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         participant = EmbeddedAttribute(type="InvoiceParticipant", getter="participant", setter="participant", searcher=StringSearch("participant"))
         paymentTerms = Attribute(getter="paymentTerms", setter="paymentTerms", searcher=StringSearch("paymentTerms"))
-        recipient = ObjectIdReferenceAttribute({'RelatedPerson', 'Organization', 'Patient'}, ("recipient", str), "recipient", pk_setter="recipient")
+        recipient = ObjectIdReferenceAttribute(['Organization', 'Patient', 'RelatedPerson'], ("recipient", str), "recipient", pk_setter="recipient")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         totalGross = EmbeddedAttribute(type="Money", getter="totalGross", setter="totalGross", searcher=StringSearch("totalGross"))
         totalNet = EmbeddedAttribute(type="Money", getter="totalNet", setter="totalNet", searcher=StringSearch("totalNet"))
         totalPriceComponent = EmbeddedAttribute(type="InvoiceLineItemPriceComponent", getter="totalPriceComponent", setter="totalPriceComponent", searcher=StringSearch("totalPriceComponent"))
@@ -9476,8 +9477,8 @@ class InvoiceLineItem(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    chargeItemCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    chargeItemReference = fields.ObjectIdField(blank=False, required=True)
+    chargeItemCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    chargeItemReference = fields.ObjectIdField(blank=True, required=False)
     priceComponent = fields.EmbeddedDocumentListField("InvoiceLineItemPriceComponent", blank=True, required=False)
     sequence = fields.IntegerField(blank=True, required=False)
     class FhirMap:
@@ -9485,7 +9486,7 @@ class InvoiceLineItem(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         chargeItemCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="chargeItemCodeableConcept", setter="chargeItemCodeableConcept", searcher=StringSearch("chargeItemCodeableConcept"))
-        chargeItemReference = ObjectIdReferenceAttribute({'ChargeItem'}, ("chargeItemReference", str), "chargeItemReference", pk_setter="chargeItemReference")
+        chargeItemReference = ObjectIdReferenceAttribute(['ChargeItem'], ("chargeItemReference", str), "chargeItemReference", pk_setter="chargeItemReference")
         priceComponent = EmbeddedAttribute(type="InvoiceLineItemPriceComponent", getter="priceComponent", setter="priceComponent", searcher=StringSearch("priceComponent"))
         sequence = Attribute(getter="sequence", setter="sequence", searcher=NumericSearch("sequence"))
 
@@ -9516,11 +9517,11 @@ class InvoiceParticipant(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        actor = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("actor", str), "actor", pk_setter="actor")
+        actor = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("actor", str), "actor", pk_setter="actor")
         role = EmbeddedAttribute(type="CodeableConcept", getter="role", setter="role", searcher=StringSearch("role"))
 
 class Library(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -9590,7 +9591,7 @@ class Library(FhirBaseModel, MongoModel):
         reviewer = EmbeddedAttribute(type="ContactDetail", getter="reviewer", setter="reviewer", searcher=StringSearch("reviewer"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subjectCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="subjectCodeableConcept", setter="subjectCodeableConcept", searcher=StringSearch("subjectCodeableConcept"))
-        subjectReference = ObjectIdReferenceAttribute({'Group'}, ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
+        subjectReference = ObjectIdReferenceAttribute(['Group'], ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
         subtitle = Attribute(getter="subtitle", setter="subtitle", searcher=StringSearch("subtitle"))
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
         topic = EmbeddedAttribute(type="CodeableConcept", getter="topic", setter="topic", searcher=StringSearch("topic"))
@@ -9601,7 +9602,7 @@ class Library(FhirBaseModel, MongoModel):
         version = Attribute(getter="version", setter="version", searcher=StringSearch("version"))
 
 class Linkage(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -9620,7 +9621,7 @@ class Linkage(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         active = Attribute(getter="active", setter="active", searcher=StringSearch("active"))
-        author = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("author", str), "author", pk_setter="author")
+        author = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("author", str), "author", pk_setter="author")
         item = EmbeddedAttribute(type="LinkageItem", getter="item", setter="item", searcher=StringSearch("item"))
 
 class LinkageItem(FhirBaseModel, EmbeddedMongoModel):
@@ -9633,11 +9634,11 @@ class LinkageItem(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        resource = ObjectIdReferenceAttribute({'Resource'}, ("resource", str), "resource", pk_setter="resource")
+        resource = ObjectIdReferenceAttribute(['Resource'], ("resource", str), "resource", pk_setter="resource")
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
 
 class List(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -9668,15 +9669,15 @@ class List(FhirBaseModel, MongoModel):
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         date = DateAttribute("date")
         emptyReason = EmbeddedAttribute(type="CodeableConcept", getter="emptyReason", setter="emptyReason", searcher=StringSearch("emptyReason"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         entry = EmbeddedAttribute(type="ListEntry", getter="entry", setter="entry", searcher=StringSearch("entry"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         mode = Attribute(getter="mode", setter="mode", searcher=StringSearch("mode"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         orderedBy = EmbeddedAttribute(type="CodeableConcept", getter="orderedBy", setter="orderedBy", searcher=StringSearch("orderedBy"))
-        source = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Device', 'Patient'}, ("source", str), "source", pk_setter="source")
+        source = ObjectIdReferenceAttribute(['Device', 'Patient', 'Practitioner', 'PractitionerRole'], ("source", str), "source", pk_setter="source")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Location', 'Device', 'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Location', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
 
 class ListEntry(FhirBaseModel, EmbeddedMongoModel):
@@ -9694,10 +9695,10 @@ class ListEntry(FhirBaseModel, EmbeddedMongoModel):
         date = DateAttribute("date")
         deleted = Attribute(getter="deleted", setter="deleted", searcher=StringSearch("deleted"))
         flag = EmbeddedAttribute(type="CodeableConcept", getter="flag", setter="flag", searcher=StringSearch("flag"))
-        item = ObjectIdReferenceAttribute({'Resource'}, ("item", str), "item", pk_setter="item")
+        item = ObjectIdReferenceAttribute(['Resource'], ("item", str), "item", pk_setter="item")
 
 class Location(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -9733,14 +9734,14 @@ class Location(FhirBaseModel, MongoModel):
         alias = Attribute(getter="alias", setter="alias", searcher=StringSearch("alias"))
         availabilityExceptions = Attribute(getter="availabilityExceptions", setter="availabilityExceptions", searcher=StringSearch("availabilityExceptions"))
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
-        endpoint = ObjectIdReferenceAttribute({'Endpoint'}, ("endpoint", str), "endpoint", pk_setter="endpoint")
+        endpoint = ObjectIdReferenceAttribute(['Endpoint'], ("endpoint", str), "endpoint", pk_setter="endpoint")
         hoursOfOperation = EmbeddedAttribute(type="LocationHoursOfOperation", getter="hoursOfOperation", setter="hoursOfOperation", searcher=StringSearch("hoursOfOperation"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        managingOrganization = ObjectIdReferenceAttribute({'Organization'}, ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
+        managingOrganization = ObjectIdReferenceAttribute(['Organization'], ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
         mode = Attribute(getter="mode", setter="mode", searcher=StringSearch("mode"))
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         operationalStatus = EmbeddedAttribute(type="Coding", getter="operationalStatus", setter="operationalStatus", searcher=StringSearch("operationalStatus"))
-        partOf = ObjectIdReferenceAttribute({'Location'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['Location'], ("partOf", str), "partOf", pk_setter="partOf")
         physicalType = EmbeddedAttribute(type="CodeableConcept", getter="physicalType", setter="physicalType", searcher=StringSearch("physicalType"))
         position = EmbeddedAttribute(type="LocationPosition", getter="position", setter="position", searcher=StringSearch("position"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
@@ -9799,7 +9800,7 @@ class MarketingStatus(FhirBaseModel, EmbeddedMongoModel):
         status = EmbeddedAttribute(type="CodeableConcept", getter="status", setter="status", searcher=StringSearch("status"))
 
 class Measure(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -9888,7 +9889,7 @@ class Measure(FhirBaseModel, MongoModel):
         scoring = EmbeddedAttribute(type="CodeableConcept", getter="scoring", setter="scoring", searcher=StringSearch("scoring"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subjectCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="subjectCodeableConcept", setter="subjectCodeableConcept", searcher=StringSearch("subjectCodeableConcept"))
-        subjectReference = ObjectIdReferenceAttribute({'Group'}, ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
+        subjectReference = ObjectIdReferenceAttribute(['Group'], ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
         subtitle = Attribute(getter="subtitle", setter="subtitle", searcher=StringSearch("subtitle"))
         supplementalData = EmbeddedAttribute(type="MeasureSupplementalData", getter="supplementalData", setter="supplementalData", searcher=StringSearch("supplementalData"))
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
@@ -9964,7 +9965,7 @@ class MeasureGroupStratifierComponent(FhirBaseModel, EmbeddedMongoModel):
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
 
 class MeasureReport(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -9991,15 +9992,15 @@ class MeasureReport(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         date = DateAttribute("date")
-        evaluatedResource = ObjectIdReferenceAttribute({'Resource'}, ("evaluatedResource", str), "evaluatedResource", pk_setter="evaluatedResource")
+        evaluatedResource = ObjectIdReferenceAttribute(['Resource'], ("evaluatedResource", str), "evaluatedResource", pk_setter="evaluatedResource")
         group = EmbeddedAttribute(type="MeasureReportGroup", getter="group", setter="group", searcher=StringSearch("group"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         improvementNotation = EmbeddedAttribute(type="CodeableConcept", getter="improvementNotation", setter="improvementNotation", searcher=StringSearch("improvementNotation"))
         measure = Attribute(getter="measure", setter="measure", searcher=StringSearch("measure"))
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
-        reporter = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Location', 'Organization'}, ("reporter", str), "reporter", pk_setter="reporter")
+        reporter = ObjectIdReferenceAttribute(['Location', 'Organization', 'Practitioner', 'PractitionerRole'], ("reporter", str), "reporter", pk_setter="reporter")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'PractitionerRole', 'Location', 'RelatedPerson', 'Group', 'Practitioner', 'Device', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Location', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("subject", str), "subject", pk_setter="subject")
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
 
 class MeasureReportGroup(FhirBaseModel, EmbeddedMongoModel):
@@ -10032,7 +10033,7 @@ class MeasureReportGroupPopulation(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         count = Attribute(getter="count", setter="count", searcher=NumericSearch("count"))
-        subjectResults = ObjectIdReferenceAttribute({'List'}, ("subjectResults", str), "subjectResults", pk_setter="subjectResults")
+        subjectResults = ObjectIdReferenceAttribute(['List'], ("subjectResults", str), "subjectResults", pk_setter="subjectResults")
 
 class MeasureReportGroupStratifier(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -10090,7 +10091,7 @@ class MeasureReportGroupStratifierStratumPopulation(FhirBaseModel, EmbeddedMongo
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         count = Attribute(getter="count", setter="count", searcher=NumericSearch("count"))
-        subjectResults = ObjectIdReferenceAttribute({'List'}, ("subjectResults", str), "subjectResults", pk_setter="subjectResults")
+        subjectResults = ObjectIdReferenceAttribute(['List'], ("subjectResults", str), "subjectResults", pk_setter="subjectResults")
 
 class MeasureSupplementalData(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -10110,7 +10111,7 @@ class MeasureSupplementalData(FhirBaseModel, EmbeddedMongoModel):
         usage = EmbeddedAttribute(type="CodeableConcept", getter="usage", setter="usage", searcher=StringSearch("usage"))
 
 class Media(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -10148,32 +10149,32 @@ class Media(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        basedOn = ObjectIdReferenceAttribute({'CarePlan', 'ServiceRequest'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['CarePlan', 'ServiceRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         bodySite = EmbeddedAttribute(type="CodeableConcept", getter="bodySite", setter="bodySite", searcher=StringSearch("bodySite"))
         content = EmbeddedAttribute(type="Attachment", getter="content", setter="content", searcher=StringSearch("content"))
         createdDateTime = DateAttribute("createdDateTime")
         createdPeriod = EmbeddedAttribute(type="Period", getter="createdPeriod", setter="createdPeriod", searcher=StringSearch("createdPeriod"))
-        device = ObjectIdReferenceAttribute({'DeviceMetric', 'Device'}, ("device", str), "device", pk_setter="device")
+        device = ObjectIdReferenceAttribute(['Device', 'DeviceMetric'], ("device", str), "device", pk_setter="device")
         deviceName = Attribute(getter="deviceName", setter="deviceName", searcher=StringSearch("deviceName"))
         duration = Attribute(getter="duration", setter="duration", searcher=NumericSearch("duration"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         frames = Attribute(getter="frames", setter="frames", searcher=NumericSearch("frames"))
         height = Attribute(getter="height", setter="height", searcher=NumericSearch("height"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         issued = DateAttribute("issued")
         modality = EmbeddedAttribute(type="CodeableConcept", getter="modality", setter="modality", searcher=StringSearch("modality"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        operator = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("operator", str), "operator", pk_setter="operator")
-        partOf = ObjectIdReferenceAttribute({'Resource'}, ("partOf", str), "partOf", pk_setter="partOf")
+        operator = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("operator", str), "operator", pk_setter="operator")
+        partOf = ObjectIdReferenceAttribute(['Resource'], ("partOf", str), "partOf", pk_setter="partOf")
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'PractitionerRole', 'Location', 'Group', 'Practitioner', 'Device', 'Specimen', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Location', 'Patient', 'Practitioner', 'PractitionerRole', 'Specimen'], ("subject", str), "subject", pk_setter="subject")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
         view = EmbeddedAttribute(type="CodeableConcept", getter="view", setter="view", searcher=StringSearch("view"))
         width = Attribute(getter="width", setter="width", searcher=NumericSearch("width"))
 
 class Medication(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -10202,11 +10203,11 @@ class Medication(FhirBaseModel, MongoModel):
         form = EmbeddedAttribute(type="CodeableConcept", getter="form", setter="form", searcher=StringSearch("form"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         ingredient = EmbeddedAttribute(type="MedicationIngredient", getter="ingredient", setter="ingredient", searcher=StringSearch("ingredient"))
-        manufacturer = ObjectIdReferenceAttribute({'Organization'}, ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
+        manufacturer = ObjectIdReferenceAttribute(['Organization'], ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class MedicationAdministration(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -10217,13 +10218,13 @@ class MedicationAdministration(FhirBaseModel, MongoModel):
     context = fields.ObjectIdField(blank=True, required=False)
     device = fields.ObjectIdField(blank=True, required=False)
     dosage = fields.EmbeddedDocumentField("MedicationAdministrationDosage", blank=True, required=False)
-    effectiveDateTime = fields.DateTimeField(blank=False, required=True)
-    effectivePeriod = fields.EmbeddedDocumentField("Period", blank=False, required=True)
+    effectiveDateTime = fields.DateTimeField(blank=True, required=False)
+    effectivePeriod = fields.EmbeddedDocumentField("Period", blank=True, required=False)
     eventHistory = fields.ObjectIdField(blank=True, required=False)
     identifier = fields.EmbeddedDocumentListField("Identifier", blank=True, required=False)
     instantiates = fields.ListField(fields.CharField(), blank=True, required=False)
-    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    medicationReference = fields.ObjectIdField(blank=False, required=True)
+    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    medicationReference = fields.ObjectIdField(blank=True, required=False)
     note = fields.EmbeddedDocumentListField("Annotation", blank=True, required=False)
     partOf = fields.ObjectIdField(blank=True, required=False)
     performer = fields.EmbeddedDocumentListField("MedicationAdministrationPerformer", blank=True, required=False)
@@ -10243,26 +10244,26 @@ class MedicationAdministration(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
-        context = ObjectIdReferenceAttribute({'Encounter', 'EpisodeOfCare'}, ("context", str), "context", pk_setter="context")
-        device = ObjectIdReferenceAttribute({'Device'}, ("device", str), "device", pk_setter="device")
+        context = ObjectIdReferenceAttribute(['Encounter', 'EpisodeOfCare'], ("context", str), "context", pk_setter="context")
+        device = ObjectIdReferenceAttribute(['Device'], ("device", str), "device", pk_setter="device")
         dosage = EmbeddedAttribute(type="MedicationAdministrationDosage", getter="dosage", setter="dosage", searcher=StringSearch("dosage"))
         effectiveDateTime = DateAttribute("effectiveDateTime")
         effectivePeriod = EmbeddedAttribute(type="Period", getter="effectivePeriod", setter="effectivePeriod", searcher=StringSearch("effectivePeriod"))
-        eventHistory = ObjectIdReferenceAttribute({'Provenance'}, ("eventHistory", str), "eventHistory", pk_setter="eventHistory")
+        eventHistory = ObjectIdReferenceAttribute(['Provenance'], ("eventHistory", str), "eventHistory", pk_setter="eventHistory")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         instantiates = Attribute(getter="instantiates", setter="instantiates", searcher=StringSearch("instantiates"))
         medicationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="medicationCodeableConcept", setter="medicationCodeableConcept", searcher=StringSearch("medicationCodeableConcept"))
-        medicationReference = ObjectIdReferenceAttribute({'Medication'}, ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
+        medicationReference = ObjectIdReferenceAttribute(['Medication'], ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        partOf = ObjectIdReferenceAttribute({'MedicationAdministration', 'Procedure'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['MedicationAdministration', 'Procedure'], ("partOf", str), "partOf", pk_setter="partOf")
         performer = EmbeddedAttribute(type="MedicationAdministrationPerformer", getter="performer", setter="performer", searcher=StringSearch("performer"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        request = ObjectIdReferenceAttribute({'MedicationRequest'}, ("request", str), "request", pk_setter="request")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        request = ObjectIdReferenceAttribute(['MedicationRequest'], ("request", str), "request", pk_setter="request")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusReason = EmbeddedAttribute(type="CodeableConcept", getter="statusReason", setter="statusReason", searcher=StringSearch("statusReason"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
-        supportingInformation = ObjectIdReferenceAttribute({'Resource'}, ("supportingInformation", str), "supportingInformation", pk_setter="supportingInformation")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
+        supportingInformation = ObjectIdReferenceAttribute(['Resource'], ("supportingInformation", str), "supportingInformation", pk_setter="supportingInformation")
 
 class MedicationAdministrationDosage(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -10297,7 +10298,7 @@ class MedicationAdministrationPerformer(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        actor = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Patient'}, ("actor", str), "actor", pk_setter="actor")
+        actor = ObjectIdReferenceAttribute(['Device', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("actor", str), "actor", pk_setter="actor")
         function = EmbeddedAttribute(type="CodeableConcept", getter="function", setter="function", searcher=StringSearch("function"))
 
 class MedicationBatch(FhirBaseModel, EmbeddedMongoModel):
@@ -10314,7 +10315,7 @@ class MedicationBatch(FhirBaseModel, EmbeddedMongoModel):
         lotNumber = Attribute(getter="lotNumber", setter="lotNumber", searcher=StringSearch("lotNumber"))
 
 class MedicationDispense(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -10331,8 +10332,8 @@ class MedicationDispense(FhirBaseModel, MongoModel):
     eventHistory = fields.ObjectIdField(blank=True, required=False)
     identifier = fields.EmbeddedDocumentListField("Identifier", blank=True, required=False)
     location = fields.ObjectIdField(blank=True, required=False)
-    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    medicationReference = fields.ObjectIdField(blank=False, required=True)
+    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    medicationReference = fields.ObjectIdField(blank=True, required=False)
     note = fields.EmbeddedDocumentListField("Annotation", blank=True, required=False)
     partOf = fields.ObjectIdField(blank=True, required=False)
     performer = fields.EmbeddedDocumentListField("MedicationDispensePerformer", blank=True, required=False)
@@ -10355,29 +10356,29 @@ class MedicationDispense(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        authorizingPrescription = ObjectIdReferenceAttribute({'MedicationRequest'}, ("authorizingPrescription", str), "authorizingPrescription", pk_setter="authorizingPrescription")
+        authorizingPrescription = ObjectIdReferenceAttribute(['MedicationRequest'], ("authorizingPrescription", str), "authorizingPrescription", pk_setter="authorizingPrescription")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
-        context = ObjectIdReferenceAttribute({'Encounter', 'EpisodeOfCare'}, ("context", str), "context", pk_setter="context")
+        context = ObjectIdReferenceAttribute(['Encounter', 'EpisodeOfCare'], ("context", str), "context", pk_setter="context")
         daysSupply = EmbeddedAttribute(type="Quantity", getter="daysSupply", setter="daysSupply", searcher=StringSearch("daysSupply"))
-        destination = ObjectIdReferenceAttribute({'Location'}, ("destination", str), "destination", pk_setter="destination")
-        detectedIssue = ObjectIdReferenceAttribute({'DetectedIssue'}, ("detectedIssue", str), "detectedIssue", pk_setter="detectedIssue")
+        destination = ObjectIdReferenceAttribute(['Location'], ("destination", str), "destination", pk_setter="destination")
+        detectedIssue = ObjectIdReferenceAttribute(['DetectedIssue'], ("detectedIssue", str), "detectedIssue", pk_setter="detectedIssue")
         dosageInstruction = EmbeddedAttribute(type="Dosage", getter="dosageInstruction", setter="dosageInstruction", searcher=StringSearch("dosageInstruction"))
-        eventHistory = ObjectIdReferenceAttribute({'Provenance'}, ("eventHistory", str), "eventHistory", pk_setter="eventHistory")
+        eventHistory = ObjectIdReferenceAttribute(['Provenance'], ("eventHistory", str), "eventHistory", pk_setter="eventHistory")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         medicationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="medicationCodeableConcept", setter="medicationCodeableConcept", searcher=StringSearch("medicationCodeableConcept"))
-        medicationReference = ObjectIdReferenceAttribute({'Medication'}, ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
+        medicationReference = ObjectIdReferenceAttribute(['Medication'], ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        partOf = ObjectIdReferenceAttribute({'Procedure'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['Procedure'], ("partOf", str), "partOf", pk_setter="partOf")
         performer = EmbeddedAttribute(type="MedicationDispensePerformer", getter="performer", setter="performer", searcher=StringSearch("performer"))
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
-        receiver = ObjectIdReferenceAttribute({'Practitioner', 'Patient'}, ("receiver", str), "receiver", pk_setter="receiver")
+        receiver = ObjectIdReferenceAttribute(['Patient', 'Practitioner'], ("receiver", str), "receiver", pk_setter="receiver")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusReasonCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="statusReasonCodeableConcept", setter="statusReasonCodeableConcept", searcher=StringSearch("statusReasonCodeableConcept"))
-        statusReasonReference = ObjectIdReferenceAttribute({'DetectedIssue'}, ("statusReasonReference", str), "statusReasonReference", pk_setter="statusReasonReference")
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        statusReasonReference = ObjectIdReferenceAttribute(['DetectedIssue'], ("statusReasonReference", str), "statusReasonReference", pk_setter="statusReasonReference")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         substitution = EmbeddedAttribute(type="MedicationDispenseSubstitution", getter="substitution", setter="substitution", searcher=StringSearch("substitution"))
-        supportingInformation = ObjectIdReferenceAttribute({'Resource'}, ("supportingInformation", str), "supportingInformation", pk_setter="supportingInformation")
+        supportingInformation = ObjectIdReferenceAttribute(['Resource'], ("supportingInformation", str), "supportingInformation", pk_setter="supportingInformation")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
         whenHandedOver = DateAttribute("whenHandedOver")
         whenPrepared = DateAttribute("whenPrepared")
@@ -10392,7 +10393,7 @@ class MedicationDispensePerformer(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        actor = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("actor", str), "actor", pk_setter="actor")
+        actor = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("actor", str), "actor", pk_setter="actor")
         function = EmbeddedAttribute(type="CodeableConcept", getter="function", setter="function", searcher=StringSearch("function"))
 
 class MedicationDispenseSubstitution(FhirBaseModel, EmbeddedMongoModel):
@@ -10408,7 +10409,7 @@ class MedicationDispenseSubstitution(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         reason = EmbeddedAttribute(type="CodeableConcept", getter="reason", setter="reason", searcher=StringSearch("reason"))
-        responsibleParty = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("responsibleParty", str), "responsibleParty", pk_setter="responsibleParty")
+        responsibleParty = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("responsibleParty", str), "responsibleParty", pk_setter="responsibleParty")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
         wasSubstituted = Attribute(getter="wasSubstituted", setter="wasSubstituted", searcher=StringSearch("wasSubstituted"))
 
@@ -10417,8 +10418,8 @@ class MedicationIngredient(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     isActive = fields.BooleanField(blank=True, required=False)
-    itemCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    itemReference = fields.ObjectIdField(blank=False, required=True)
+    itemCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    itemReference = fields.ObjectIdField(blank=True, required=False)
     strength = fields.EmbeddedDocumentField("Ratio", blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
@@ -10426,11 +10427,11 @@ class MedicationIngredient(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         isActive = Attribute(getter="isActive", setter="isActive", searcher=StringSearch("isActive"))
         itemCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="itemCodeableConcept", setter="itemCodeableConcept", searcher=StringSearch("itemCodeableConcept"))
-        itemReference = ObjectIdReferenceAttribute({'Substance', 'Medication'}, ("itemReference", str), "itemReference", pk_setter="itemReference")
+        itemReference = ObjectIdReferenceAttribute(['Medication', 'Substance'], ("itemReference", str), "itemReference", pk_setter="itemReference")
         strength = EmbeddedAttribute(type="Ratio", getter="strength", setter="strength", searcher=StringSearch("strength"))
 
 class MedicationKnowledge(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -10469,16 +10470,16 @@ class MedicationKnowledge(FhirBaseModel, MongoModel):
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         administrationGuidelines = EmbeddedAttribute(type="MedicationKnowledgeAdministrationGuidelines", getter="administrationGuidelines", setter="administrationGuidelines", searcher=StringSearch("administrationGuidelines"))
         amount = EmbeddedAttribute(type="Quantity", getter="amount", setter="amount", searcher=StringSearch("amount"))
-        associatedMedication = ObjectIdReferenceAttribute({'Medication'}, ("associatedMedication", str), "associatedMedication", pk_setter="associatedMedication")
+        associatedMedication = ObjectIdReferenceAttribute(['Medication'], ("associatedMedication", str), "associatedMedication", pk_setter="associatedMedication")
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        contraindication = ObjectIdReferenceAttribute({'DetectedIssue'}, ("contraindication", str), "contraindication", pk_setter="contraindication")
+        contraindication = ObjectIdReferenceAttribute(['DetectedIssue'], ("contraindication", str), "contraindication", pk_setter="contraindication")
         cost = EmbeddedAttribute(type="MedicationKnowledgeCost", getter="cost", setter="cost", searcher=StringSearch("cost"))
         doseForm = EmbeddedAttribute(type="CodeableConcept", getter="doseForm", setter="doseForm", searcher=StringSearch("doseForm"))
         drugCharacteristic = EmbeddedAttribute(type="MedicationKnowledgeDrugCharacteristic", getter="drugCharacteristic", setter="drugCharacteristic", searcher=StringSearch("drugCharacteristic"))
         ingredient = EmbeddedAttribute(type="MedicationKnowledgeIngredient", getter="ingredient", setter="ingredient", searcher=StringSearch("ingredient"))
         intendedRoute = EmbeddedAttribute(type="CodeableConcept", getter="intendedRoute", setter="intendedRoute", searcher=StringSearch("intendedRoute"))
         kinetics = EmbeddedAttribute(type="MedicationKnowledgeKinetics", getter="kinetics", setter="kinetics", searcher=StringSearch("kinetics"))
-        manufacturer = ObjectIdReferenceAttribute({'Organization'}, ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
+        manufacturer = ObjectIdReferenceAttribute(['Organization'], ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
         medicineClassification = EmbeddedAttribute(type="MedicationKnowledgeMedicineClassification", getter="medicineClassification", setter="medicineClassification", searcher=StringSearch("medicineClassification"))
         monitoringProgram = EmbeddedAttribute(type="MedicationKnowledgeMonitoringProgram", getter="monitoringProgram", setter="monitoringProgram", searcher=StringSearch("monitoringProgram"))
         monograph = EmbeddedAttribute(type="MedicationKnowledgeMonograph", getter="monograph", setter="monograph", searcher=StringSearch("monograph"))
@@ -10504,7 +10505,7 @@ class MedicationKnowledgeAdministrationGuidelines(FhirBaseModel, EmbeddedMongoMo
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         dosage = EmbeddedAttribute(type="MedicationKnowledgeAdministrationGuidelinesDosage", getter="dosage", setter="dosage", searcher=StringSearch("dosage"))
         indicationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="indicationCodeableConcept", setter="indicationCodeableConcept", searcher=StringSearch("indicationCodeableConcept"))
-        indicationReference = ObjectIdReferenceAttribute({'ObservationDefinition'}, ("indicationReference", str), "indicationReference", pk_setter="indicationReference")
+        indicationReference = ObjectIdReferenceAttribute(['ObservationDefinition'], ("indicationReference", str), "indicationReference", pk_setter="indicationReference")
         patientCharacteristics = EmbeddedAttribute(type="MedicationKnowledgeAdministrationGuidelinesPatientCharacteristics", getter="patientCharacteristics", setter="patientCharacteristics", searcher=StringSearch("patientCharacteristics"))
 
 class MedicationKnowledgeAdministrationGuidelinesDosage(FhirBaseModel, EmbeddedMongoModel):
@@ -10524,8 +10525,8 @@ class MedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(FhirBase
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    characteristicCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    characteristicQuantity = fields.EmbeddedDocumentField("Quantity", blank=False, required=True)
+    characteristicCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    characteristicQuantity = fields.EmbeddedDocumentField("Quantity", blank=True, required=False)
     value = fields.ListField(fields.CharField(), blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
@@ -10574,8 +10575,8 @@ class MedicationKnowledgeIngredient(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     isActive = fields.BooleanField(blank=True, required=False)
-    itemCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    itemReference = fields.ObjectIdField(blank=False, required=True)
+    itemCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    itemReference = fields.ObjectIdField(blank=True, required=False)
     strength = fields.EmbeddedDocumentField("Ratio", blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
@@ -10583,7 +10584,7 @@ class MedicationKnowledgeIngredient(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         isActive = Attribute(getter="isActive", setter="isActive", searcher=StringSearch("isActive"))
         itemCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="itemCodeableConcept", setter="itemCodeableConcept", searcher=StringSearch("itemCodeableConcept"))
-        itemReference = ObjectIdReferenceAttribute({'Substance'}, ("itemReference", str), "itemReference", pk_setter="itemReference")
+        itemReference = ObjectIdReferenceAttribute(['Substance'], ("itemReference", str), "itemReference", pk_setter="itemReference")
         strength = EmbeddedAttribute(type="Ratio", getter="strength", setter="strength", searcher=StringSearch("strength"))
 
 class MedicationKnowledgeKinetics(FhirBaseModel, EmbeddedMongoModel):
@@ -10637,7 +10638,7 @@ class MedicationKnowledgeMonograph(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        source = ObjectIdReferenceAttribute({'Media', 'DocumentReference'}, ("source", str), "source", pk_setter="source")
+        source = ObjectIdReferenceAttribute(['DocumentReference', 'Media'], ("source", str), "source", pk_setter="source")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class MedicationKnowledgePackaging(FhirBaseModel, EmbeddedMongoModel):
@@ -10666,7 +10667,7 @@ class MedicationKnowledgeRegulatory(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         maxDispense = EmbeddedAttribute(type="MedicationKnowledgeRegulatoryMaxDispense", getter="maxDispense", setter="maxDispense", searcher=StringSearch("maxDispense"))
-        regulatoryAuthority = ObjectIdReferenceAttribute({'Organization'}, ("regulatoryAuthority", str), "regulatoryAuthority", pk_setter="regulatoryAuthority")
+        regulatoryAuthority = ObjectIdReferenceAttribute(['Organization'], ("regulatoryAuthority", str), "regulatoryAuthority", pk_setter="regulatoryAuthority")
         schedule = EmbeddedAttribute(type="MedicationKnowledgeRegulatorySchedule", getter="schedule", setter="schedule", searcher=StringSearch("schedule"))
         substitution = EmbeddedAttribute(type="MedicationKnowledgeRegulatorySubstitution", getter="substitution", setter="substitution", searcher=StringSearch("substitution"))
 
@@ -10717,11 +10718,11 @@ class MedicationKnowledgeRelatedMedicationKnowledge(FhirBaseModel, EmbeddedMongo
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        reference = ObjectIdReferenceAttribute({'MedicationKnowledge'}, ("reference", str), "reference", pk_setter="reference")
+        reference = ObjectIdReferenceAttribute(['MedicationKnowledge'], ("reference", str), "reference", pk_setter="reference")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class MedicationRequest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -10744,8 +10745,8 @@ class MedicationRequest(FhirBaseModel, MongoModel):
     instantiatesUri = fields.ListField(fields.CharField(), blank=True, required=False)
     insurance = fields.ObjectIdField(blank=True, required=False)
     intent = fields.CharField(blank=False, required=True)
-    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    medicationReference = fields.ObjectIdField(blank=False, required=True)
+    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    medicationReference = fields.ObjectIdField(blank=True, required=False)
     note = fields.EmbeddedDocumentListField("Annotation", blank=True, required=False)
     performer = fields.ObjectIdField(blank=True, required=False)
     performerType = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
@@ -10771,39 +10772,39 @@ class MedicationRequest(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         authoredOn = DateAttribute("authoredOn")
-        basedOn = ObjectIdReferenceAttribute({'CarePlan', 'ServiceRequest', 'ImmunizationRecommendation', 'MedicationRequest'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['CarePlan', 'ImmunizationRecommendation', 'MedicationRequest', 'ServiceRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         courseOfTherapyType = EmbeddedAttribute(type="CodeableConcept", getter="courseOfTherapyType", setter="courseOfTherapyType", searcher=StringSearch("courseOfTherapyType"))
-        detectedIssue = ObjectIdReferenceAttribute({'DetectedIssue'}, ("detectedIssue", str), "detectedIssue", pk_setter="detectedIssue")
+        detectedIssue = ObjectIdReferenceAttribute(['DetectedIssue'], ("detectedIssue", str), "detectedIssue", pk_setter="detectedIssue")
         dispenseRequest = EmbeddedAttribute(type="MedicationRequestDispenseRequest", getter="dispenseRequest", setter="dispenseRequest", searcher=StringSearch("dispenseRequest"))
         doNotPerform = Attribute(getter="doNotPerform", setter="doNotPerform", searcher=StringSearch("doNotPerform"))
         dosageInstruction = EmbeddedAttribute(type="Dosage", getter="dosageInstruction", setter="dosageInstruction", searcher=StringSearch("dosageInstruction"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
-        eventHistory = ObjectIdReferenceAttribute({'Provenance'}, ("eventHistory", str), "eventHistory", pk_setter="eventHistory")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
+        eventHistory = ObjectIdReferenceAttribute(['Provenance'], ("eventHistory", str), "eventHistory", pk_setter="eventHistory")
         groupIdentifier = EmbeddedAttribute(type="Identifier", getter="groupIdentifier", setter="groupIdentifier", searcher=StringSearch("groupIdentifier"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         instantiatesCanonical = Attribute(getter="instantiatesCanonical", setter="instantiatesCanonical", searcher=StringSearch("instantiatesCanonical"))
         instantiatesUri = Attribute(getter="instantiatesUri", setter="instantiatesUri", searcher=StringSearch("instantiatesUri"))
-        insurance = ObjectIdReferenceAttribute({'ClaimResponse', 'Coverage'}, ("insurance", str), "insurance", pk_setter="insurance")
+        insurance = ObjectIdReferenceAttribute(['ClaimResponse', 'Coverage'], ("insurance", str), "insurance", pk_setter="insurance")
         intent = Attribute(getter="intent", setter="intent", searcher=StringSearch("intent"))
         medicationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="medicationCodeableConcept", setter="medicationCodeableConcept", searcher=StringSearch("medicationCodeableConcept"))
-        medicationReference = ObjectIdReferenceAttribute({'Medication'}, ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
+        medicationReference = ObjectIdReferenceAttribute(['Medication'], ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        performer = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("performer", str), "performer", pk_setter="performer")
+        performer = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("performer", str), "performer", pk_setter="performer")
         performerType = EmbeddedAttribute(type="CodeableConcept", getter="performerType", setter="performerType", searcher=StringSearch("performerType"))
-        priorPrescription = ObjectIdReferenceAttribute({'MedicationRequest'}, ("priorPrescription", str), "priorPrescription", pk_setter="priorPrescription")
+        priorPrescription = ObjectIdReferenceAttribute(['MedicationRequest'], ("priorPrescription", str), "priorPrescription", pk_setter="priorPrescription")
         priority = Attribute(getter="priority", setter="priority", searcher=StringSearch("priority"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'Condition', 'Observation'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        recorder = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("recorder", str), "recorder", pk_setter="recorder")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        recorder = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("recorder", str), "recorder", pk_setter="recorder")
         reportedBoolean = Attribute(getter="reportedBoolean", setter="reportedBoolean", searcher=StringSearch("reportedBoolean"))
-        reportedReference = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("reportedReference", str), "reportedReference", pk_setter="reportedReference")
-        requester = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("requester", str), "requester", pk_setter="requester")
+        reportedReference = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("reportedReference", str), "reportedReference", pk_setter="reportedReference")
+        requester = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("requester", str), "requester", pk_setter="requester")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusReason = EmbeddedAttribute(type="CodeableConcept", getter="statusReason", setter="statusReason", searcher=StringSearch("statusReason"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         substitution = EmbeddedAttribute(type="MedicationRequestSubstitution", getter="substitution", setter="substitution", searcher=StringSearch("substitution"))
-        supportingInformation = ObjectIdReferenceAttribute({'Resource'}, ("supportingInformation", str), "supportingInformation", pk_setter="supportingInformation")
+        supportingInformation = ObjectIdReferenceAttribute(['Resource'], ("supportingInformation", str), "supportingInformation", pk_setter="supportingInformation")
 
 class MedicationRequestDispenseRequest(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -10824,7 +10825,7 @@ class MedicationRequestDispenseRequest(FhirBaseModel, EmbeddedMongoModel):
         expectedSupplyDuration = EmbeddedAttribute(type="Duration", getter="expectedSupplyDuration", setter="expectedSupplyDuration", searcher=StringSearch("expectedSupplyDuration"))
         initialFill = EmbeddedAttribute(type="MedicationRequestDispenseRequestInitialFill", getter="initialFill", setter="initialFill", searcher=StringSearch("initialFill"))
         numberOfRepeatsAllowed = Attribute(getter="numberOfRepeatsAllowed", setter="numberOfRepeatsAllowed", searcher=NumericSearch("numberOfRepeatsAllowed"))
-        performer = ObjectIdReferenceAttribute({'Organization'}, ("performer", str), "performer", pk_setter="performer")
+        performer = ObjectIdReferenceAttribute(['Organization'], ("performer", str), "performer", pk_setter="performer")
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         validityPeriod = EmbeddedAttribute(type="Period", getter="validityPeriod", setter="validityPeriod", searcher=StringSearch("validityPeriod"))
 
@@ -10845,8 +10846,8 @@ class MedicationRequestSubstitution(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    allowedBoolean = fields.BooleanField(blank=False, required=True)
-    allowedCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
+    allowedBoolean = fields.BooleanField(blank=True, required=False)
+    allowedCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
     reason = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
@@ -10857,7 +10858,7 @@ class MedicationRequestSubstitution(FhirBaseModel, EmbeddedMongoModel):
         reason = EmbeddedAttribute(type="CodeableConcept", getter="reason", setter="reason", searcher=StringSearch("reason"))
 
 class MedicationStatement(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -10874,8 +10875,8 @@ class MedicationStatement(FhirBaseModel, MongoModel):
     effectivePeriod = fields.EmbeddedDocumentField("Period", blank=True, required=False)
     identifier = fields.EmbeddedDocumentListField("Identifier", blank=True, required=False)
     informationSource = fields.ObjectIdField(blank=True, required=False)
-    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    medicationReference = fields.ObjectIdField(blank=False, required=True)
+    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    medicationReference = fields.ObjectIdField(blank=True, required=False)
     note = fields.EmbeddedDocumentListField("Annotation", blank=True, required=False)
     partOf = fields.ObjectIdField(blank=True, required=False)
     reasonCode = fields.EmbeddedDocumentListField("CodeableConcept", blank=True, required=False)
@@ -10891,28 +10892,28 @@ class MedicationStatement(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        basedOn = ObjectIdReferenceAttribute({'CarePlan', 'ServiceRequest', 'MedicationRequest'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['CarePlan', 'MedicationRequest', 'ServiceRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
-        context = ObjectIdReferenceAttribute({'Encounter', 'EpisodeOfCare'}, ("context", str), "context", pk_setter="context")
+        context = ObjectIdReferenceAttribute(['Encounter', 'EpisodeOfCare'], ("context", str), "context", pk_setter="context")
         dateAsserted = DateAttribute("dateAsserted")
-        derivedFrom = ObjectIdReferenceAttribute({'Resource'}, ("derivedFrom", str), "derivedFrom", pk_setter="derivedFrom")
+        derivedFrom = ObjectIdReferenceAttribute(['Resource'], ("derivedFrom", str), "derivedFrom", pk_setter="derivedFrom")
         dosage = EmbeddedAttribute(type="Dosage", getter="dosage", setter="dosage", searcher=StringSearch("dosage"))
         effectiveDateTime = DateAttribute("effectiveDateTime")
         effectivePeriod = EmbeddedAttribute(type="Period", getter="effectivePeriod", setter="effectivePeriod", searcher=StringSearch("effectivePeriod"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        informationSource = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("informationSource", str), "informationSource", pk_setter="informationSource")
+        informationSource = ObjectIdReferenceAttribute(['Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("informationSource", str), "informationSource", pk_setter="informationSource")
         medicationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="medicationCodeableConcept", setter="medicationCodeableConcept", searcher=StringSearch("medicationCodeableConcept"))
-        medicationReference = ObjectIdReferenceAttribute({'Medication'}, ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
+        medicationReference = ObjectIdReferenceAttribute(['Medication'], ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        partOf = ObjectIdReferenceAttribute({'MedicationDispense', 'MedicationStatement', 'Procedure', 'Observation', 'MedicationAdministration'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['MedicationAdministration', 'MedicationDispense', 'MedicationStatement', 'Observation', 'Procedure'], ("partOf", str), "partOf", pk_setter="partOf")
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusReason = EmbeddedAttribute(type="CodeableConcept", getter="statusReason", setter="statusReason", searcher=StringSearch("statusReason"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
 
 class MedicinalProduct(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -10948,28 +10949,28 @@ class MedicinalProduct(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         additionalMonitoringIndicator = EmbeddedAttribute(type="CodeableConcept", getter="additionalMonitoringIndicator", setter="additionalMonitoringIndicator", searcher=StringSearch("additionalMonitoringIndicator"))
-        attachedDocument = ObjectIdReferenceAttribute({'DocumentReference'}, ("attachedDocument", str), "attachedDocument", pk_setter="attachedDocument")
-        clinicalTrial = ObjectIdReferenceAttribute({'ResearchStudy'}, ("clinicalTrial", str), "clinicalTrial", pk_setter="clinicalTrial")
+        attachedDocument = ObjectIdReferenceAttribute(['DocumentReference'], ("attachedDocument", str), "attachedDocument", pk_setter="attachedDocument")
+        clinicalTrial = ObjectIdReferenceAttribute(['ResearchStudy'], ("clinicalTrial", str), "clinicalTrial", pk_setter="clinicalTrial")
         combinedPharmaceuticalDoseForm = EmbeddedAttribute(type="CodeableConcept", getter="combinedPharmaceuticalDoseForm", setter="combinedPharmaceuticalDoseForm", searcher=StringSearch("combinedPharmaceuticalDoseForm"))
-        contact = ObjectIdReferenceAttribute({'PractitionerRole', 'Organization'}, ("contact", str), "contact", pk_setter="contact")
+        contact = ObjectIdReferenceAttribute(['Organization', 'PractitionerRole'], ("contact", str), "contact", pk_setter="contact")
         crossReference = EmbeddedAttribute(type="Identifier", getter="crossReference", setter="crossReference", searcher=StringSearch("crossReference"))
         domain = EmbeddedAttribute(type="Coding", getter="domain", setter="domain", searcher=StringSearch("domain"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         legalStatusOfSupply = EmbeddedAttribute(type="CodeableConcept", getter="legalStatusOfSupply", setter="legalStatusOfSupply", searcher=StringSearch("legalStatusOfSupply"))
         manufacturingBusinessOperation = EmbeddedAttribute(type="MedicinalProductManufacturingBusinessOperation", getter="manufacturingBusinessOperation", setter="manufacturingBusinessOperation", searcher=StringSearch("manufacturingBusinessOperation"))
         marketingStatus = EmbeddedAttribute(type="MarketingStatus", getter="marketingStatus", setter="marketingStatus", searcher=StringSearch("marketingStatus"))
-        masterFile = ObjectIdReferenceAttribute({'DocumentReference'}, ("masterFile", str), "masterFile", pk_setter="masterFile")
+        masterFile = ObjectIdReferenceAttribute(['DocumentReference'], ("masterFile", str), "masterFile", pk_setter="masterFile")
         name = EmbeddedAttribute(type="MedicinalProductName", getter="name", setter="name", searcher=StringSearch("name"))
-        packagedMedicinalProduct = ObjectIdReferenceAttribute({'MedicinalProductPackaged'}, ("packagedMedicinalProduct", str), "packagedMedicinalProduct", pk_setter="packagedMedicinalProduct")
+        packagedMedicinalProduct = ObjectIdReferenceAttribute(['MedicinalProductPackaged'], ("packagedMedicinalProduct", str), "packagedMedicinalProduct", pk_setter="packagedMedicinalProduct")
         paediatricUseIndicator = EmbeddedAttribute(type="CodeableConcept", getter="paediatricUseIndicator", setter="paediatricUseIndicator", searcher=StringSearch("paediatricUseIndicator"))
-        pharmaceuticalProduct = ObjectIdReferenceAttribute({'MedicinalProductPharmaceutical'}, ("pharmaceuticalProduct", str), "pharmaceuticalProduct", pk_setter="pharmaceuticalProduct")
+        pharmaceuticalProduct = ObjectIdReferenceAttribute(['MedicinalProductPharmaceutical'], ("pharmaceuticalProduct", str), "pharmaceuticalProduct", pk_setter="pharmaceuticalProduct")
         productClassification = EmbeddedAttribute(type="CodeableConcept", getter="productClassification", setter="productClassification", searcher=StringSearch("productClassification"))
         specialDesignation = EmbeddedAttribute(type="MedicinalProductSpecialDesignation", getter="specialDesignation", setter="specialDesignation", searcher=StringSearch("specialDesignation"))
         specialMeasures = Attribute(getter="specialMeasures", setter="specialMeasures", searcher=StringSearch("specialMeasures"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class MedicinalProductAuthorization(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11003,18 +11004,18 @@ class MedicinalProductAuthorization(FhirBaseModel, MongoModel):
         country = EmbeddedAttribute(type="CodeableConcept", getter="country", setter="country", searcher=StringSearch("country"))
         dataExclusivityPeriod = EmbeddedAttribute(type="Period", getter="dataExclusivityPeriod", setter="dataExclusivityPeriod", searcher=StringSearch("dataExclusivityPeriod"))
         dateOfFirstAuthorization = DateAttribute("dateOfFirstAuthorization")
-        holder = ObjectIdReferenceAttribute({'Organization'}, ("holder", str), "holder", pk_setter="holder")
+        holder = ObjectIdReferenceAttribute(['Organization'], ("holder", str), "holder", pk_setter="holder")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         internationalBirthDate = DateAttribute("internationalBirthDate")
         jurisdiction = EmbeddedAttribute(type="CodeableConcept", getter="jurisdiction", setter="jurisdiction", searcher=StringSearch("jurisdiction"))
         jurisdictionalAuthorization = EmbeddedAttribute(type="MedicinalProductAuthorizationJurisdictionalAuthorization", getter="jurisdictionalAuthorization", setter="jurisdictionalAuthorization", searcher=StringSearch("jurisdictionalAuthorization"))
         legalBasis = EmbeddedAttribute(type="CodeableConcept", getter="legalBasis", setter="legalBasis", searcher=StringSearch("legalBasis"))
         procedure = EmbeddedAttribute(type="MedicinalProductAuthorizationProcedure", getter="procedure", setter="procedure", searcher=StringSearch("procedure"))
-        regulator = ObjectIdReferenceAttribute({'Organization'}, ("regulator", str), "regulator", pk_setter="regulator")
+        regulator = ObjectIdReferenceAttribute(['Organization'], ("regulator", str), "regulator", pk_setter="regulator")
         restoreDate = DateAttribute("restoreDate")
         status = EmbeddedAttribute(type="CodeableConcept", getter="status", setter="status", searcher=StringSearch("status"))
         statusDate = DateAttribute("statusDate")
-        subject = ObjectIdReferenceAttribute({'MedicinalProduct', 'MedicinalProductPackaged'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['MedicinalProduct', 'MedicinalProductPackaged'], ("subject", str), "subject", pk_setter="subject")
         validityPeriod = EmbeddedAttribute(type="Period", getter="validityPeriod", setter="validityPeriod", searcher=StringSearch("validityPeriod"))
 
 class MedicinalProductAuthorizationJurisdictionalAuthorization(FhirBaseModel, EmbeddedMongoModel):
@@ -11056,7 +11057,7 @@ class MedicinalProductAuthorizationProcedure(FhirBaseModel, EmbeddedMongoModel):
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class MedicinalProductContraindication(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11083,26 +11084,26 @@ class MedicinalProductContraindication(FhirBaseModel, MongoModel):
         diseaseStatus = EmbeddedAttribute(type="CodeableConcept", getter="diseaseStatus", setter="diseaseStatus", searcher=StringSearch("diseaseStatus"))
         otherTherapy = EmbeddedAttribute(type="MedicinalProductContraindicationOtherTherapy", getter="otherTherapy", setter="otherTherapy", searcher=StringSearch("otherTherapy"))
         population = EmbeddedAttribute(type="Population", getter="population", setter="population", searcher=StringSearch("population"))
-        subject = ObjectIdReferenceAttribute({'MedicinalProduct', 'Medication'}, ("subject", str), "subject", pk_setter="subject")
-        therapeuticIndication = ObjectIdReferenceAttribute({'MedicinalProductIndication'}, ("therapeuticIndication", str), "therapeuticIndication", pk_setter="therapeuticIndication")
+        subject = ObjectIdReferenceAttribute(['Medication', 'MedicinalProduct'], ("subject", str), "subject", pk_setter="subject")
+        therapeuticIndication = ObjectIdReferenceAttribute(['MedicinalProductIndication'], ("therapeuticIndication", str), "therapeuticIndication", pk_setter="therapeuticIndication")
 
 class MedicinalProductContraindicationOtherTherapy(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    medicationReference = fields.ObjectIdField(blank=False, required=True)
+    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    medicationReference = fields.ObjectIdField(blank=True, required=False)
     therapyRelationshipType = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         medicationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="medicationCodeableConcept", setter="medicationCodeableConcept", searcher=StringSearch("medicationCodeableConcept"))
-        medicationReference = ObjectIdReferenceAttribute({'MedicinalProduct', 'Substance', 'SubstanceSpecification', 'Medication'}, ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
+        medicationReference = ObjectIdReferenceAttribute(['Medication', 'MedicinalProduct', 'Substance', 'SubstanceSpecification'], ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
         therapyRelationshipType = EmbeddedAttribute(type="CodeableConcept", getter="therapyRelationshipType", setter="therapyRelationshipType", searcher=StringSearch("therapyRelationshipType"))
 
 class MedicinalProductIndication(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11133,26 +11134,26 @@ class MedicinalProductIndication(FhirBaseModel, MongoModel):
         intendedEffect = EmbeddedAttribute(type="CodeableConcept", getter="intendedEffect", setter="intendedEffect", searcher=StringSearch("intendedEffect"))
         otherTherapy = EmbeddedAttribute(type="MedicinalProductIndicationOtherTherapy", getter="otherTherapy", setter="otherTherapy", searcher=StringSearch("otherTherapy"))
         population = EmbeddedAttribute(type="Population", getter="population", setter="population", searcher=StringSearch("population"))
-        subject = ObjectIdReferenceAttribute({'MedicinalProduct', 'Medication'}, ("subject", str), "subject", pk_setter="subject")
-        undesirableEffect = ObjectIdReferenceAttribute({'MedicinalProductUndesirableEffect'}, ("undesirableEffect", str), "undesirableEffect", pk_setter="undesirableEffect")
+        subject = ObjectIdReferenceAttribute(['Medication', 'MedicinalProduct'], ("subject", str), "subject", pk_setter="subject")
+        undesirableEffect = ObjectIdReferenceAttribute(['MedicinalProductUndesirableEffect'], ("undesirableEffect", str), "undesirableEffect", pk_setter="undesirableEffect")
 
 class MedicinalProductIndicationOtherTherapy(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    medicationReference = fields.ObjectIdField(blank=False, required=True)
+    medicationCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    medicationReference = fields.ObjectIdField(blank=True, required=False)
     therapyRelationshipType = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         medicationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="medicationCodeableConcept", setter="medicationCodeableConcept", searcher=StringSearch("medicationCodeableConcept"))
-        medicationReference = ObjectIdReferenceAttribute({'MedicinalProduct', 'Substance', 'SubstanceSpecification', 'Medication'}, ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
+        medicationReference = ObjectIdReferenceAttribute(['Medication', 'MedicinalProduct', 'Substance', 'SubstanceSpecification'], ("medicationReference", str), "medicationReference", pk_setter="medicationReference")
         therapyRelationshipType = EmbeddedAttribute(type="CodeableConcept", getter="therapyRelationshipType", setter="therapyRelationshipType", searcher=StringSearch("therapyRelationshipType"))
 
 class MedicinalProductIngredient(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11175,7 +11176,7 @@ class MedicinalProductIngredient(FhirBaseModel, MongoModel):
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         allergenicIndicator = Attribute(getter="allergenicIndicator", setter="allergenicIndicator", searcher=StringSearch("allergenicIndicator"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        manufacturer = ObjectIdReferenceAttribute({'Organization'}, ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
+        manufacturer = ObjectIdReferenceAttribute(['Organization'], ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
         role = EmbeddedAttribute(type="CodeableConcept", getter="role", setter="role", searcher=StringSearch("role"))
         specifiedSubstance = EmbeddedAttribute(type="MedicinalProductIngredientSpecifiedSubstance", getter="specifiedSubstance", setter="specifiedSubstance", searcher=StringSearch("specifiedSubstance"))
         substance = EmbeddedAttribute(type="MedicinalProductIngredientSubstance", getter="substance", setter="substance", searcher=StringSearch("substance"))
@@ -11253,7 +11254,7 @@ class MedicinalProductIngredientSubstance(FhirBaseModel, EmbeddedMongoModel):
         strength = EmbeddedAttribute(type="MedicinalProductIngredientSpecifiedSubstanceStrength", getter="strength", setter="strength", searcher=StringSearch("strength"))
 
 class MedicinalProductInteraction(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11280,24 +11281,24 @@ class MedicinalProductInteraction(FhirBaseModel, MongoModel):
         incidence = EmbeddedAttribute(type="CodeableConcept", getter="incidence", setter="incidence", searcher=StringSearch("incidence"))
         interactant = EmbeddedAttribute(type="MedicinalProductInteractionInteractant", getter="interactant", setter="interactant", searcher=StringSearch("interactant"))
         management = EmbeddedAttribute(type="CodeableConcept", getter="management", setter="management", searcher=StringSearch("management"))
-        subject = ObjectIdReferenceAttribute({'MedicinalProduct', 'Substance', 'Medication'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Medication', 'MedicinalProduct', 'Substance'], ("subject", str), "subject", pk_setter="subject")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class MedicinalProductInteractionInteractant(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    itemCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    itemReference = fields.ObjectIdField(blank=False, required=True)
+    itemCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    itemReference = fields.ObjectIdField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         itemCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="itemCodeableConcept", setter="itemCodeableConcept", searcher=StringSearch("itemCodeableConcept"))
-        itemReference = ObjectIdReferenceAttribute({'MedicinalProduct', 'ObservationDefinition', 'Substance', 'Medication'}, ("itemReference", str), "itemReference", pk_setter="itemReference")
+        itemReference = ObjectIdReferenceAttribute(['Medication', 'MedicinalProduct', 'ObservationDefinition', 'Substance'], ("itemReference", str), "itemReference", pk_setter="itemReference")
 
 class MedicinalProductManufactured(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11319,9 +11320,9 @@ class MedicinalProductManufactured(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        ingredient = ObjectIdReferenceAttribute({'MedicinalProductIngredient'}, ("ingredient", str), "ingredient", pk_setter="ingredient")
+        ingredient = ObjectIdReferenceAttribute(['MedicinalProductIngredient'], ("ingredient", str), "ingredient", pk_setter="ingredient")
         manufacturedDoseForm = EmbeddedAttribute(type="CodeableConcept", getter="manufacturedDoseForm", setter="manufacturedDoseForm", searcher=StringSearch("manufacturedDoseForm"))
-        manufacturer = ObjectIdReferenceAttribute({'Organization'}, ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
+        manufacturer = ObjectIdReferenceAttribute(['Organization'], ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
         otherCharacteristics = EmbeddedAttribute(type="CodeableConcept", getter="otherCharacteristics", setter="otherCharacteristics", searcher=StringSearch("otherCharacteristics"))
         physicalCharacteristics = EmbeddedAttribute(type="ProdCharacteristic", getter="physicalCharacteristics", setter="physicalCharacteristics", searcher=StringSearch("physicalCharacteristics"))
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
@@ -11344,9 +11345,9 @@ class MedicinalProductManufacturingBusinessOperation(FhirBaseModel, EmbeddedMong
         authorisationReferenceNumber = EmbeddedAttribute(type="Identifier", getter="authorisationReferenceNumber", setter="authorisationReferenceNumber", searcher=StringSearch("authorisationReferenceNumber"))
         confidentialityIndicator = EmbeddedAttribute(type="CodeableConcept", getter="confidentialityIndicator", setter="confidentialityIndicator", searcher=StringSearch("confidentialityIndicator"))
         effectiveDate = DateAttribute("effectiveDate")
-        manufacturer = ObjectIdReferenceAttribute({'Organization'}, ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
+        manufacturer = ObjectIdReferenceAttribute(['Organization'], ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
         operationType = EmbeddedAttribute(type="CodeableConcept", getter="operationType", setter="operationType", searcher=StringSearch("operationType"))
-        regulator = ObjectIdReferenceAttribute({'Organization'}, ("regulator", str), "regulator", pk_setter="regulator")
+        regulator = ObjectIdReferenceAttribute(['Organization'], ("regulator", str), "regulator", pk_setter="regulator")
 
 class MedicinalProductName(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -11392,7 +11393,7 @@ class MedicinalProductNameNamePart(FhirBaseModel, EmbeddedMongoModel):
         type = EmbeddedAttribute(type="Coding", getter="type", setter="type", searcher=StringSearch("type"))
 
 class MedicinalProductPackaged(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11420,11 +11421,11 @@ class MedicinalProductPackaged(FhirBaseModel, MongoModel):
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         legalStatusOfSupply = EmbeddedAttribute(type="CodeableConcept", getter="legalStatusOfSupply", setter="legalStatusOfSupply", searcher=StringSearch("legalStatusOfSupply"))
-        manufacturer = ObjectIdReferenceAttribute({'Organization'}, ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
-        marketingAuthorization = ObjectIdReferenceAttribute({'MedicinalProductAuthorization'}, ("marketingAuthorization", str), "marketingAuthorization", pk_setter="marketingAuthorization")
+        manufacturer = ObjectIdReferenceAttribute(['Organization'], ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
+        marketingAuthorization = ObjectIdReferenceAttribute(['MedicinalProductAuthorization'], ("marketingAuthorization", str), "marketingAuthorization", pk_setter="marketingAuthorization")
         marketingStatus = EmbeddedAttribute(type="MarketingStatus", getter="marketingStatus", setter="marketingStatus", searcher=StringSearch("marketingStatus"))
         packageItem = EmbeddedAttribute(type="MedicinalProductPackagedPackageItem", getter="packageItem", setter="packageItem", searcher=StringSearch("packageItem"))
-        subject = ObjectIdReferenceAttribute({'MedicinalProduct'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['MedicinalProduct'], ("subject", str), "subject", pk_setter="subject")
 
 class MedicinalProductPackagedBatchIdentifier(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -11460,10 +11461,10 @@ class MedicinalProductPackagedPackageItem(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         alternateMaterial = EmbeddedAttribute(type="CodeableConcept", getter="alternateMaterial", setter="alternateMaterial", searcher=StringSearch("alternateMaterial"))
-        device = ObjectIdReferenceAttribute({'DeviceDefinition'}, ("device", str), "device", pk_setter="device")
+        device = ObjectIdReferenceAttribute(['DeviceDefinition'], ("device", str), "device", pk_setter="device")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        manufacturedItem = ObjectIdReferenceAttribute({'MedicinalProductManufactured'}, ("manufacturedItem", str), "manufacturedItem", pk_setter="manufacturedItem")
-        manufacturer = ObjectIdReferenceAttribute({'Organization'}, ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
+        manufacturedItem = ObjectIdReferenceAttribute(['MedicinalProductManufactured'], ("manufacturedItem", str), "manufacturedItem", pk_setter="manufacturedItem")
+        manufacturer = ObjectIdReferenceAttribute(['Organization'], ("manufacturer", str), "manufacturer", pk_setter="manufacturer")
         material = EmbeddedAttribute(type="CodeableConcept", getter="material", setter="material", searcher=StringSearch("material"))
         otherCharacteristics = EmbeddedAttribute(type="CodeableConcept", getter="otherCharacteristics", setter="otherCharacteristics", searcher=StringSearch("otherCharacteristics"))
         packageItem = EmbeddedAttribute(type="MedicinalProductPackagedPackageItem", getter="packageItem", setter="packageItem", searcher=StringSearch("packageItem"))
@@ -11473,7 +11474,7 @@ class MedicinalProductPackagedPackageItem(FhirBaseModel, EmbeddedMongoModel):
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class MedicinalProductPharmaceutical(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11497,9 +11498,9 @@ class MedicinalProductPharmaceutical(FhirBaseModel, MongoModel):
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         administrableDoseForm = EmbeddedAttribute(type="CodeableConcept", getter="administrableDoseForm", setter="administrableDoseForm", searcher=StringSearch("administrableDoseForm"))
         characteristics = EmbeddedAttribute(type="MedicinalProductPharmaceuticalCharacteristics", getter="characteristics", setter="characteristics", searcher=StringSearch("characteristics"))
-        device = ObjectIdReferenceAttribute({'DeviceDefinition'}, ("device", str), "device", pk_setter="device")
+        device = ObjectIdReferenceAttribute(['DeviceDefinition'], ("device", str), "device", pk_setter="device")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        ingredient = ObjectIdReferenceAttribute({'MedicinalProductIngredient'}, ("ingredient", str), "ingredient", pk_setter="ingredient")
+        ingredient = ObjectIdReferenceAttribute(['MedicinalProductIngredient'], ("ingredient", str), "ingredient", pk_setter="ingredient")
         routeOfAdministration = EmbeddedAttribute(type="MedicinalProductPharmaceuticalRouteOfAdministration", getter="routeOfAdministration", setter="routeOfAdministration", searcher=StringSearch("routeOfAdministration"))
         unitOfPresentation = EmbeddedAttribute(type="CodeableConcept", getter="unitOfPresentation", setter="unitOfPresentation", searcher=StringSearch("unitOfPresentation"))
 
@@ -11586,14 +11587,14 @@ class MedicinalProductSpecialDesignation(FhirBaseModel, EmbeddedMongoModel):
         date = DateAttribute("date")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         indicationCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="indicationCodeableConcept", setter="indicationCodeableConcept", searcher=StringSearch("indicationCodeableConcept"))
-        indicationReference = ObjectIdReferenceAttribute({'MedicinalProductIndication'}, ("indicationReference", str), "indicationReference", pk_setter="indicationReference")
+        indicationReference = ObjectIdReferenceAttribute(['MedicinalProductIndication'], ("indicationReference", str), "indicationReference", pk_setter="indicationReference")
         intendedUse = EmbeddedAttribute(type="CodeableConcept", getter="intendedUse", setter="intendedUse", searcher=StringSearch("intendedUse"))
         species = EmbeddedAttribute(type="CodeableConcept", getter="species", setter="species", searcher=StringSearch("species"))
         status = EmbeddedAttribute(type="CodeableConcept", getter="status", setter="status", searcher=StringSearch("status"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class MedicinalProductUndesirableEffect(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11616,11 +11617,11 @@ class MedicinalProductUndesirableEffect(FhirBaseModel, MongoModel):
         classification = EmbeddedAttribute(type="CodeableConcept", getter="classification", setter="classification", searcher=StringSearch("classification"))
         frequencyOfOccurrence = EmbeddedAttribute(type="CodeableConcept", getter="frequencyOfOccurrence", setter="frequencyOfOccurrence", searcher=StringSearch("frequencyOfOccurrence"))
         population = EmbeddedAttribute(type="Population", getter="population", setter="population", searcher=StringSearch("population"))
-        subject = ObjectIdReferenceAttribute({'MedicinalProduct', 'Medication'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Medication', 'MedicinalProduct'], ("subject", str), "subject", pk_setter="subject")
         symptomConditionEffect = EmbeddedAttribute(type="CodeableConcept", getter="symptomConditionEffect", setter="symptomConditionEffect", searcher=StringSearch("symptomConditionEffect"))
 
 class MessageDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11634,8 +11635,8 @@ class MessageDefinition(FhirBaseModel, MongoModel):
     copyright = fields.CharField(blank=True, required=False)
     date = fields.DateTimeField(blank=False, required=True)
     description = fields.CharField(blank=True, required=False)
-    eventCoding = fields.EmbeddedDocumentField("Coding", blank=False, required=True)
-    eventUri = fields.CharField(blank=False, required=True)
+    eventCoding = fields.EmbeddedDocumentField("Coding", blank=True, required=False)
+    eventUri = fields.CharField(blank=True, required=False)
     experimental = fields.BooleanField(blank=True, required=False)
     focus = fields.EmbeddedDocumentListField("MessageDefinitionFocus", blank=True, required=False)
     graph = fields.ListField(fields.CharField(), blank=True, required=False)
@@ -11717,7 +11718,7 @@ class MessageDefinitionFocus(FhirBaseModel, EmbeddedMongoModel):
         profile = Attribute(getter="profile", setter="profile", searcher=StringSearch("profile"))
 
 class MessageHeader(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11728,8 +11729,8 @@ class MessageHeader(FhirBaseModel, MongoModel):
     definition = fields.CharField(blank=True, required=False)
     destination = fields.EmbeddedDocumentListField("MessageHeaderDestination", blank=True, required=False)
     enterer = fields.ObjectIdField(blank=True, required=False)
-    eventCoding = fields.EmbeddedDocumentField("Coding", blank=False, required=True)
-    eventUri = fields.CharField(blank=False, required=True)
+    eventCoding = fields.EmbeddedDocumentField("Coding", blank=True, required=False)
+    eventUri = fields.CharField(blank=True, required=False)
     focus = fields.ObjectIdField(blank=True, required=False)
     reason = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
     response = fields.EmbeddedDocumentField("MessageHeaderResponse", blank=True, required=False)
@@ -11744,17 +11745,17 @@ class MessageHeader(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        author = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("author", str), "author", pk_setter="author")
+        author = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("author", str), "author", pk_setter="author")
         definition = Attribute(getter="definition", setter="definition", searcher=StringSearch("definition"))
         destination = EmbeddedAttribute(type="MessageHeaderDestination", getter="destination", setter="destination", searcher=StringSearch("destination"))
-        enterer = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("enterer", str), "enterer", pk_setter="enterer")
+        enterer = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("enterer", str), "enterer", pk_setter="enterer")
         eventCoding = EmbeddedAttribute(type="Coding", getter="eventCoding", setter="eventCoding", searcher=StringSearch("eventCoding"))
         eventUri = Attribute(getter="eventUri", setter="eventUri", searcher=StringSearch("eventUri"))
-        focus = ObjectIdReferenceAttribute({'Resource'}, ("focus", str), "focus", pk_setter="focus")
+        focus = ObjectIdReferenceAttribute(['Resource'], ("focus", str), "focus", pk_setter="focus")
         reason = EmbeddedAttribute(type="CodeableConcept", getter="reason", setter="reason", searcher=StringSearch("reason"))
         response = EmbeddedAttribute(type="MessageHeaderResponse", getter="response", setter="response", searcher=StringSearch("response"))
-        responsible = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("responsible", str), "responsible", pk_setter="responsible")
-        sender = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("sender", str), "sender", pk_setter="sender")
+        responsible = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("responsible", str), "responsible", pk_setter="responsible")
+        sender = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("sender", str), "sender", pk_setter="sender")
         source = EmbeddedAttribute(type="MessageHeaderSource", getter="source", setter="source", searcher=StringSearch("source"))
 
 class MessageHeaderDestination(FhirBaseModel, EmbeddedMongoModel):
@@ -11771,8 +11772,8 @@ class MessageHeaderDestination(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         endpoint = Attribute(getter="endpoint", setter="endpoint", searcher=StringSearch("endpoint"))
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
-        receiver = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("receiver", str), "receiver", pk_setter="receiver")
-        target = ObjectIdReferenceAttribute({'Device'}, ("target", str), "target", pk_setter="target")
+        receiver = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("receiver", str), "receiver", pk_setter="receiver")
+        target = ObjectIdReferenceAttribute(['Device'], ("target", str), "target", pk_setter="target")
 
 class MessageHeaderResponse(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -11786,7 +11787,7 @@ class MessageHeaderResponse(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         code = Attribute(getter="code", setter="code", searcher=StringSearch("code"))
-        details = ObjectIdReferenceAttribute({'OperationOutcome'}, ("details", str), "details", pk_setter="details")
+        details = ObjectIdReferenceAttribute(['OperationOutcome'], ("details", str), "details", pk_setter="details")
         identifier = Attribute(getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
 
 class MessageHeaderSource(FhirBaseModel, EmbeddedMongoModel):
@@ -11828,7 +11829,7 @@ class Meta(FhirBaseModel, EmbeddedMongoModel):
         versionId = Attribute(getter="versionId", setter="versionId", searcher=StringSearch("versionId"))
 
 class MetadataResource(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11869,7 +11870,7 @@ class MetadataResource(FhirBaseModel, MongoModel):
         version = Attribute(getter="version", setter="version", searcher=StringSearch("version"))
 
 class MolecularSequence(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -11901,18 +11902,18 @@ class MolecularSequence(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         coordinateSystem = Attribute(getter="coordinateSystem", setter="coordinateSystem", searcher=NumericSearch("coordinateSystem"))
-        device = ObjectIdReferenceAttribute({'Device'}, ("device", str), "device", pk_setter="device")
+        device = ObjectIdReferenceAttribute(['Device'], ("device", str), "device", pk_setter="device")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         observedSeq = Attribute(getter="observedSeq", setter="observedSeq", searcher=StringSearch("observedSeq"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
-        performer = ObjectIdReferenceAttribute({'Organization'}, ("performer", str), "performer", pk_setter="performer")
-        pointer = ObjectIdReferenceAttribute({'MolecularSequence'}, ("pointer", str), "pointer", pk_setter="pointer")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
+        performer = ObjectIdReferenceAttribute(['Organization'], ("performer", str), "performer", pk_setter="performer")
+        pointer = ObjectIdReferenceAttribute(['MolecularSequence'], ("pointer", str), "pointer", pk_setter="pointer")
         quality = EmbeddedAttribute(type="MolecularSequenceQuality", getter="quality", setter="quality", searcher=StringSearch("quality"))
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         readCoverage = Attribute(getter="readCoverage", setter="readCoverage", searcher=NumericSearch("readCoverage"))
         referenceSeq = EmbeddedAttribute(type="MolecularSequenceReferenceSeq", getter="referenceSeq", setter="referenceSeq", searcher=StringSearch("referenceSeq"))
         repository = EmbeddedAttribute(type="MolecularSequenceRepository", getter="repository", setter="repository", searcher=StringSearch("repository"))
-        specimen = ObjectIdReferenceAttribute({'Specimen'}, ("specimen", str), "specimen", pk_setter="specimen")
+        specimen = ObjectIdReferenceAttribute(['Specimen'], ("specimen", str), "specimen", pk_setter="specimen")
         structureVariant = EmbeddedAttribute(type="MolecularSequenceStructureVariant", getter="structureVariant", setter="structureVariant", searcher=StringSearch("structureVariant"))
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
         variant = EmbeddedAttribute(type="MolecularSequenceVariant", getter="variant", setter="variant", searcher=StringSearch("variant"))
@@ -12000,7 +12001,7 @@ class MolecularSequenceReferenceSeq(FhirBaseModel, EmbeddedMongoModel):
         genomeBuild = Attribute(getter="genomeBuild", setter="genomeBuild", searcher=StringSearch("genomeBuild"))
         orientation = Attribute(getter="orientation", setter="orientation", searcher=StringSearch("orientation"))
         referenceSeqId = EmbeddedAttribute(type="CodeableConcept", getter="referenceSeqId", setter="referenceSeqId", searcher=StringSearch("referenceSeqId"))
-        referenceSeqPointer = ObjectIdReferenceAttribute({'MolecularSequence'}, ("referenceSeqPointer", str), "referenceSeqPointer", pk_setter="referenceSeqPointer")
+        referenceSeqPointer = ObjectIdReferenceAttribute(['MolecularSequence'], ("referenceSeqPointer", str), "referenceSeqPointer", pk_setter="referenceSeqPointer")
         referenceSeqString = Attribute(getter="referenceSeqString", setter="referenceSeqString", searcher=StringSearch("referenceSeqString"))
         strand = Attribute(getter="strand", setter="strand", searcher=StringSearch("strand"))
         windowEnd = Attribute(getter="windowEnd", setter="windowEnd", searcher=NumericSearch("windowEnd"))
@@ -12091,7 +12092,7 @@ class MolecularSequenceVariant(FhirBaseModel, EmbeddedMongoModel):
         observedAllele = Attribute(getter="observedAllele", setter="observedAllele", searcher=StringSearch("observedAllele"))
         referenceAllele = Attribute(getter="referenceAllele", setter="referenceAllele", searcher=StringSearch("referenceAllele"))
         start = Attribute(getter="start", setter="start", searcher=NumericSearch("start"))
-        variantPointer = ObjectIdReferenceAttribute({'Observation'}, ("variantPointer", str), "variantPointer", pk_setter="variantPointer")
+        variantPointer = ObjectIdReferenceAttribute(['Observation'], ("variantPointer", str), "variantPointer", pk_setter="variantPointer")
 
 class Money(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -12105,7 +12106,7 @@ class Money(FhirBaseModel, EmbeddedMongoModel):
         value = Attribute(getter="value", setter="value", searcher=NumericSearch("value"))
 
 class NamingSystem(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -12178,7 +12179,7 @@ class Narrative(FhirBaseModel, EmbeddedMongoModel):
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class NutritionOrder(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -12210,9 +12211,9 @@ class NutritionOrder(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        allergyIntolerance = ObjectIdReferenceAttribute({'AllergyIntolerance'}, ("allergyIntolerance", str), "allergyIntolerance", pk_setter="allergyIntolerance")
+        allergyIntolerance = ObjectIdReferenceAttribute(['AllergyIntolerance'], ("allergyIntolerance", str), "allergyIntolerance", pk_setter="allergyIntolerance")
         dateTime = DateAttribute("dateTime")
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         enteralFormula = EmbeddedAttribute(type="NutritionOrderEnteralFormula", getter="enteralFormula", setter="enteralFormula", searcher=StringSearch("enteralFormula"))
         excludeFoodModifier = EmbeddedAttribute(type="CodeableConcept", getter="excludeFoodModifier", setter="excludeFoodModifier", searcher=StringSearch("excludeFoodModifier"))
         foodPreferenceModifier = EmbeddedAttribute(type="CodeableConcept", getter="foodPreferenceModifier", setter="foodPreferenceModifier", searcher=StringSearch("foodPreferenceModifier"))
@@ -12223,8 +12224,8 @@ class NutritionOrder(FhirBaseModel, MongoModel):
         intent = Attribute(getter="intent", setter="intent", searcher=StringSearch("intent"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         oralDiet = EmbeddedAttribute(type="NutritionOrderOralDiet", getter="oralDiet", setter="oralDiet", searcher=StringSearch("oralDiet"))
-        orderer = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("orderer", str), "orderer", pk_setter="orderer")
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        orderer = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("orderer", str), "orderer", pk_setter="orderer")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         supplement = EmbeddedAttribute(type="NutritionOrderSupplement", getter="supplement", setter="supplement", searcher=StringSearch("supplement"))
 
@@ -12339,7 +12340,7 @@ class NutritionOrderSupplement(FhirBaseModel, EmbeddedMongoModel):
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class Observation(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -12391,32 +12392,32 @@ class Observation(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        basedOn = ObjectIdReferenceAttribute({'MedicationRequest', 'CarePlan', 'NutritionOrder', 'DeviceRequest', 'ServiceRequest', 'ImmunizationRecommendation'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['CarePlan', 'DeviceRequest', 'ImmunizationRecommendation', 'MedicationRequest', 'NutritionOrder', 'ServiceRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         bodySite = EmbeddedAttribute(type="CodeableConcept", getter="bodySite", setter="bodySite", searcher=StringSearch("bodySite"))
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         component = EmbeddedAttribute(type="ObservationComponent", getter="component", setter="component", searcher=StringSearch("component"))
         dataAbsentReason = EmbeddedAttribute(type="CodeableConcept", getter="dataAbsentReason", setter="dataAbsentReason", searcher=StringSearch("dataAbsentReason"))
-        derivedFrom = ObjectIdReferenceAttribute({'DocumentReference', 'MolecularSequence', 'Observation', 'ImagingStudy', 'QuestionnaireResponse', 'vitalsigns', 'Media'}, ("derivedFrom", str), "derivedFrom", pk_setter="derivedFrom")
-        device = ObjectIdReferenceAttribute({'DeviceMetric', 'Device'}, ("device", str), "device", pk_setter="device")
+        derivedFrom = ObjectIdReferenceAttribute(['DocumentReference', 'ImagingStudy', 'Media', 'MolecularSequence', 'Observation', 'QuestionnaireResponse', 'vitalsigns'], ("derivedFrom", str), "derivedFrom", pk_setter="derivedFrom")
+        device = ObjectIdReferenceAttribute(['Device', 'DeviceMetric'], ("device", str), "device", pk_setter="device")
         effectiveDateTime = DateAttribute("effectiveDateTime")
         effectiveInstant = DateAttribute("effectiveInstant")
         effectivePeriod = EmbeddedAttribute(type="Period", getter="effectivePeriod", setter="effectivePeriod", searcher=StringSearch("effectivePeriod"))
         effectiveTiming = EmbeddedAttribute(type="Timing", getter="effectiveTiming", setter="effectiveTiming", searcher=StringSearch("effectiveTiming"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
-        focus = ObjectIdReferenceAttribute({'Resource'}, ("focus", str), "focus", pk_setter="focus")
-        hasMember = ObjectIdReferenceAttribute({'MolecularSequence', 'Observation', 'vitalsigns', 'QuestionnaireResponse'}, ("hasMember", str), "hasMember", pk_setter="hasMember")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
+        focus = ObjectIdReferenceAttribute(['Resource'], ("focus", str), "focus", pk_setter="focus")
+        hasMember = ObjectIdReferenceAttribute(['MolecularSequence', 'Observation', 'QuestionnaireResponse', 'vitalsigns'], ("hasMember", str), "hasMember", pk_setter="hasMember")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         interpretation = EmbeddedAttribute(type="CodeableConcept", getter="interpretation", setter="interpretation", searcher=StringSearch("interpretation"))
         issued = DateAttribute("issued")
         method = EmbeddedAttribute(type="CodeableConcept", getter="method", setter="method", searcher=StringSearch("method"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        partOf = ObjectIdReferenceAttribute({'Immunization', 'MedicationDispense', 'MedicationStatement', 'Procedure', 'ImagingStudy', 'MedicationAdministration'}, ("partOf", str), "partOf", pk_setter="partOf")
-        performer = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'CareTeam', 'Organization', 'Patient'}, ("performer", str), "performer", pk_setter="performer")
+        partOf = ObjectIdReferenceAttribute(['ImagingStudy', 'Immunization', 'MedicationAdministration', 'MedicationDispense', 'MedicationStatement', 'Procedure'], ("partOf", str), "partOf", pk_setter="partOf")
+        performer = ObjectIdReferenceAttribute(['CareTeam', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("performer", str), "performer", pk_setter="performer")
         referenceRange = EmbeddedAttribute(type="ObservationReferenceRange", getter="referenceRange", setter="referenceRange", searcher=StringSearch("referenceRange"))
-        specimen = ObjectIdReferenceAttribute({'Specimen'}, ("specimen", str), "specimen", pk_setter="specimen")
+        specimen = ObjectIdReferenceAttribute(['Specimen'], ("specimen", str), "specimen", pk_setter="specimen")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Location', 'Device', 'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Location', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         valueBoolean = Attribute(getter="valueBoolean", setter="valueBoolean", searcher=StringSearch("valueBoolean"))
         valueCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="valueCodeableConcept", setter="valueCodeableConcept", searcher=StringSearch("valueCodeableConcept"))
         valueDateTime = DateAttribute("valueDateTime")
@@ -12469,7 +12470,7 @@ class ObservationComponent(FhirBaseModel, EmbeddedMongoModel):
         valueTime = DateAttribute("valueTime")
 
 class ObservationDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -12497,19 +12498,19 @@ class ObservationDefinition(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        abnormalCodedValueSet = ObjectIdReferenceAttribute({'ValueSet'}, ("abnormalCodedValueSet", str), "abnormalCodedValueSet", pk_setter="abnormalCodedValueSet")
+        abnormalCodedValueSet = ObjectIdReferenceAttribute(['ValueSet'], ("abnormalCodedValueSet", str), "abnormalCodedValueSet", pk_setter="abnormalCodedValueSet")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        criticalCodedValueSet = ObjectIdReferenceAttribute({'ValueSet'}, ("criticalCodedValueSet", str), "criticalCodedValueSet", pk_setter="criticalCodedValueSet")
+        criticalCodedValueSet = ObjectIdReferenceAttribute(['ValueSet'], ("criticalCodedValueSet", str), "criticalCodedValueSet", pk_setter="criticalCodedValueSet")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         method = EmbeddedAttribute(type="CodeableConcept", getter="method", setter="method", searcher=StringSearch("method"))
         multipleResultsAllowed = Attribute(getter="multipleResultsAllowed", setter="multipleResultsAllowed", searcher=StringSearch("multipleResultsAllowed"))
-        normalCodedValueSet = ObjectIdReferenceAttribute({'ValueSet'}, ("normalCodedValueSet", str), "normalCodedValueSet", pk_setter="normalCodedValueSet")
+        normalCodedValueSet = ObjectIdReferenceAttribute(['ValueSet'], ("normalCodedValueSet", str), "normalCodedValueSet", pk_setter="normalCodedValueSet")
         permittedDataType = Attribute(getter="permittedDataType", setter="permittedDataType", searcher=StringSearch("permittedDataType"))
         preferredReportName = Attribute(getter="preferredReportName", setter="preferredReportName", searcher=StringSearch("preferredReportName"))
         qualifiedInterval = EmbeddedAttribute(type="ObservationDefinitionQualifiedInterval", getter="qualifiedInterval", setter="qualifiedInterval", searcher=StringSearch("qualifiedInterval"))
         quantitativeDetails = EmbeddedAttribute(type="ObservationDefinitionQuantitativeDetails", getter="quantitativeDetails", setter="quantitativeDetails", searcher=StringSearch("quantitativeDetails"))
-        validCodedValueSet = ObjectIdReferenceAttribute({'ValueSet'}, ("validCodedValueSet", str), "validCodedValueSet", pk_setter="validCodedValueSet")
+        validCodedValueSet = ObjectIdReferenceAttribute(['ValueSet'], ("validCodedValueSet", str), "validCodedValueSet", pk_setter="validCodedValueSet")
 
 class ObservationDefinitionQualifiedInterval(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -12575,7 +12576,7 @@ class ObservationReferenceRange(FhirBaseModel, EmbeddedMongoModel):
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class OperationDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -12714,7 +12715,7 @@ class OperationDefinitionParameterReferencedFrom(FhirBaseModel, EmbeddedMongoMod
         sourceId = Attribute(getter="sourceId", setter="sourceId", searcher=StringSearch("sourceId"))
 
 class OperationOutcome(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -12754,7 +12755,7 @@ class OperationOutcomeIssue(FhirBaseModel, EmbeddedMongoModel):
         severity = Attribute(getter="severity", setter="severity", searcher=StringSearch("severity"))
 
 class Organization(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -12783,15 +12784,15 @@ class Organization(FhirBaseModel, MongoModel):
         address = EmbeddedAttribute(type="Address", getter="address", setter="address", searcher=StringSearch("address"))
         alias = Attribute(getter="alias", setter="alias", searcher=StringSearch("alias"))
         contact = EmbeddedAttribute(type="OrganizationContact", getter="contact", setter="contact", searcher=StringSearch("contact"))
-        endpoint = ObjectIdReferenceAttribute({'Endpoint'}, ("endpoint", str), "endpoint", pk_setter="endpoint")
+        endpoint = ObjectIdReferenceAttribute(['Endpoint'], ("endpoint", str), "endpoint", pk_setter="endpoint")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
-        partOf = ObjectIdReferenceAttribute({'Organization'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['Organization'], ("partOf", str), "partOf", pk_setter="partOf")
         telecom = EmbeddedAttribute(type="ContactPoint", getter="telecom", setter="telecom", searcher=StringSearch("telecom"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class OrganizationAffiliation(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -12820,13 +12821,13 @@ class OrganizationAffiliation(FhirBaseModel, MongoModel):
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         active = Attribute(getter="active", setter="active", searcher=StringSearch("active"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        endpoint = ObjectIdReferenceAttribute({'Endpoint'}, ("endpoint", str), "endpoint", pk_setter="endpoint")
-        healthcareService = ObjectIdReferenceAttribute({'HealthcareService'}, ("healthcareService", str), "healthcareService", pk_setter="healthcareService")
+        endpoint = ObjectIdReferenceAttribute(['Endpoint'], ("endpoint", str), "endpoint", pk_setter="endpoint")
+        healthcareService = ObjectIdReferenceAttribute(['HealthcareService'], ("healthcareService", str), "healthcareService", pk_setter="healthcareService")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
-        network = ObjectIdReferenceAttribute({'Organization'}, ("network", str), "network", pk_setter="network")
-        organization = ObjectIdReferenceAttribute({'Organization'}, ("organization", str), "organization", pk_setter="organization")
-        participatingOrganization = ObjectIdReferenceAttribute({'Organization'}, ("participatingOrganization", str), "participatingOrganization", pk_setter="participatingOrganization")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
+        network = ObjectIdReferenceAttribute(['Organization'], ("network", str), "network", pk_setter="network")
+        organization = ObjectIdReferenceAttribute(['Organization'], ("organization", str), "organization", pk_setter="organization")
+        participatingOrganization = ObjectIdReferenceAttribute(['Organization'], ("participatingOrganization", str), "participatingOrganization", pk_setter="participatingOrganization")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         specialty = EmbeddedAttribute(type="CodeableConcept", getter="specialty", setter="specialty", searcher=StringSearch("specialty"))
         telecom = EmbeddedAttribute(type="ContactPoint", getter="telecom", setter="telecom", searcher=StringSearch("telecom"))
@@ -12849,7 +12850,7 @@ class OrganizationContact(FhirBaseModel, EmbeddedMongoModel):
         telecom = EmbeddedAttribute(type="ContactPoint", getter="telecom", setter="telecom", searcher=StringSearch("telecom"))
 
 class PaginatedBundle(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -12895,7 +12896,7 @@ class ParameterDefinition(FhirBaseModel, EmbeddedMongoModel):
         use = Attribute(getter="use", setter="use", searcher=StringSearch("use"))
 
 class Parameters(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -13021,7 +13022,7 @@ class ParametersParameter(FhirBaseModel, EmbeddedMongoModel):
         valueUuid = Attribute(getter="valueUuid", setter="valueUuid", searcher=StringSearch("valueUuid"))
 
 class Patient(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -13062,10 +13063,10 @@ class Patient(FhirBaseModel, MongoModel):
         deceasedBoolean = Attribute(getter="deceasedBoolean", setter="deceasedBoolean", searcher=StringSearch("deceasedBoolean"))
         deceasedDateTime = DateAttribute("deceasedDateTime")
         gender = Attribute(getter="gender", setter="gender", searcher=StringSearch("gender"))
-        generalPractitioner = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("generalPractitioner", str), "generalPractitioner", pk_setter="generalPractitioner")
+        generalPractitioner = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("generalPractitioner", str), "generalPractitioner", pk_setter="generalPractitioner")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         link = EmbeddedAttribute(type="PatientLink", getter="link", setter="link", searcher=StringSearch("link"))
-        managingOrganization = ObjectIdReferenceAttribute({'Organization'}, ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
+        managingOrganization = ObjectIdReferenceAttribute(['Organization'], ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
         maritalStatus = EmbeddedAttribute(type="CodeableConcept", getter="maritalStatus", setter="maritalStatus", searcher=StringSearch("maritalStatus"))
         multipleBirthBoolean = Attribute(getter="multipleBirthBoolean", setter="multipleBirthBoolean", searcher=StringSearch("multipleBirthBoolean"))
         multipleBirthInteger = Attribute(getter="multipleBirthInteger", setter="multipleBirthInteger", searcher=NumericSearch("multipleBirthInteger"))
@@ -13104,7 +13105,7 @@ class PatientContact(FhirBaseModel, EmbeddedMongoModel):
         address = EmbeddedAttribute(type="Address", getter="address", setter="address", searcher=StringSearch("address"))
         gender = Attribute(getter="gender", setter="gender", searcher=StringSearch("gender"))
         name = EmbeddedAttribute(type="HumanName", getter="name", setter="name", searcher=StringSearch("name"))
-        organization = ObjectIdReferenceAttribute({'Organization'}, ("organization", str), "organization", pk_setter="organization")
+        organization = ObjectIdReferenceAttribute(['Organization'], ("organization", str), "organization", pk_setter="organization")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         relationship = EmbeddedAttribute(type="CodeableConcept", getter="relationship", setter="relationship", searcher=StringSearch("relationship"))
         telecom = EmbeddedAttribute(type="ContactPoint", getter="telecom", setter="telecom", searcher=StringSearch("telecom"))
@@ -13119,11 +13120,11 @@ class PatientLink(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        other = ObjectIdReferenceAttribute({'RelatedPerson', 'Patient'}, ("other", str), "other", pk_setter="other")
+        other = ObjectIdReferenceAttribute(['Patient', 'RelatedPerson'], ("other", str), "other", pk_setter="other")
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
 
 class PaymentNotice(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -13153,18 +13154,18 @@ class PaymentNotice(FhirBaseModel, MongoModel):
         amount = EmbeddedAttribute(type="Money", getter="amount", setter="amount", searcher=StringSearch("amount"))
         created = DateAttribute("created")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        payee = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("payee", str), "payee", pk_setter="payee")
-        payment = ObjectIdReferenceAttribute({'PaymentReconciliation'}, ("payment", str), "payment", pk_setter="payment")
+        payee = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("payee", str), "payee", pk_setter="payee")
+        payment = ObjectIdReferenceAttribute(['PaymentReconciliation'], ("payment", str), "payment", pk_setter="payment")
         paymentDate = DateAttribute("paymentDate")
         paymentStatus = EmbeddedAttribute(type="CodeableConcept", getter="paymentStatus", setter="paymentStatus", searcher=StringSearch("paymentStatus"))
-        provider = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("provider", str), "provider", pk_setter="provider")
-        recipient = ObjectIdReferenceAttribute({'Organization'}, ("recipient", str), "recipient", pk_setter="recipient")
-        request = ObjectIdReferenceAttribute({'Resource'}, ("request", str), "request", pk_setter="request")
-        response = ObjectIdReferenceAttribute({'Resource'}, ("response", str), "response", pk_setter="response")
+        provider = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("provider", str), "provider", pk_setter="provider")
+        recipient = ObjectIdReferenceAttribute(['Organization'], ("recipient", str), "recipient", pk_setter="recipient")
+        request = ObjectIdReferenceAttribute(['Resource'], ("request", str), "request", pk_setter="request")
+        response = ObjectIdReferenceAttribute(['Resource'], ("response", str), "response", pk_setter="response")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class PaymentReconciliation(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -13203,11 +13204,11 @@ class PaymentReconciliation(FhirBaseModel, MongoModel):
         paymentAmount = EmbeddedAttribute(type="Money", getter="paymentAmount", setter="paymentAmount", searcher=StringSearch("paymentAmount"))
         paymentDate = DateAttribute("paymentDate")
         paymentIdentifier = EmbeddedAttribute(type="Identifier", getter="paymentIdentifier", setter="paymentIdentifier", searcher=StringSearch("paymentIdentifier"))
-        paymentIssuer = ObjectIdReferenceAttribute({'Organization'}, ("paymentIssuer", str), "paymentIssuer", pk_setter="paymentIssuer")
+        paymentIssuer = ObjectIdReferenceAttribute(['Organization'], ("paymentIssuer", str), "paymentIssuer", pk_setter="paymentIssuer")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         processNote = EmbeddedAttribute(type="PaymentReconciliationProcessNote", getter="processNote", setter="processNote", searcher=StringSearch("processNote"))
-        request = ObjectIdReferenceAttribute({'Task'}, ("request", str), "request", pk_setter="request")
-        requestor = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("requestor", str), "requestor", pk_setter="requestor")
+        request = ObjectIdReferenceAttribute(['Task'], ("request", str), "request", pk_setter="request")
+        requestor = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("requestor", str), "requestor", pk_setter="requestor")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class PaymentReconciliationDetail(FhirBaseModel, EmbeddedMongoModel):
@@ -13231,12 +13232,12 @@ class PaymentReconciliationDetail(FhirBaseModel, EmbeddedMongoModel):
         amount = EmbeddedAttribute(type="Money", getter="amount", setter="amount", searcher=StringSearch("amount"))
         date = DateAttribute("date")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        payee = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("payee", str), "payee", pk_setter="payee")
+        payee = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("payee", str), "payee", pk_setter="payee")
         predecessor = EmbeddedAttribute(type="Identifier", getter="predecessor", setter="predecessor", searcher=StringSearch("predecessor"))
-        request = ObjectIdReferenceAttribute({'Resource'}, ("request", str), "request", pk_setter="request")
-        response = ObjectIdReferenceAttribute({'Resource'}, ("response", str), "response", pk_setter="response")
-        responsible = ObjectIdReferenceAttribute({'PractitionerRole'}, ("responsible", str), "responsible", pk_setter="responsible")
-        submitter = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("submitter", str), "submitter", pk_setter="submitter")
+        request = ObjectIdReferenceAttribute(['Resource'], ("request", str), "request", pk_setter="request")
+        response = ObjectIdReferenceAttribute(['Resource'], ("response", str), "response", pk_setter="response")
+        responsible = ObjectIdReferenceAttribute(['PractitionerRole'], ("responsible", str), "responsible", pk_setter="responsible")
+        submitter = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("submitter", str), "submitter", pk_setter="submitter")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class PaymentReconciliationProcessNote(FhirBaseModel, EmbeddedMongoModel):
@@ -13264,7 +13265,7 @@ class Period(FhirBaseModel, EmbeddedMongoModel):
         start = DateAttribute("start")
 
 class Person(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -13295,7 +13296,7 @@ class Person(FhirBaseModel, MongoModel):
         gender = Attribute(getter="gender", setter="gender", searcher=StringSearch("gender"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         link = EmbeddedAttribute(type="PersonLink", getter="link", setter="link", searcher=StringSearch("link"))
-        managingOrganization = ObjectIdReferenceAttribute({'Organization'}, ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
+        managingOrganization = ObjectIdReferenceAttribute(['Organization'], ("managingOrganization", str), "managingOrganization", pk_setter="managingOrganization")
         name = EmbeddedAttribute(type="HumanName", getter="name", setter="name", searcher=StringSearch("name"))
         photo = EmbeddedAttribute(type="Attachment", getter="photo", setter="photo", searcher=StringSearch("photo"))
         telecom = EmbeddedAttribute(type="ContactPoint", getter="telecom", setter="telecom", searcher=StringSearch("telecom"))
@@ -13311,10 +13312,10 @@ class PersonLink(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         assurance = Attribute(getter="assurance", setter="assurance", searcher=StringSearch("assurance"))
-        target = ObjectIdReferenceAttribute({'Person', 'Practitioner', 'RelatedPerson', 'Patient'}, ("target", str), "target", pk_setter="target")
+        target = ObjectIdReferenceAttribute(['Patient', 'Person', 'Practitioner', 'RelatedPerson'], ("target", str), "target", pk_setter="target")
 
 class PlanDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -13384,7 +13385,7 @@ class PlanDefinition(FhirBaseModel, MongoModel):
         reviewer = EmbeddedAttribute(type="ContactDetail", getter="reviewer", setter="reviewer", searcher=StringSearch("reviewer"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subjectCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="subjectCodeableConcept", setter="subjectCodeableConcept", searcher=StringSearch("subjectCodeableConcept"))
-        subjectReference = ObjectIdReferenceAttribute({'Group'}, ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
+        subjectReference = ObjectIdReferenceAttribute(['Group'], ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
         subtitle = Attribute(getter="subtitle", setter="subtitle", searcher=StringSearch("subtitle"))
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
         topic = EmbeddedAttribute(type="CodeableConcept", getter="topic", setter="topic", searcher=StringSearch("topic"))
@@ -13458,7 +13459,7 @@ class PlanDefinitionAction(FhirBaseModel, EmbeddedMongoModel):
         requiredBehavior = Attribute(getter="requiredBehavior", setter="requiredBehavior", searcher=StringSearch("requiredBehavior"))
         selectionBehavior = Attribute(getter="selectionBehavior", setter="selectionBehavior", searcher=StringSearch("selectionBehavior"))
         subjectCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="subjectCodeableConcept", setter="subjectCodeableConcept", searcher=StringSearch("subjectCodeableConcept"))
-        subjectReference = ObjectIdReferenceAttribute({'Group'}, ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
+        subjectReference = ObjectIdReferenceAttribute(['Group'], ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
         textEquivalent = Attribute(getter="textEquivalent", setter="textEquivalent", searcher=StringSearch("textEquivalent"))
         timingAge = EmbeddedAttribute(type="Age", getter="timingAge", setter="timingAge", searcher=StringSearch("timingAge"))
         timingDateTime = DateAttribute("timingDateTime")
@@ -13589,7 +13590,7 @@ class Population(FhirBaseModel, EmbeddedMongoModel):
         race = EmbeddedAttribute(type="CodeableConcept", getter="race", setter="race", searcher=StringSearch("race"))
 
 class Practitioner(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -13639,11 +13640,11 @@ class PractitionerQualification(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        issuer = ObjectIdReferenceAttribute({'Organization'}, ("issuer", str), "issuer", pk_setter="issuer")
+        issuer = ObjectIdReferenceAttribute(['Organization'], ("issuer", str), "issuer", pk_setter="issuer")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
 
 class PractitionerRole(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -13676,14 +13677,14 @@ class PractitionerRole(FhirBaseModel, MongoModel):
         availabilityExceptions = Attribute(getter="availabilityExceptions", setter="availabilityExceptions", searcher=StringSearch("availabilityExceptions"))
         availableTime = EmbeddedAttribute(type="PractitionerRoleAvailableTime", getter="availableTime", setter="availableTime", searcher=StringSearch("availableTime"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        endpoint = ObjectIdReferenceAttribute({'Endpoint'}, ("endpoint", str), "endpoint", pk_setter="endpoint")
-        healthcareService = ObjectIdReferenceAttribute({'HealthcareService'}, ("healthcareService", str), "healthcareService", pk_setter="healthcareService")
+        endpoint = ObjectIdReferenceAttribute(['Endpoint'], ("endpoint", str), "endpoint", pk_setter="endpoint")
+        healthcareService = ObjectIdReferenceAttribute(['HealthcareService'], ("healthcareService", str), "healthcareService", pk_setter="healthcareService")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         notAvailable = EmbeddedAttribute(type="PractitionerRoleNotAvailable", getter="notAvailable", setter="notAvailable", searcher=StringSearch("notAvailable"))
-        organization = ObjectIdReferenceAttribute({'Organization'}, ("organization", str), "organization", pk_setter="organization")
+        organization = ObjectIdReferenceAttribute(['Organization'], ("organization", str), "organization", pk_setter="organization")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
-        practitioner = ObjectIdReferenceAttribute({'Practitioner'}, ("practitioner", str), "practitioner", pk_setter="practitioner")
+        practitioner = ObjectIdReferenceAttribute(['Practitioner'], ("practitioner", str), "practitioner", pk_setter="practitioner")
         specialty = EmbeddedAttribute(type="CodeableConcept", getter="specialty", setter="specialty", searcher=StringSearch("specialty"))
         telecom = EmbeddedAttribute(type="ContactPoint", getter="telecom", setter="telecom", searcher=StringSearch("telecom"))
 
@@ -13718,7 +13719,7 @@ class PractitionerRoleNotAvailable(FhirBaseModel, EmbeddedMongoModel):
         during = EmbeddedAttribute(type="Period", getter="during", setter="during", searcher=StringSearch("during"))
 
 class Procedure(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -13765,23 +13766,23 @@ class Procedure(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        asserter = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Patient'}, ("asserter", str), "asserter", pk_setter="asserter")
-        basedOn = ObjectIdReferenceAttribute({'CarePlan', 'ServiceRequest'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        asserter = ObjectIdReferenceAttribute(['Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("asserter", str), "asserter", pk_setter="asserter")
+        basedOn = ObjectIdReferenceAttribute(['CarePlan', 'ServiceRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         bodySite = EmbeddedAttribute(type="CodeableConcept", getter="bodySite", setter="bodySite", searcher=StringSearch("bodySite"))
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         complication = EmbeddedAttribute(type="CodeableConcept", getter="complication", setter="complication", searcher=StringSearch("complication"))
-        complicationDetail = ObjectIdReferenceAttribute({'Condition'}, ("complicationDetail", str), "complicationDetail", pk_setter="complicationDetail")
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        complicationDetail = ObjectIdReferenceAttribute(['Condition'], ("complicationDetail", str), "complicationDetail", pk_setter="complicationDetail")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         focalDevice = EmbeddedAttribute(type="ProcedureFocalDevice", getter="focalDevice", setter="focalDevice", searcher=StringSearch("focalDevice"))
         followUp = EmbeddedAttribute(type="CodeableConcept", getter="followUp", setter="followUp", searcher=StringSearch("followUp"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         instantiatesCanonical = Attribute(getter="instantiatesCanonical", setter="instantiatesCanonical", searcher=StringSearch("instantiatesCanonical"))
         instantiatesUri = Attribute(getter="instantiatesUri", setter="instantiatesUri", searcher=StringSearch("instantiatesUri"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         outcome = EmbeddedAttribute(type="CodeableConcept", getter="outcome", setter="outcome", searcher=StringSearch("outcome"))
-        partOf = ObjectIdReferenceAttribute({'Observation', 'Procedure', 'MedicationAdministration'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['MedicationAdministration', 'Observation', 'Procedure'], ("partOf", str), "partOf", pk_setter="partOf")
         performedAge = EmbeddedAttribute(type="Age", getter="performedAge", setter="performedAge", searcher=StringSearch("performedAge"))
         performedDateTime = DateAttribute("performedDateTime")
         performedPeriod = EmbeddedAttribute(type="Period", getter="performedPeriod", setter="performedPeriod", searcher=StringSearch("performedPeriod"))
@@ -13789,14 +13790,14 @@ class Procedure(FhirBaseModel, MongoModel):
         performedString = Attribute(getter="performedString", setter="performedString", searcher=StringSearch("performedString"))
         performer = EmbeddedAttribute(type="ProcedurePerformer", getter="performer", setter="performer", searcher=StringSearch("performer"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'DocumentReference', 'Observation', 'Procedure', 'Condition'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        recorder = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Patient'}, ("recorder", str), "recorder", pk_setter="recorder")
-        report = ObjectIdReferenceAttribute({'DiagnosticReport', 'Composition', 'DocumentReference'}, ("report", str), "report", pk_setter="report")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Observation', 'Procedure'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        recorder = ObjectIdReferenceAttribute(['Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("recorder", str), "recorder", pk_setter="recorder")
+        report = ObjectIdReferenceAttribute(['Composition', 'DiagnosticReport', 'DocumentReference'], ("report", str), "report", pk_setter="report")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusReason = EmbeddedAttribute(type="CodeableConcept", getter="statusReason", setter="statusReason", searcher=StringSearch("statusReason"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
         usedCode = EmbeddedAttribute(type="CodeableConcept", getter="usedCode", setter="usedCode", searcher=StringSearch("usedCode"))
-        usedReference = ObjectIdReferenceAttribute({'Substance', 'Device', 'Medication'}, ("usedReference", str), "usedReference", pk_setter="usedReference")
+        usedReference = ObjectIdReferenceAttribute(['Device', 'Medication', 'Substance'], ("usedReference", str), "usedReference", pk_setter="usedReference")
 
 class ProcedureFocalDevice(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -13809,7 +13810,7 @@ class ProcedureFocalDevice(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         action = EmbeddedAttribute(type="CodeableConcept", getter="action", setter="action", searcher=StringSearch("action"))
-        manipulated = ObjectIdReferenceAttribute({'Device'}, ("manipulated", str), "manipulated", pk_setter="manipulated")
+        manipulated = ObjectIdReferenceAttribute(['Device'], ("manipulated", str), "manipulated", pk_setter="manipulated")
 
 class ProcedurePerformer(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -13822,12 +13823,12 @@ class ProcedurePerformer(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        actor = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("actor", str), "actor", pk_setter="actor")
+        actor = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("actor", str), "actor", pk_setter="actor")
         function = EmbeddedAttribute(type="CodeableConcept", getter="function", setter="function", searcher=StringSearch("function"))
-        onBehalfOf = ObjectIdReferenceAttribute({'Organization'}, ("onBehalfOf", str), "onBehalfOf", pk_setter="onBehalfOf")
+        onBehalfOf = ObjectIdReferenceAttribute(['Organization'], ("onBehalfOf", str), "onBehalfOf", pk_setter="onBehalfOf")
 
 class ProcedureRequest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -13915,7 +13916,7 @@ class ProcedureRequestRequester(FhirBaseModel, EmbeddedMongoModel):
         # onBehalfOf = ObjectIdReferenceAttribute(getter="onBehalfOf", setter="onBehalfOf", searcher=StringSearch("onBehalfOf"))
 
 class ProcessRequest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -13973,7 +13974,7 @@ class ProcessRequestItem(FhirBaseModel, EmbeddedMongoModel):
         sequenceLinkId = Attribute(getter="sequenceLinkId", setter="sequenceLinkId", searcher=NumericSearch("sequenceLinkId"))
 
 class ProcessResponse(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -14077,7 +14078,7 @@ class ProductShelfLife(FhirBaseModel, EmbeddedMongoModel):
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class Provenance(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -14106,14 +14107,14 @@ class Provenance(FhirBaseModel, MongoModel):
         activity = EmbeddedAttribute(type="CodeableConcept", getter="activity", setter="activity", searcher=StringSearch("activity"))
         agent = EmbeddedAttribute(type="ProvenanceAgent", getter="agent", setter="agent", searcher=StringSearch("agent"))
         entity = EmbeddedAttribute(type="ProvenanceEntity", getter="entity", setter="entity", searcher=StringSearch("entity"))
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         occurredDateTime = DateAttribute("occurredDateTime")
         occurredPeriod = EmbeddedAttribute(type="Period", getter="occurredPeriod", setter="occurredPeriod", searcher=StringSearch("occurredPeriod"))
         policy = Attribute(getter="policy", setter="policy", searcher=StringSearch("policy"))
         reason = EmbeddedAttribute(type="CodeableConcept", getter="reason", setter="reason", searcher=StringSearch("reason"))
         recorded = DateAttribute("recorded")
         signature = EmbeddedAttribute(type="Signature", getter="signature", setter="signature", searcher=StringSearch("signature"))
-        target = ObjectIdReferenceAttribute({'Resource'}, ("target", str), "target", pk_setter="target")
+        target = ObjectIdReferenceAttribute(['Resource'], ("target", str), "target", pk_setter="target")
 
 class ProvenanceAgent(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -14127,10 +14128,10 @@ class ProvenanceAgent(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        onBehalfOf = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("onBehalfOf", str), "onBehalfOf", pk_setter="onBehalfOf")
+        onBehalfOf = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("onBehalfOf", str), "onBehalfOf", pk_setter="onBehalfOf")
         role = EmbeddedAttribute(type="CodeableConcept", getter="role", setter="role", searcher=StringSearch("role"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
-        who = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("who", str), "who", pk_setter="who")
+        who = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("who", str), "who", pk_setter="who")
 
 class ProvenanceEntity(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -14145,7 +14146,7 @@ class ProvenanceEntity(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         agent = EmbeddedAttribute(type="ProvenanceAgent", getter="agent", setter="agent", searcher=StringSearch("agent"))
         role = Attribute(getter="role", setter="role", searcher=StringSearch("role"))
-        what = ObjectIdReferenceAttribute({'Resource'}, ("what", str), "what", pk_setter="what")
+        what = ObjectIdReferenceAttribute(['Resource'], ("what", str), "what", pk_setter="what")
 
 class Quantity(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -14165,7 +14166,7 @@ class Quantity(FhirBaseModel, EmbeddedMongoModel):
         value = Attribute(getter="value", setter="value", searcher=NumericSearch("value"))
 
 class Questionnaire(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -14271,12 +14272,12 @@ class QuestionnaireItemAnswerOption(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     initialSelected = fields.BooleanField(blank=True, required=False)
-    valueCoding = fields.EmbeddedDocumentField("Coding", blank=False, required=True)
-    valueDate = fields.DateTimeField(blank=False, required=True)
-    valueInteger = fields.IntegerField(blank=False, required=True)
-    valueReference = fields.ObjectIdField(blank=False, required=True)
-    valueString = fields.CharField(blank=False, required=True)
-    valueTime = fields.DateTimeField(blank=False, required=True)
+    valueCoding = fields.EmbeddedDocumentField("Coding", blank=True, required=False)
+    valueDate = fields.DateTimeField(blank=True, required=False)
+    valueInteger = fields.IntegerField(blank=True, required=False)
+    valueReference = fields.ObjectIdField(blank=True, required=False)
+    valueString = fields.CharField(blank=True, required=False)
+    valueTime = fields.DateTimeField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -14285,7 +14286,7 @@ class QuestionnaireItemAnswerOption(FhirBaseModel, EmbeddedMongoModel):
         valueCoding = EmbeddedAttribute(type="Coding", getter="valueCoding", setter="valueCoding", searcher=StringSearch("valueCoding"))
         valueDate = DateAttribute("valueDate")
         valueInteger = Attribute(getter="valueInteger", setter="valueInteger", searcher=NumericSearch("valueInteger"))
-        valueReference = ObjectIdReferenceAttribute({'Resource'}, ("valueReference", str), "valueReference", pk_setter="valueReference")
+        valueReference = ObjectIdReferenceAttribute(['Resource'], ("valueReference", str), "valueReference", pk_setter="valueReference")
         valueString = Attribute(getter="valueString", setter="valueString", searcher=StringSearch("valueString"))
         valueTime = DateAttribute("valueTime")
 
@@ -14293,16 +14294,16 @@ class QuestionnaireItemEnableWhen(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    answerBoolean = fields.BooleanField(blank=False, required=True)
-    answerCoding = fields.EmbeddedDocumentField("Coding", blank=False, required=True)
-    answerDate = fields.DateTimeField(blank=False, required=True)
-    answerDateTime = fields.DateTimeField(blank=False, required=True)
-    answerDecimal = fields.FloatField(blank=False, required=True)
-    answerInteger = fields.IntegerField(blank=False, required=True)
-    answerQuantity = fields.EmbeddedDocumentField("Quantity", blank=False, required=True)
-    answerReference = fields.ObjectIdField(blank=False, required=True)
-    answerString = fields.CharField(blank=False, required=True)
-    answerTime = fields.DateTimeField(blank=False, required=True)
+    answerBoolean = fields.BooleanField(blank=True, required=False)
+    answerCoding = fields.EmbeddedDocumentField("Coding", blank=True, required=False)
+    answerDate = fields.DateTimeField(blank=True, required=False)
+    answerDateTime = fields.DateTimeField(blank=True, required=False)
+    answerDecimal = fields.FloatField(blank=True, required=False)
+    answerInteger = fields.IntegerField(blank=True, required=False)
+    answerQuantity = fields.EmbeddedDocumentField("Quantity", blank=True, required=False)
+    answerReference = fields.ObjectIdField(blank=True, required=False)
+    answerString = fields.CharField(blank=True, required=False)
+    answerTime = fields.DateTimeField(blank=True, required=False)
     operator = fields.CharField(blank=False, required=True)
     question = fields.CharField(blank=False, required=True)
     class FhirMap:
@@ -14316,7 +14317,7 @@ class QuestionnaireItemEnableWhen(FhirBaseModel, EmbeddedMongoModel):
         answerDecimal = Attribute(getter="answerDecimal", setter="answerDecimal", searcher=NumericSearch("answerDecimal"))
         answerInteger = Attribute(getter="answerInteger", setter="answerInteger", searcher=NumericSearch("answerInteger"))
         answerQuantity = EmbeddedAttribute(type="Quantity", getter="answerQuantity", setter="answerQuantity", searcher=StringSearch("answerQuantity"))
-        answerReference = ObjectIdReferenceAttribute({'Resource'}, ("answerReference", str), "answerReference", pk_setter="answerReference")
+        answerReference = ObjectIdReferenceAttribute(['Resource'], ("answerReference", str), "answerReference", pk_setter="answerReference")
         answerString = Attribute(getter="answerString", setter="answerString", searcher=StringSearch("answerString"))
         answerTime = DateAttribute("answerTime")
         operator = Attribute(getter="operator", setter="operator", searcher=StringSearch("operator"))
@@ -14326,18 +14327,18 @@ class QuestionnaireItemInitial(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    valueAttachment = fields.EmbeddedDocumentField("Attachment", blank=False, required=True)
-    valueBoolean = fields.BooleanField(blank=False, required=True)
-    valueCoding = fields.EmbeddedDocumentField("Coding", blank=False, required=True)
-    valueDate = fields.DateTimeField(blank=False, required=True)
-    valueDateTime = fields.DateTimeField(blank=False, required=True)
-    valueDecimal = fields.FloatField(blank=False, required=True)
-    valueInteger = fields.IntegerField(blank=False, required=True)
-    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=False, required=True)
-    valueReference = fields.ObjectIdField(blank=False, required=True)
-    valueString = fields.CharField(blank=False, required=True)
-    valueTime = fields.DateTimeField(blank=False, required=True)
-    valueUri = fields.CharField(blank=False, required=True)
+    valueAttachment = fields.EmbeddedDocumentField("Attachment", blank=True, required=False)
+    valueBoolean = fields.BooleanField(blank=True, required=False)
+    valueCoding = fields.EmbeddedDocumentField("Coding", blank=True, required=False)
+    valueDate = fields.DateTimeField(blank=True, required=False)
+    valueDateTime = fields.DateTimeField(blank=True, required=False)
+    valueDecimal = fields.FloatField(blank=True, required=False)
+    valueInteger = fields.IntegerField(blank=True, required=False)
+    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=True, required=False)
+    valueReference = fields.ObjectIdField(blank=True, required=False)
+    valueString = fields.CharField(blank=True, required=False)
+    valueTime = fields.DateTimeField(blank=True, required=False)
+    valueUri = fields.CharField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -14350,13 +14351,13 @@ class QuestionnaireItemInitial(FhirBaseModel, EmbeddedMongoModel):
         valueDecimal = Attribute(getter="valueDecimal", setter="valueDecimal", searcher=NumericSearch("valueDecimal"))
         valueInteger = Attribute(getter="valueInteger", setter="valueInteger", searcher=NumericSearch("valueInteger"))
         valueQuantity = EmbeddedAttribute(type="Quantity", getter="valueQuantity", setter="valueQuantity", searcher=StringSearch("valueQuantity"))
-        valueReference = ObjectIdReferenceAttribute({'Resource'}, ("valueReference", str), "valueReference", pk_setter="valueReference")
+        valueReference = ObjectIdReferenceAttribute(['Resource'], ("valueReference", str), "valueReference", pk_setter="valueReference")
         valueString = Attribute(getter="valueString", setter="valueString", searcher=StringSearch("valueString"))
         valueTime = DateAttribute("valueTime")
         valueUri = Attribute(getter="valueUri", setter="valueUri", searcher=StringSearch("valueUri"))
 
 class QuestionnaireResponse(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -14382,17 +14383,17 @@ class QuestionnaireResponse(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        author = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("author", str), "author", pk_setter="author")
+        author = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("author", str), "author", pk_setter="author")
         authored = DateAttribute("authored")
-        basedOn = ObjectIdReferenceAttribute({'CarePlan', 'ServiceRequest'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        basedOn = ObjectIdReferenceAttribute(['CarePlan', 'ServiceRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         item = EmbeddedAttribute(type="QuestionnaireResponseItem", getter="item", setter="item", searcher=StringSearch("item"))
-        partOf = ObjectIdReferenceAttribute({'Observation', 'Procedure'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['Observation', 'Procedure'], ("partOf", str), "partOf", pk_setter="partOf")
         questionnaire = Attribute(getter="questionnaire", setter="questionnaire", searcher=StringSearch("questionnaire"))
-        source = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'RelatedPerson', 'Patient'}, ("source", str), "source", pk_setter="source")
+        source = ObjectIdReferenceAttribute(['Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("source", str), "source", pk_setter="source")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Resource'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Resource'], ("subject", str), "subject", pk_setter="subject")
 
 class QuestionnaireResponseItem(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -14443,7 +14444,7 @@ class QuestionnaireResponseItemAnswer(FhirBaseModel, EmbeddedMongoModel):
         valueDecimal = Attribute(getter="valueDecimal", setter="valueDecimal", searcher=NumericSearch("valueDecimal"))
         valueInteger = Attribute(getter="valueInteger", setter="valueInteger", searcher=NumericSearch("valueInteger"))
         valueQuantity = EmbeddedAttribute(type="Quantity", getter="valueQuantity", setter="valueQuantity", searcher=StringSearch("valueQuantity"))
-        valueReference = ObjectIdReferenceAttribute({'Resource'}, ("valueReference", str), "valueReference", pk_setter="valueReference")
+        valueReference = ObjectIdReferenceAttribute(['Resource'], ("valueReference", str), "valueReference", pk_setter="valueReference")
         valueString = Attribute(getter="valueString", setter="valueString", searcher=StringSearch("valueString"))
         valueTime = DateAttribute("valueTime")
         valueUri = Attribute(getter="valueUri", setter="valueUri", searcher=StringSearch("valueUri"))
@@ -14486,7 +14487,7 @@ class Reference(FhirBaseModel, EmbeddedMongoModel):
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
 
 class ReferralRequest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -14585,7 +14586,7 @@ class RelatedArtifact(FhirBaseModel, EmbeddedMongoModel):
         url = Attribute(getter="url", setter="url", searcher=StringSearch("url"))
 
 class RelatedPerson(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -14619,7 +14620,7 @@ class RelatedPerson(FhirBaseModel, MongoModel):
         gender = Attribute(getter="gender", setter="gender", searcher=StringSearch("gender"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         name = EmbeddedAttribute(type="HumanName", getter="name", setter="name", searcher=StringSearch("name"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         photo = EmbeddedAttribute(type="Attachment", getter="photo", setter="photo", searcher=StringSearch("photo"))
         relationship = EmbeddedAttribute(type="CodeableConcept", getter="relationship", setter="relationship", searcher=StringSearch("relationship"))
@@ -14639,7 +14640,7 @@ class RelatedPersonCommunication(FhirBaseModel, EmbeddedMongoModel):
         preferred = Attribute(getter="preferred", setter="preferred", searcher=StringSearch("preferred"))
 
 class RequestGroup(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -14673,11 +14674,11 @@ class RequestGroup(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         action = EmbeddedAttribute(type="RequestGroupAction", getter="action", setter="action", searcher=StringSearch("action"))
-        author = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Device'}, ("author", str), "author", pk_setter="author")
+        author = ObjectIdReferenceAttribute(['Device', 'Practitioner', 'PractitionerRole'], ("author", str), "author", pk_setter="author")
         authoredOn = DateAttribute("authoredOn")
-        basedOn = ObjectIdReferenceAttribute({'Resource'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['Resource'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         groupIdentifier = EmbeddedAttribute(type="Identifier", getter="groupIdentifier", setter="groupIdentifier", searcher=StringSearch("groupIdentifier"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         instantiatesCanonical = Attribute(getter="instantiatesCanonical", setter="instantiatesCanonical", searcher=StringSearch("instantiatesCanonical"))
@@ -14686,10 +14687,10 @@ class RequestGroup(FhirBaseModel, MongoModel):
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         priority = Attribute(getter="priority", setter="priority", searcher=StringSearch("priority"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation', 'DocumentReference'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        replaces = ObjectIdReferenceAttribute({'Resource'}, ("replaces", str), "replaces", pk_setter="replaces")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        replaces = ObjectIdReferenceAttribute(['Resource'], ("replaces", str), "replaces", pk_setter="replaces")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
 
 class RequestGroupAction(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -14730,13 +14731,13 @@ class RequestGroupAction(FhirBaseModel, EmbeddedMongoModel):
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         documentation = EmbeddedAttribute(type="RelatedArtifact", getter="documentation", setter="documentation", searcher=StringSearch("documentation"))
         groupingBehavior = Attribute(getter="groupingBehavior", setter="groupingBehavior", searcher=StringSearch("groupingBehavior"))
-        participant = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Patient'}, ("participant", str), "participant", pk_setter="participant")
+        participant = ObjectIdReferenceAttribute(['Device', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("participant", str), "participant", pk_setter="participant")
         precheckBehavior = Attribute(getter="precheckBehavior", setter="precheckBehavior", searcher=StringSearch("precheckBehavior"))
         prefix = Attribute(getter="prefix", setter="prefix", searcher=StringSearch("prefix"))
         priority = Attribute(getter="priority", setter="priority", searcher=StringSearch("priority"))
         relatedAction = EmbeddedAttribute(type="RequestGroupActionRelatedAction", getter="relatedAction", setter="relatedAction", searcher=StringSearch("relatedAction"))
         requiredBehavior = Attribute(getter="requiredBehavior", setter="requiredBehavior", searcher=StringSearch("requiredBehavior"))
-        resource = ObjectIdReferenceAttribute({'Resource'}, ("resource", str), "resource", pk_setter="resource")
+        resource = ObjectIdReferenceAttribute(['Resource'], ("resource", str), "resource", pk_setter="resource")
         selectionBehavior = Attribute(getter="selectionBehavior", setter="selectionBehavior", searcher=StringSearch("selectionBehavior"))
         textEquivalent = Attribute(getter="textEquivalent", setter="textEquivalent", searcher=StringSearch("textEquivalent"))
         timingAge = EmbeddedAttribute(type="Age", getter="timingAge", setter="timingAge", searcher=StringSearch("timingAge"))
@@ -14779,7 +14780,7 @@ class RequestGroupActionRelatedAction(FhirBaseModel, EmbeddedMongoModel):
         relationship = Attribute(getter="relationship", setter="relationship", searcher=StringSearch("relationship"))
 
 class ResearchDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -14840,15 +14841,15 @@ class ResearchDefinition(FhirBaseModel, MongoModel):
         effectivePeriod = EmbeddedAttribute(type="Period", getter="effectivePeriod", setter="effectivePeriod", searcher=StringSearch("effectivePeriod"))
         endorser = EmbeddedAttribute(type="ContactDetail", getter="endorser", setter="endorser", searcher=StringSearch("endorser"))
         experimental = Attribute(getter="experimental", setter="experimental", searcher=StringSearch("experimental"))
-        exposure = ObjectIdReferenceAttribute({'ResearchElementDefinition'}, ("exposure", str), "exposure", pk_setter="exposure")
-        exposureAlternative = ObjectIdReferenceAttribute({'ResearchElementDefinition'}, ("exposureAlternative", str), "exposureAlternative", pk_setter="exposureAlternative")
+        exposure = ObjectIdReferenceAttribute(['ResearchElementDefinition'], ("exposure", str), "exposure", pk_setter="exposure")
+        exposureAlternative = ObjectIdReferenceAttribute(['ResearchElementDefinition'], ("exposureAlternative", str), "exposureAlternative", pk_setter="exposureAlternative")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         jurisdiction = EmbeddedAttribute(type="CodeableConcept", getter="jurisdiction", setter="jurisdiction", searcher=StringSearch("jurisdiction"))
         lastReviewDate = DateAttribute("lastReviewDate")
         library = Attribute(getter="library", setter="library", searcher=StringSearch("library"))
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
-        outcome = ObjectIdReferenceAttribute({'ResearchElementDefinition'}, ("outcome", str), "outcome", pk_setter="outcome")
-        population = ObjectIdReferenceAttribute({'ResearchElementDefinition'}, ("population", str), "population", pk_setter="population")
+        outcome = ObjectIdReferenceAttribute(['ResearchElementDefinition'], ("outcome", str), "outcome", pk_setter="outcome")
+        population = ObjectIdReferenceAttribute(['ResearchElementDefinition'], ("population", str), "population", pk_setter="population")
         publisher = Attribute(getter="publisher", setter="publisher", searcher=StringSearch("publisher"))
         purpose = Attribute(getter="purpose", setter="purpose", searcher=StringSearch("purpose"))
         relatedArtifact = EmbeddedAttribute(type="RelatedArtifact", getter="relatedArtifact", setter="relatedArtifact", searcher=StringSearch("relatedArtifact"))
@@ -14856,7 +14857,7 @@ class ResearchDefinition(FhirBaseModel, MongoModel):
         shortTitle = Attribute(getter="shortTitle", setter="shortTitle", searcher=StringSearch("shortTitle"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subjectCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="subjectCodeableConcept", setter="subjectCodeableConcept", searcher=StringSearch("subjectCodeableConcept"))
-        subjectReference = ObjectIdReferenceAttribute({'Group'}, ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
+        subjectReference = ObjectIdReferenceAttribute(['Group'], ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
         subtitle = Attribute(getter="subtitle", setter="subtitle", searcher=StringSearch("subtitle"))
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
         topic = EmbeddedAttribute(type="CodeableConcept", getter="topic", setter="topic", searcher=StringSearch("topic"))
@@ -14866,7 +14867,7 @@ class ResearchDefinition(FhirBaseModel, MongoModel):
         version = Attribute(getter="version", setter="version", searcher=StringSearch("version"))
 
 class ResearchElementDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -14939,7 +14940,7 @@ class ResearchElementDefinition(FhirBaseModel, MongoModel):
         shortTitle = Attribute(getter="shortTitle", setter="shortTitle", searcher=StringSearch("shortTitle"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         subjectCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="subjectCodeableConcept", setter="subjectCodeableConcept", searcher=StringSearch("subjectCodeableConcept"))
-        subjectReference = ObjectIdReferenceAttribute({'Group'}, ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
+        subjectReference = ObjectIdReferenceAttribute(['Group'], ("subjectReference", str), "subjectReference", pk_setter="subjectReference")
         subtitle = Attribute(getter="subtitle", setter="subtitle", searcher=StringSearch("subtitle"))
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
         topic = EmbeddedAttribute(type="CodeableConcept", getter="topic", setter="topic", searcher=StringSearch("topic"))
@@ -14954,10 +14955,10 @@ class ResearchElementDefinitionCharacteristic(FhirBaseModel, EmbeddedMongoModel)
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    definitionCanonical = fields.CharField(blank=False, required=True)
-    definitionCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    definitionDataRequirement = fields.EmbeddedDocumentField("DataRequirement", blank=False, required=True)
-    definitionExpression = fields.EmbeddedDocumentField("Expression", blank=False, required=True)
+    definitionCanonical = fields.CharField(blank=True, required=False)
+    definitionCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    definitionDataRequirement = fields.EmbeddedDocumentField("DataRequirement", blank=True, required=False)
+    definitionExpression = fields.EmbeddedDocumentField("Expression", blank=True, required=False)
     exclude = fields.BooleanField(blank=True, required=False)
     participantEffectiveDateTime = fields.DateTimeField(blank=True, required=False)
     participantEffectiveDescription = fields.CharField(blank=True, required=False)
@@ -15002,7 +15003,7 @@ class ResearchElementDefinitionCharacteristic(FhirBaseModel, EmbeddedMongoModel)
         usageContext = EmbeddedAttribute(type="UsageContext", getter="usageContext", setter="usageContext", searcher=StringSearch("usageContext"))
 
 class ResearchStudy(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15046,23 +15047,23 @@ class ResearchStudy(FhirBaseModel, MongoModel):
         condition = EmbeddedAttribute(type="CodeableConcept", getter="condition", setter="condition", searcher=StringSearch("condition"))
         contact = EmbeddedAttribute(type="ContactDetail", getter="contact", setter="contact", searcher=StringSearch("contact"))
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
-        enrollment = ObjectIdReferenceAttribute({'Group'}, ("enrollment", str), "enrollment", pk_setter="enrollment")
+        enrollment = ObjectIdReferenceAttribute(['Group'], ("enrollment", str), "enrollment", pk_setter="enrollment")
         focus = EmbeddedAttribute(type="CodeableConcept", getter="focus", setter="focus", searcher=StringSearch("focus"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         keyword = EmbeddedAttribute(type="CodeableConcept", getter="keyword", setter="keyword", searcher=StringSearch("keyword"))
         location = EmbeddedAttribute(type="CodeableConcept", getter="location", setter="location", searcher=StringSearch("location"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         objective = EmbeddedAttribute(type="ResearchStudyObjective", getter="objective", setter="objective", searcher=StringSearch("objective"))
-        partOf = ObjectIdReferenceAttribute({'ResearchStudy'}, ("partOf", str), "partOf", pk_setter="partOf")
+        partOf = ObjectIdReferenceAttribute(['ResearchStudy'], ("partOf", str), "partOf", pk_setter="partOf")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         phase = EmbeddedAttribute(type="CodeableConcept", getter="phase", setter="phase", searcher=StringSearch("phase"))
         primaryPurposeType = EmbeddedAttribute(type="CodeableConcept", getter="primaryPurposeType", setter="primaryPurposeType", searcher=StringSearch("primaryPurposeType"))
-        principalInvestigator = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("principalInvestigator", str), "principalInvestigator", pk_setter="principalInvestigator")
-        protocol = ObjectIdReferenceAttribute({'PlanDefinition'}, ("protocol", str), "protocol", pk_setter="protocol")
+        principalInvestigator = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("principalInvestigator", str), "principalInvestigator", pk_setter="principalInvestigator")
+        protocol = ObjectIdReferenceAttribute(['PlanDefinition'], ("protocol", str), "protocol", pk_setter="protocol")
         reasonStopped = EmbeddedAttribute(type="CodeableConcept", getter="reasonStopped", setter="reasonStopped", searcher=StringSearch("reasonStopped"))
         relatedArtifact = EmbeddedAttribute(type="RelatedArtifact", getter="relatedArtifact", setter="relatedArtifact", searcher=StringSearch("relatedArtifact"))
-        site = ObjectIdReferenceAttribute({'Location'}, ("site", str), "site", pk_setter="site")
-        sponsor = ObjectIdReferenceAttribute({'Organization'}, ("sponsor", str), "sponsor", pk_setter="sponsor")
+        site = ObjectIdReferenceAttribute(['Location'], ("site", str), "site", pk_setter="site")
+        sponsor = ObjectIdReferenceAttribute(['Organization'], ("sponsor", str), "sponsor", pk_setter="sponsor")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         title = Attribute(getter="title", setter="title", searcher=StringSearch("title"))
 
@@ -15095,7 +15096,7 @@ class ResearchStudyObjective(FhirBaseModel, EmbeddedMongoModel):
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class ResearchSubject(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15120,15 +15121,15 @@ class ResearchSubject(FhirBaseModel, MongoModel):
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         actualArm = Attribute(getter="actualArm", setter="actualArm", searcher=StringSearch("actualArm"))
         assignedArm = Attribute(getter="assignedArm", setter="assignedArm", searcher=StringSearch("assignedArm"))
-        consent = ObjectIdReferenceAttribute({'Consent'}, ("consent", str), "consent", pk_setter="consent")
+        consent = ObjectIdReferenceAttribute(['Consent'], ("consent", str), "consent", pk_setter="consent")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
-        individual = ObjectIdReferenceAttribute({'Patient'}, ("individual", str), "individual", pk_setter="individual")
+        individual = ObjectIdReferenceAttribute(['Patient'], ("individual", str), "individual", pk_setter="individual")
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        study = ObjectIdReferenceAttribute({'ResearchStudy'}, ("study", str), "study", pk_setter="study")
+        study = ObjectIdReferenceAttribute(['ResearchStudy'], ("study", str), "study", pk_setter="study")
 
 class Resource(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15139,7 +15140,7 @@ class Resource(FhirBaseModel, MongoModel):
         meta = EmbeddedAttribute(type="Meta", getter="meta", setter="meta", searcher=StringSearch("meta"))
 
 class RiskAssessment(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15172,24 +15173,24 @@ class RiskAssessment(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        basedOn = ObjectIdReferenceAttribute({'Resource'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
-        basis = ObjectIdReferenceAttribute({'Resource'}, ("basis", str), "basis", pk_setter="basis")
+        basedOn = ObjectIdReferenceAttribute(['Resource'], ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basis = ObjectIdReferenceAttribute(['Resource'], ("basis", str), "basis", pk_setter="basis")
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
-        condition = ObjectIdReferenceAttribute({'Condition'}, ("condition", str), "condition", pk_setter="condition")
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        condition = ObjectIdReferenceAttribute(['Condition'], ("condition", str), "condition", pk_setter="condition")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         method = EmbeddedAttribute(type="CodeableConcept", getter="method", setter="method", searcher=StringSearch("method"))
         mitigation = Attribute(getter="mitigation", setter="mitigation", searcher=StringSearch("mitigation"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         occurrenceDateTime = DateAttribute("occurrenceDateTime")
         occurrencePeriod = EmbeddedAttribute(type="Period", getter="occurrencePeriod", setter="occurrencePeriod", searcher=StringSearch("occurrencePeriod"))
-        parent = ObjectIdReferenceAttribute({'Resource'}, ("parent", str), "parent", pk_setter="parent")
-        performer = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Device'}, ("performer", str), "performer", pk_setter="performer")
+        parent = ObjectIdReferenceAttribute(['Resource'], ("parent", str), "parent", pk_setter="parent")
+        performer = ObjectIdReferenceAttribute(['Device', 'Practitioner', 'PractitionerRole'], ("performer", str), "performer", pk_setter="performer")
         prediction = EmbeddedAttribute(type="RiskAssessmentPrediction", getter="prediction", setter="prediction", searcher=StringSearch("prediction"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation', 'DocumentReference'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Group', 'Patient'], ("subject", str), "subject", pk_setter="subject")
 
 class RiskAssessmentPrediction(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -15217,7 +15218,7 @@ class RiskAssessmentPrediction(FhirBaseModel, EmbeddedMongoModel):
         whenRange = EmbeddedAttribute(type="Range", getter="whenRange", setter="whenRange", searcher=StringSearch("whenRange"))
 
 class RiskEvidenceSynthesis(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15273,14 +15274,14 @@ class RiskEvidenceSynthesis(FhirBaseModel, MongoModel):
         editor = EmbeddedAttribute(type="ContactDetail", getter="editor", setter="editor", searcher=StringSearch("editor"))
         effectivePeriod = EmbeddedAttribute(type="Period", getter="effectivePeriod", setter="effectivePeriod", searcher=StringSearch("effectivePeriod"))
         endorser = EmbeddedAttribute(type="ContactDetail", getter="endorser", setter="endorser", searcher=StringSearch("endorser"))
-        exposure = ObjectIdReferenceAttribute({'EvidenceVariable'}, ("exposure", str), "exposure", pk_setter="exposure")
+        exposure = ObjectIdReferenceAttribute(['EvidenceVariable'], ("exposure", str), "exposure", pk_setter="exposure")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         jurisdiction = EmbeddedAttribute(type="CodeableConcept", getter="jurisdiction", setter="jurisdiction", searcher=StringSearch("jurisdiction"))
         lastReviewDate = DateAttribute("lastReviewDate")
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        outcome = ObjectIdReferenceAttribute({'EvidenceVariable'}, ("outcome", str), "outcome", pk_setter="outcome")
-        population = ObjectIdReferenceAttribute({'EvidenceVariable'}, ("population", str), "population", pk_setter="population")
+        outcome = ObjectIdReferenceAttribute(['EvidenceVariable'], ("outcome", str), "outcome", pk_setter="outcome")
+        population = ObjectIdReferenceAttribute(['EvidenceVariable'], ("population", str), "population", pk_setter="population")
         publisher = Attribute(getter="publisher", setter="publisher", searcher=StringSearch("publisher"))
         relatedArtifact = EmbeddedAttribute(type="RelatedArtifact", getter="relatedArtifact", setter="relatedArtifact", searcher=StringSearch("relatedArtifact"))
         reviewer = EmbeddedAttribute(type="ContactDetail", getter="reviewer", setter="reviewer", searcher=StringSearch("reviewer"))
@@ -15402,7 +15403,7 @@ class SampledData(FhirBaseModel, EmbeddedMongoModel):
         upperLimit = Attribute(getter="upperLimit", setter="upperLimit", searcher=NumericSearch("upperLimit"))
 
 class Schedule(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15426,7 +15427,7 @@ class Schedule(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         active = Attribute(getter="active", setter="active", searcher=StringSearch("active"))
-        actor = ObjectIdReferenceAttribute({'PractitionerRole', 'Location', 'RelatedPerson', 'HealthcareService', 'Practitioner', 'Device', 'Patient'}, ("actor", str), "actor", pk_setter="actor")
+        actor = ObjectIdReferenceAttribute(['Device', 'HealthcareService', 'Location', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("actor", str), "actor", pk_setter="actor")
         comment = Attribute(getter="comment", setter="comment", searcher=StringSearch("comment"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         planningHorizon = EmbeddedAttribute(type="Period", getter="planningHorizon", setter="planningHorizon", searcher=StringSearch("planningHorizon"))
@@ -15435,7 +15436,7 @@ class Schedule(FhirBaseModel, MongoModel):
         specialty = EmbeddedAttribute(type="CodeableConcept", getter="specialty", setter="specialty", searcher=StringSearch("specialty"))
 
 class SearchParameter(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15517,7 +15518,7 @@ class SearchParameterComponent(FhirBaseModel, EmbeddedMongoModel):
         expression = Attribute(getter="expression", setter="expression", searcher=StringSearch("expression"))
 
 class Sequence(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15668,7 +15669,7 @@ class SequenceVariant(FhirBaseModel, EmbeddedMongoModel):
         # variantPointer = ObjectIdReferenceAttribute(getter="variantPointer", setter="variantPointer", searcher=StringSearch("variantPointer"))
 
 class ServiceDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15735,7 +15736,7 @@ class ServiceDefinition(FhirBaseModel, MongoModel):
         version = Attribute(getter="version", setter="version", searcher=StringSearch("version"))
 
 class ServiceRequest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15791,41 +15792,41 @@ class ServiceRequest(FhirBaseModel, MongoModel):
         asNeededBoolean = Attribute(getter="asNeededBoolean", setter="asNeededBoolean", searcher=StringSearch("asNeededBoolean"))
         asNeededCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="asNeededCodeableConcept", setter="asNeededCodeableConcept", searcher=StringSearch("asNeededCodeableConcept"))
         authoredOn = DateAttribute("authoredOn")
-        basedOn = ObjectIdReferenceAttribute({'CarePlan', 'ServiceRequest', 'MedicationRequest'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['CarePlan', 'MedicationRequest', 'ServiceRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         bodySite = EmbeddedAttribute(type="CodeableConcept", getter="bodySite", setter="bodySite", searcher=StringSearch("bodySite"))
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         doNotPerform = Attribute(getter="doNotPerform", setter="doNotPerform", searcher=StringSearch("doNotPerform"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         instantiatesCanonical = Attribute(getter="instantiatesCanonical", setter="instantiatesCanonical", searcher=StringSearch("instantiatesCanonical"))
         instantiatesUri = Attribute(getter="instantiatesUri", setter="instantiatesUri", searcher=StringSearch("instantiatesUri"))
-        insurance = ObjectIdReferenceAttribute({'ClaimResponse', 'Coverage'}, ("insurance", str), "insurance", pk_setter="insurance")
+        insurance = ObjectIdReferenceAttribute(['ClaimResponse', 'Coverage'], ("insurance", str), "insurance", pk_setter="insurance")
         intent = Attribute(getter="intent", setter="intent", searcher=StringSearch("intent"))
         locationCode = EmbeddedAttribute(type="CodeableConcept", getter="locationCode", setter="locationCode", searcher=StringSearch("locationCode"))
-        locationReference = ObjectIdReferenceAttribute({'Location'}, ("locationReference", str), "locationReference", pk_setter="locationReference")
+        locationReference = ObjectIdReferenceAttribute(['Location'], ("locationReference", str), "locationReference", pk_setter="locationReference")
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         occurrenceDateTime = DateAttribute("occurrenceDateTime")
         occurrencePeriod = EmbeddedAttribute(type="Period", getter="occurrencePeriod", setter="occurrencePeriod", searcher=StringSearch("occurrencePeriod"))
         occurrenceTiming = EmbeddedAttribute(type="Timing", getter="occurrenceTiming", setter="occurrenceTiming", searcher=StringSearch("occurrenceTiming"))
         orderDetail = EmbeddedAttribute(type="CodeableConcept", getter="orderDetail", setter="orderDetail", searcher=StringSearch("orderDetail"))
         patientInstruction = Attribute(getter="patientInstruction", setter="patientInstruction", searcher=StringSearch("patientInstruction"))
-        performer = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'HealthcareService', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("performer", str), "performer", pk_setter="performer")
+        performer = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'HealthcareService', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("performer", str), "performer", pk_setter="performer")
         performerType = EmbeddedAttribute(type="CodeableConcept", getter="performerType", setter="performerType", searcher=StringSearch("performerType"))
         priority = Attribute(getter="priority", setter="priority", searcher=StringSearch("priority"))
         quantityQuantity = EmbeddedAttribute(type="Quantity", getter="quantityQuantity", setter="quantityQuantity", searcher=StringSearch("quantityQuantity"))
         quantityRange = EmbeddedAttribute(type="Range", getter="quantityRange", setter="quantityRange", searcher=StringSearch("quantityRange"))
         quantityRatio = EmbeddedAttribute(type="Ratio", getter="quantityRatio", setter="quantityRatio", searcher=StringSearch("quantityRatio"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation', 'DocumentReference'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        relevantHistory = ObjectIdReferenceAttribute({'Provenance'}, ("relevantHistory", str), "relevantHistory", pk_setter="relevantHistory")
-        replaces = ObjectIdReferenceAttribute({'ServiceRequest'}, ("replaces", str), "replaces", pk_setter="replaces")
-        requester = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("requester", str), "requester", pk_setter="requester")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        relevantHistory = ObjectIdReferenceAttribute(['Provenance'], ("relevantHistory", str), "relevantHistory", pk_setter="relevantHistory")
+        replaces = ObjectIdReferenceAttribute(['ServiceRequest'], ("replaces", str), "replaces", pk_setter="replaces")
+        requester = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("requester", str), "requester", pk_setter="requester")
         requisition = EmbeddedAttribute(type="Identifier", getter="requisition", setter="requisition", searcher=StringSearch("requisition"))
-        specimen = ObjectIdReferenceAttribute({'Specimen'}, ("specimen", str), "specimen", pk_setter="specimen")
+        specimen = ObjectIdReferenceAttribute(['Specimen'], ("specimen", str), "specimen", pk_setter="specimen")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Device', 'Location', 'Group', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
-        supportingInfo = ObjectIdReferenceAttribute({'Resource'}, ("supportingInfo", str), "supportingInfo", pk_setter="supportingInfo")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Location', 'Patient'], ("subject", str), "subject", pk_setter="subject")
+        supportingInfo = ObjectIdReferenceAttribute(['Resource'], ("supportingInfo", str), "supportingInfo", pk_setter="supportingInfo")
 
 class Signature(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -15841,15 +15842,15 @@ class Signature(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         data = Attribute(getter="data", setter="data", searcher=StringSearch("data"))
-        onBehalfOf = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("onBehalfOf", str), "onBehalfOf", pk_setter="onBehalfOf")
+        onBehalfOf = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("onBehalfOf", str), "onBehalfOf", pk_setter="onBehalfOf")
         sigFormat = Attribute(getter="sigFormat", setter="sigFormat", searcher=StringSearch("sigFormat"))
         targetFormat = Attribute(getter="targetFormat", setter="targetFormat", searcher=StringSearch("targetFormat"))
         type = EmbeddedAttribute(type="Coding", getter="type", setter="type", searcher=StringSearch("type"))
         when = DateAttribute("when")
-        who = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("who", str), "who", pk_setter="who")
+        who = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("who", str), "who", pk_setter="who")
 
 class Slot(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15880,7 +15881,7 @@ class Slot(FhirBaseModel, MongoModel):
         end = DateAttribute("end")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         overbooked = Attribute(getter="overbooked", setter="overbooked", searcher=StringSearch("overbooked"))
-        schedule = ObjectIdReferenceAttribute({'Schedule'}, ("schedule", str), "schedule", pk_setter="schedule")
+        schedule = ObjectIdReferenceAttribute(['Schedule'], ("schedule", str), "schedule", pk_setter="schedule")
         serviceCategory = EmbeddedAttribute(type="CodeableConcept", getter="serviceCategory", setter="serviceCategory", searcher=StringSearch("serviceCategory"))
         serviceType = EmbeddedAttribute(type="CodeableConcept", getter="serviceType", setter="serviceType", searcher=StringSearch("serviceType"))
         specialty = EmbeddedAttribute(type="CodeableConcept", getter="specialty", setter="specialty", searcher=StringSearch("specialty"))
@@ -15888,7 +15889,7 @@ class Slot(FhirBaseModel, MongoModel):
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class Specimen(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -15922,12 +15923,12 @@ class Specimen(FhirBaseModel, MongoModel):
         container = EmbeddedAttribute(type="SpecimenContainer", getter="container", setter="container", searcher=StringSearch("container"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
-        parent = ObjectIdReferenceAttribute({'Specimen'}, ("parent", str), "parent", pk_setter="parent")
+        parent = ObjectIdReferenceAttribute(['Specimen'], ("parent", str), "parent", pk_setter="parent")
         processing = EmbeddedAttribute(type="SpecimenProcessing", getter="processing", setter="processing", searcher=StringSearch("processing"))
         receivedTime = DateAttribute("receivedTime")
-        request = ObjectIdReferenceAttribute({'ServiceRequest'}, ("request", str), "request", pk_setter="request")
+        request = ObjectIdReferenceAttribute(['ServiceRequest'], ("request", str), "request", pk_setter="request")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        subject = ObjectIdReferenceAttribute({'Location', 'Group', 'Substance', 'Device', 'Patient'}, ("subject", str), "subject", pk_setter="subject")
+        subject = ObjectIdReferenceAttribute(['Device', 'Group', 'Location', 'Patient', 'Substance'], ("subject", str), "subject", pk_setter="subject")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class SpecimenCollection(FhirBaseModel, EmbeddedMongoModel):
@@ -15950,7 +15951,7 @@ class SpecimenCollection(FhirBaseModel, EmbeddedMongoModel):
         bodySite = EmbeddedAttribute(type="CodeableConcept", getter="bodySite", setter="bodySite", searcher=StringSearch("bodySite"))
         collectedDateTime = DateAttribute("collectedDateTime")
         collectedPeriod = EmbeddedAttribute(type="Period", getter="collectedPeriod", setter="collectedPeriod", searcher=StringSearch("collectedPeriod"))
-        collector = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("collector", str), "collector", pk_setter="collector")
+        collector = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("collector", str), "collector", pk_setter="collector")
         duration = EmbeddedAttribute(type="Duration", getter="duration", setter="duration", searcher=StringSearch("duration"))
         fastingStatusCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="fastingStatusCodeableConcept", setter="fastingStatusCodeableConcept", searcher=StringSearch("fastingStatusCodeableConcept"))
         fastingStatusDuration = EmbeddedAttribute(type="Duration", getter="fastingStatusDuration", setter="fastingStatusDuration", searcher=StringSearch("fastingStatusDuration"))
@@ -15973,7 +15974,7 @@ class SpecimenContainer(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         additiveCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="additiveCodeableConcept", setter="additiveCodeableConcept", searcher=StringSearch("additiveCodeableConcept"))
-        additiveReference = ObjectIdReferenceAttribute({'Substance'}, ("additiveReference", str), "additiveReference", pk_setter="additiveReference")
+        additiveReference = ObjectIdReferenceAttribute(['Substance'], ("additiveReference", str), "additiveReference", pk_setter="additiveReference")
         capacity = EmbeddedAttribute(type="Quantity", getter="capacity", setter="capacity", searcher=StringSearch("capacity"))
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
@@ -15981,7 +15982,7 @@ class SpecimenContainer(FhirBaseModel, EmbeddedMongoModel):
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class SpecimenDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -16065,14 +16066,14 @@ class SpecimenDefinitionTypeTestedContainerAdditive(FhirBaseModel, EmbeddedMongo
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    additiveCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    additiveReference = fields.ObjectIdField(blank=False, required=True)
+    additiveCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    additiveReference = fields.ObjectIdField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         additiveCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="additiveCodeableConcept", setter="additiveCodeableConcept", searcher=StringSearch("additiveCodeableConcept"))
-        additiveReference = ObjectIdReferenceAttribute({'Substance'}, ("additiveReference", str), "additiveReference", pk_setter="additiveReference")
+        additiveReference = ObjectIdReferenceAttribute(['Substance'], ("additiveReference", str), "additiveReference", pk_setter="additiveReference")
 
 class SpecimenDefinitionTypeTestedHandling(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -16104,14 +16105,14 @@ class SpecimenProcessing(FhirBaseModel, EmbeddedMongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
-        additive = ObjectIdReferenceAttribute({'Substance'}, ("additive", str), "additive", pk_setter="additive")
+        additive = ObjectIdReferenceAttribute(['Substance'], ("additive", str), "additive", pk_setter="additive")
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
         procedure = EmbeddedAttribute(type="CodeableConcept", getter="procedure", setter="procedure", searcher=StringSearch("procedure"))
         timeDateTime = DateAttribute("timeDateTime")
         timePeriod = EmbeddedAttribute(type="Period", getter="timePeriod", setter="timePeriod", searcher=StringSearch("timePeriod"))
 
 class StructureDefinition(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -16234,7 +16235,7 @@ class StructureDefinitionSnapshot(FhirBaseModel, EmbeddedMongoModel):
         element = EmbeddedAttribute(type="ElementDefinition", getter="element", setter="element", searcher=StringSearch("element"))
 
 class StructureMap(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -16514,11 +16515,11 @@ class StructureMapGroupRuleTargetParameter(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
-    valueBoolean = fields.BooleanField(blank=False, required=True)
-    valueDecimal = fields.FloatField(blank=False, required=True)
-    valueId = fields.CharField(blank=False, required=True)
-    valueInteger = fields.IntegerField(blank=False, required=True)
-    valueString = fields.CharField(blank=False, required=True)
+    valueBoolean = fields.BooleanField(blank=True, required=False)
+    valueDecimal = fields.FloatField(blank=True, required=False)
+    valueId = fields.CharField(blank=True, required=False)
+    valueInteger = fields.IntegerField(blank=True, required=False)
+    valueString = fields.CharField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -16547,7 +16548,7 @@ class StructureMapStructure(FhirBaseModel, EmbeddedMongoModel):
         url = Attribute(getter="url", setter="url", searcher=StringSearch("url"))
 
 class Subscription(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -16595,7 +16596,7 @@ class SubscriptionChannel(FhirBaseModel, EmbeddedMongoModel):
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
 
 class Substance(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -16662,15 +16663,15 @@ class SubstanceIngredient(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     quantity = fields.EmbeddedDocumentField("Ratio", blank=True, required=False)
-    substanceCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    substanceReference = fields.ObjectIdField(blank=False, required=True)
+    substanceCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    substanceReference = fields.ObjectIdField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         quantity = EmbeddedAttribute(type="Ratio", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         substanceCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="substanceCodeableConcept", setter="substanceCodeableConcept", searcher=StringSearch("substanceCodeableConcept"))
-        substanceReference = ObjectIdReferenceAttribute({'Substance'}, ("substanceReference", str), "substanceReference", pk_setter="substanceReference")
+        substanceReference = ObjectIdReferenceAttribute(['Substance'], ("substanceReference", str), "substanceReference", pk_setter="substanceReference")
 
 class SubstanceInstance(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -16688,7 +16689,7 @@ class SubstanceInstance(FhirBaseModel, EmbeddedMongoModel):
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
 
 class SubstanceNucleicAcid(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -16772,7 +16773,7 @@ class SubstanceNucleicAcidSubunitSugar(FhirBaseModel, EmbeddedMongoModel):
         residueSite = Attribute(getter="residueSite", setter="residueSite", searcher=StringSearch("residueSite"))
 
 class SubstancePolymer(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -16895,7 +16896,7 @@ class SubstancePolymerRepeatRepeatUnitStructuralRepresentation(FhirBaseModel, Em
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class SubstanceProtein(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -16945,7 +16946,7 @@ class SubstanceProteinSubunit(FhirBaseModel, EmbeddedMongoModel):
         subunit = Attribute(getter="subunit", setter="subunit", searcher=NumericSearch("subunit"))
 
 class SubstanceReferenceInformation(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -16985,7 +16986,7 @@ class SubstanceReferenceInformationClassification(FhirBaseModel, EmbeddedMongoMo
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         classification = EmbeddedAttribute(type="CodeableConcept", getter="classification", setter="classification", searcher=StringSearch("classification"))
         domain = EmbeddedAttribute(type="CodeableConcept", getter="domain", setter="domain", searcher=StringSearch("domain"))
-        source = ObjectIdReferenceAttribute({'DocumentReference'}, ("source", str), "source", pk_setter="source")
+        source = ObjectIdReferenceAttribute(['DocumentReference'], ("source", str), "source", pk_setter="source")
         subtype = EmbeddedAttribute(type="CodeableConcept", getter="subtype", setter="subtype", searcher=StringSearch("subtype"))
 
 class SubstanceReferenceInformationGene(FhirBaseModel, EmbeddedMongoModel):
@@ -17001,7 +17002,7 @@ class SubstanceReferenceInformationGene(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         gene = EmbeddedAttribute(type="CodeableConcept", getter="gene", setter="gene", searcher=StringSearch("gene"))
         geneSequenceOrigin = EmbeddedAttribute(type="CodeableConcept", getter="geneSequenceOrigin", setter="geneSequenceOrigin", searcher=StringSearch("geneSequenceOrigin"))
-        source = ObjectIdReferenceAttribute({'DocumentReference'}, ("source", str), "source", pk_setter="source")
+        source = ObjectIdReferenceAttribute(['DocumentReference'], ("source", str), "source", pk_setter="source")
 
 class SubstanceReferenceInformationGeneElement(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -17015,7 +17016,7 @@ class SubstanceReferenceInformationGeneElement(FhirBaseModel, EmbeddedMongoModel
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         element = EmbeddedAttribute(type="Identifier", getter="element", setter="element", searcher=StringSearch("element"))
-        source = ObjectIdReferenceAttribute({'DocumentReference'}, ("source", str), "source", pk_setter="source")
+        source = ObjectIdReferenceAttribute(['DocumentReference'], ("source", str), "source", pk_setter="source")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class SubstanceReferenceInformationTarget(FhirBaseModel, EmbeddedMongoModel):
@@ -17043,12 +17044,12 @@ class SubstanceReferenceInformationTarget(FhirBaseModel, EmbeddedMongoModel):
         interaction = EmbeddedAttribute(type="CodeableConcept", getter="interaction", setter="interaction", searcher=StringSearch("interaction"))
         organism = EmbeddedAttribute(type="CodeableConcept", getter="organism", setter="organism", searcher=StringSearch("organism"))
         organismType = EmbeddedAttribute(type="CodeableConcept", getter="organismType", setter="organismType", searcher=StringSearch("organismType"))
-        source = ObjectIdReferenceAttribute({'DocumentReference'}, ("source", str), "source", pk_setter="source")
+        source = ObjectIdReferenceAttribute(['DocumentReference'], ("source", str), "source", pk_setter="source")
         target = EmbeddedAttribute(type="Identifier", getter="target", setter="target", searcher=StringSearch("target"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class SubstanceSourceMaterial(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -17191,7 +17192,7 @@ class SubstanceSourceMaterialPartDescription(FhirBaseModel, EmbeddedMongoModel):
         partLocation = EmbeddedAttribute(type="CodeableConcept", getter="partLocation", setter="partLocation", searcher=StringSearch("partLocation"))
 
 class SubstanceSpecification(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -17233,14 +17234,14 @@ class SubstanceSpecification(FhirBaseModel, MongoModel):
         moiety = EmbeddedAttribute(type="SubstanceSpecificationMoiety", getter="moiety", setter="moiety", searcher=StringSearch("moiety"))
         molecularWeight = EmbeddedAttribute(type="SubstanceSpecificationStructureIsotopeMolecularWeight", getter="molecularWeight", setter="molecularWeight", searcher=StringSearch("molecularWeight"))
         name = EmbeddedAttribute(type="SubstanceSpecificationName", getter="name", setter="name", searcher=StringSearch("name"))
-        nucleicAcid = ObjectIdReferenceAttribute({'SubstanceNucleicAcid'}, ("nucleicAcid", str), "nucleicAcid", pk_setter="nucleicAcid")
-        polymer = ObjectIdReferenceAttribute({'SubstancePolymer'}, ("polymer", str), "polymer", pk_setter="polymer")
+        nucleicAcid = ObjectIdReferenceAttribute(['SubstanceNucleicAcid'], ("nucleicAcid", str), "nucleicAcid", pk_setter="nucleicAcid")
+        polymer = ObjectIdReferenceAttribute(['SubstancePolymer'], ("polymer", str), "polymer", pk_setter="polymer")
         property = EmbeddedAttribute(type="SubstanceSpecificationProperty", getter="property", setter="property", searcher=StringSearch("property"))
-        protein = ObjectIdReferenceAttribute({'SubstanceProtein'}, ("protein", str), "protein", pk_setter="protein")
-        referenceInformation = ObjectIdReferenceAttribute({'SubstanceReferenceInformation'}, ("referenceInformation", str), "referenceInformation", pk_setter="referenceInformation")
+        protein = ObjectIdReferenceAttribute(['SubstanceProtein'], ("protein", str), "protein", pk_setter="protein")
+        referenceInformation = ObjectIdReferenceAttribute(['SubstanceReferenceInformation'], ("referenceInformation", str), "referenceInformation", pk_setter="referenceInformation")
         relationship = EmbeddedAttribute(type="SubstanceSpecificationRelationship", getter="relationship", setter="relationship", searcher=StringSearch("relationship"))
-        source = ObjectIdReferenceAttribute({'DocumentReference'}, ("source", str), "source", pk_setter="source")
-        sourceMaterial = ObjectIdReferenceAttribute({'SubstanceSourceMaterial'}, ("sourceMaterial", str), "sourceMaterial", pk_setter="sourceMaterial")
+        source = ObjectIdReferenceAttribute(['DocumentReference'], ("source", str), "source", pk_setter="source")
+        sourceMaterial = ObjectIdReferenceAttribute(['SubstanceSourceMaterial'], ("sourceMaterial", str), "sourceMaterial", pk_setter="sourceMaterial")
         status = EmbeddedAttribute(type="CodeableConcept", getter="status", setter="status", searcher=StringSearch("status"))
         structure = EmbeddedAttribute(type="SubstanceSpecificationStructure", getter="structure", setter="structure", searcher=StringSearch("structure"))
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
@@ -17295,7 +17296,7 @@ class SubstanceSpecificationName(FhirBaseModel, EmbeddedMongoModel):
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         official = EmbeddedAttribute(type="SubstanceSpecificationNameOfficial", getter="official", setter="official", searcher=StringSearch("official"))
         preferred = Attribute(getter="preferred", setter="preferred", searcher=StringSearch("preferred"))
-        source = ObjectIdReferenceAttribute({'DocumentReference'}, ("source", str), "source", pk_setter="source")
+        source = ObjectIdReferenceAttribute(['DocumentReference'], ("source", str), "source", pk_setter="source")
         status = EmbeddedAttribute(type="CodeableConcept", getter="status", setter="status", searcher=StringSearch("status"))
         synonym = EmbeddedAttribute(type="SubstanceSpecificationName", getter="synonym", setter="synonym", searcher=StringSearch("synonym"))
         translation = EmbeddedAttribute(type="SubstanceSpecificationName", getter="translation", setter="translation", searcher=StringSearch("translation"))
@@ -17336,7 +17337,7 @@ class SubstanceSpecificationProperty(FhirBaseModel, EmbeddedMongoModel):
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         definingSubstanceCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="definingSubstanceCodeableConcept", setter="definingSubstanceCodeableConcept", searcher=StringSearch("definingSubstanceCodeableConcept"))
-        definingSubstanceReference = ObjectIdReferenceAttribute({'Substance', 'SubstanceSpecification'}, ("definingSubstanceReference", str), "definingSubstanceReference", pk_setter="definingSubstanceReference")
+        definingSubstanceReference = ObjectIdReferenceAttribute(['Substance', 'SubstanceSpecification'], ("definingSubstanceReference", str), "definingSubstanceReference", pk_setter="definingSubstanceReference")
         parameters = Attribute(getter="parameters", setter="parameters", searcher=StringSearch("parameters"))
 
 class SubstanceSpecificationRelationship(FhirBaseModel, EmbeddedMongoModel):
@@ -17366,9 +17367,9 @@ class SubstanceSpecificationRelationship(FhirBaseModel, EmbeddedMongoModel):
         amountType = EmbeddedAttribute(type="CodeableConcept", getter="amountType", setter="amountType", searcher=StringSearch("amountType"))
         isDefining = Attribute(getter="isDefining", setter="isDefining", searcher=StringSearch("isDefining"))
         relationship = EmbeddedAttribute(type="CodeableConcept", getter="relationship", setter="relationship", searcher=StringSearch("relationship"))
-        source = ObjectIdReferenceAttribute({'DocumentReference'}, ("source", str), "source", pk_setter="source")
+        source = ObjectIdReferenceAttribute(['DocumentReference'], ("source", str), "source", pk_setter="source")
         substanceCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="substanceCodeableConcept", setter="substanceCodeableConcept", searcher=StringSearch("substanceCodeableConcept"))
-        substanceReference = ObjectIdReferenceAttribute({'SubstanceSpecification'}, ("substanceReference", str), "substanceReference", pk_setter="substanceReference")
+        substanceReference = ObjectIdReferenceAttribute(['SubstanceSpecification'], ("substanceReference", str), "substanceReference", pk_setter="substanceReference")
 
 class SubstanceSpecificationStructure(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -17392,7 +17393,7 @@ class SubstanceSpecificationStructure(FhirBaseModel, EmbeddedMongoModel):
         molecularWeight = EmbeddedAttribute(type="SubstanceSpecificationStructureIsotopeMolecularWeight", getter="molecularWeight", setter="molecularWeight", searcher=StringSearch("molecularWeight"))
         opticalActivity = EmbeddedAttribute(type="CodeableConcept", getter="opticalActivity", setter="opticalActivity", searcher=StringSearch("opticalActivity"))
         representation = EmbeddedAttribute(type="SubstanceSpecificationStructureRepresentation", getter="representation", setter="representation", searcher=StringSearch("representation"))
-        source = ObjectIdReferenceAttribute({'DocumentReference'}, ("source", str), "source", pk_setter="source")
+        source = ObjectIdReferenceAttribute(['DocumentReference'], ("source", str), "source", pk_setter="source")
         stereochemistry = EmbeddedAttribute(type="CodeableConcept", getter="stereochemistry", setter="stereochemistry", searcher=StringSearch("stereochemistry"))
 
 class SubstanceSpecificationStructureIsotope(FhirBaseModel, EmbeddedMongoModel):
@@ -17464,7 +17465,7 @@ class SubstanceSpecificationstr(FhirBaseModel, EmbeddedMongoModel):
         statusDate = DateAttribute("statusDate")
 
 class SupplyDelivery(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -17492,18 +17493,18 @@ class SupplyDelivery(FhirBaseModel, MongoModel):
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
-        basedOn = ObjectIdReferenceAttribute({'SupplyRequest'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
-        destination = ObjectIdReferenceAttribute({'Location'}, ("destination", str), "destination", pk_setter="destination")
+        basedOn = ObjectIdReferenceAttribute(['SupplyRequest'], ("basedOn", str), "basedOn", pk_setter="basedOn")
+        destination = ObjectIdReferenceAttribute(['Location'], ("destination", str), "destination", pk_setter="destination")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         occurrenceDateTime = DateAttribute("occurrenceDateTime")
         occurrencePeriod = EmbeddedAttribute(type="Period", getter="occurrencePeriod", setter="occurrencePeriod", searcher=StringSearch("occurrencePeriod"))
         occurrenceTiming = EmbeddedAttribute(type="Timing", getter="occurrenceTiming", setter="occurrenceTiming", searcher=StringSearch("occurrenceTiming"))
-        partOf = ObjectIdReferenceAttribute({'Contract', 'SupplyDelivery'}, ("partOf", str), "partOf", pk_setter="partOf")
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
-        receiver = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("receiver", str), "receiver", pk_setter="receiver")
+        partOf = ObjectIdReferenceAttribute(['Contract', 'SupplyDelivery'], ("partOf", str), "partOf", pk_setter="partOf")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
+        receiver = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("receiver", str), "receiver", pk_setter="receiver")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         suppliedItem = EmbeddedAttribute(type="SupplyDeliverySuppliedItem", getter="suppliedItem", setter="suppliedItem", searcher=StringSearch("suppliedItem"))
-        supplier = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("supplier", str), "supplier", pk_setter="supplier")
+        supplier = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("supplier", str), "supplier", pk_setter="supplier")
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
 
 class SupplyDeliverySuppliedItem(FhirBaseModel, EmbeddedMongoModel):
@@ -17518,11 +17519,11 @@ class SupplyDeliverySuppliedItem(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         itemCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="itemCodeableConcept", setter="itemCodeableConcept", searcher=StringSearch("itemCodeableConcept"))
-        itemReference = ObjectIdReferenceAttribute({'Substance', 'Device', 'Medication'}, ("itemReference", str), "itemReference", pk_setter="itemReference")
+        itemReference = ObjectIdReferenceAttribute(['Device', 'Medication', 'Substance'], ("itemReference", str), "itemReference", pk_setter="itemReference")
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
 
 class SupplyRequest(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -17534,8 +17535,8 @@ class SupplyRequest(FhirBaseModel, MongoModel):
     deliverFrom = fields.ObjectIdField(blank=True, required=False)
     deliverTo = fields.ObjectIdField(blank=True, required=False)
     identifier = fields.EmbeddedDocumentListField("Identifier", blank=True, required=False)
-    itemCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    itemReference = fields.ObjectIdField(blank=False, required=True)
+    itemCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    itemReference = fields.ObjectIdField(blank=True, required=False)
     occurrenceDateTime = fields.DateTimeField(blank=True, required=False)
     occurrencePeriod = fields.EmbeddedDocumentField("Period", blank=True, required=False)
     occurrenceTiming = fields.EmbeddedDocumentField("Timing", blank=True, required=False)
@@ -17557,11 +17558,11 @@ class SupplyRequest(FhirBaseModel, MongoModel):
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         authoredOn = DateAttribute("authoredOn")
         category = EmbeddedAttribute(type="CodeableConcept", getter="category", setter="category", searcher=StringSearch("category"))
-        deliverFrom = ObjectIdReferenceAttribute({'Location', 'Organization'}, ("deliverFrom", str), "deliverFrom", pk_setter="deliverFrom")
-        deliverTo = ObjectIdReferenceAttribute({'Location', 'Organization', 'Patient'}, ("deliverTo", str), "deliverTo", pk_setter="deliverTo")
+        deliverFrom = ObjectIdReferenceAttribute(['Location', 'Organization'], ("deliverFrom", str), "deliverFrom", pk_setter="deliverFrom")
+        deliverTo = ObjectIdReferenceAttribute(['Location', 'Organization', 'Patient'], ("deliverTo", str), "deliverTo", pk_setter="deliverTo")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         itemCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="itemCodeableConcept", setter="itemCodeableConcept", searcher=StringSearch("itemCodeableConcept"))
-        itemReference = ObjectIdReferenceAttribute({'Substance', 'Device', 'Medication'}, ("itemReference", str), "itemReference", pk_setter="itemReference")
+        itemReference = ObjectIdReferenceAttribute(['Device', 'Medication', 'Substance'], ("itemReference", str), "itemReference", pk_setter="itemReference")
         occurrenceDateTime = DateAttribute("occurrenceDateTime")
         occurrencePeriod = EmbeddedAttribute(type="Period", getter="occurrencePeriod", setter="occurrencePeriod", searcher=StringSearch("occurrencePeriod"))
         occurrenceTiming = EmbeddedAttribute(type="Timing", getter="occurrenceTiming", setter="occurrenceTiming", searcher=StringSearch("occurrenceTiming"))
@@ -17569,10 +17570,10 @@ class SupplyRequest(FhirBaseModel, MongoModel):
         priority = Attribute(getter="priority", setter="priority", searcher=StringSearch("priority"))
         quantity = EmbeddedAttribute(type="Quantity", getter="quantity", setter="quantity", searcher=StringSearch("quantity"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'DiagnosticReport', 'Condition', 'Observation', 'DocumentReference'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        requester = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("requester", str), "requester", pk_setter="requester")
+        reasonReference = ObjectIdReferenceAttribute(['Condition', 'DiagnosticReport', 'DocumentReference', 'Observation'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        requester = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("requester", str), "requester", pk_setter="requester")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
-        supplier = ObjectIdReferenceAttribute({'HealthcareService', 'Organization'}, ("supplier", str), "supplier", pk_setter="supplier")
+        supplier = ObjectIdReferenceAttribute(['HealthcareService', 'Organization'], ("supplier", str), "supplier", pk_setter="supplier")
 
 class SupplyRequestParameter(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -17594,7 +17595,7 @@ class SupplyRequestParameter(FhirBaseModel, EmbeddedMongoModel):
         valueRange = EmbeddedAttribute(type="Range", getter="valueRange", setter="valueRange", searcher=StringSearch("valueRange"))
 
 class Task(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -17641,33 +17642,33 @@ class Task(FhirBaseModel, MongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         authoredOn = DateAttribute("authoredOn")
-        basedOn = ObjectIdReferenceAttribute({'Resource'}, ("basedOn", str), "basedOn", pk_setter="basedOn")
+        basedOn = ObjectIdReferenceAttribute(['Resource'], ("basedOn", str), "basedOn", pk_setter="basedOn")
         businessStatus = EmbeddedAttribute(type="CodeableConcept", getter="businessStatus", setter="businessStatus", searcher=StringSearch("businessStatus"))
         code = EmbeddedAttribute(type="CodeableConcept", getter="code", setter="code", searcher=StringSearch("code"))
         description = Attribute(getter="description", setter="description", searcher=StringSearch("description"))
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         executionPeriod = EmbeddedAttribute(type="Period", getter="executionPeriod", setter="executionPeriod", searcher=StringSearch("executionPeriod"))
-        focus = ObjectIdReferenceAttribute({'Resource'}, ("focus", str), "focus", pk_setter="focus")
+        focus = ObjectIdReferenceAttribute(['Resource'], ("focus", str), "focus", pk_setter="focus")
         # for_ = ObjectIdReferenceAttribute(getter="for_", setter="for_", searcher=StringSearch("for_"))
         groupIdentifier = EmbeddedAttribute(type="Identifier", getter="groupIdentifier", setter="groupIdentifier", searcher=StringSearch("groupIdentifier"))
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         input = EmbeddedAttribute(type="TaskInput", getter="input", setter="input", searcher=StringSearch("input"))
         instantiatesCanonical = Attribute(getter="instantiatesCanonical", setter="instantiatesCanonical", searcher=StringSearch("instantiatesCanonical"))
         instantiatesUri = Attribute(getter="instantiatesUri", setter="instantiatesUri", searcher=StringSearch("instantiatesUri"))
-        insurance = ObjectIdReferenceAttribute({'ClaimResponse', 'Coverage'}, ("insurance", str), "insurance", pk_setter="insurance")
+        insurance = ObjectIdReferenceAttribute(['ClaimResponse', 'Coverage'], ("insurance", str), "insurance", pk_setter="insurance")
         intent = Attribute(getter="intent", setter="intent", searcher=StringSearch("intent"))
         lastModified = DateAttribute("lastModified")
-        location = ObjectIdReferenceAttribute({'Location'}, ("location", str), "location", pk_setter="location")
+        location = ObjectIdReferenceAttribute(['Location'], ("location", str), "location", pk_setter="location")
         note = EmbeddedAttribute(type="Annotation", getter="note", setter="note", searcher=StringSearch("note"))
         output = EmbeddedAttribute(type="TaskOutput", getter="output", setter="output", searcher=StringSearch("output"))
-        owner = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'HealthcareService', 'Practitioner', 'CareTeam', 'Device', 'Organization', 'Patient'}, ("owner", str), "owner", pk_setter="owner")
-        partOf = ObjectIdReferenceAttribute({'Task'}, ("partOf", str), "partOf", pk_setter="partOf")
+        owner = ObjectIdReferenceAttribute(['CareTeam', 'Device', 'HealthcareService', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("owner", str), "owner", pk_setter="owner")
+        partOf = ObjectIdReferenceAttribute(['Task'], ("partOf", str), "partOf", pk_setter="partOf")
         performerType = EmbeddedAttribute(type="CodeableConcept", getter="performerType", setter="performerType", searcher=StringSearch("performerType"))
         priority = Attribute(getter="priority", setter="priority", searcher=StringSearch("priority"))
         reasonCode = EmbeddedAttribute(type="CodeableConcept", getter="reasonCode", setter="reasonCode", searcher=StringSearch("reasonCode"))
-        reasonReference = ObjectIdReferenceAttribute({'Resource'}, ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
-        relevantHistory = ObjectIdReferenceAttribute({'Provenance'}, ("relevantHistory", str), "relevantHistory", pk_setter="relevantHistory")
-        requester = ObjectIdReferenceAttribute({'PractitionerRole', 'RelatedPerson', 'Practitioner', 'Device', 'Organization', 'Patient'}, ("requester", str), "requester", pk_setter="requester")
+        reasonReference = ObjectIdReferenceAttribute(['Resource'], ("reasonReference", str), "reasonReference", pk_setter="reasonReference")
+        relevantHistory = ObjectIdReferenceAttribute(['Provenance'], ("relevantHistory", str), "relevantHistory", pk_setter="relevantHistory")
+        requester = ObjectIdReferenceAttribute(['Device', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("requester", str), "requester", pk_setter="requester")
         restriction = EmbeddedAttribute(type="TaskRestriction", getter="restriction", setter="restriction", searcher=StringSearch("restriction"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusReason = EmbeddedAttribute(type="CodeableConcept", getter="statusReason", setter="statusReason", searcher=StringSearch("statusReason"))
@@ -17677,55 +17678,55 @@ class TaskInput(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     type = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    valueAddress = fields.EmbeddedDocumentField("Address", blank=False, required=True)
-    valueAge = fields.EmbeddedDocumentField("Age", blank=False, required=True)
-    valueAnnotation = fields.EmbeddedDocumentField("Annotation", blank=False, required=True)
-    valueAttachment = fields.EmbeddedDocumentField("Attachment", blank=False, required=True)
-    valueBase64Binary = fields.CharField(blank=False, required=True)
-    valueBoolean = fields.BooleanField(blank=False, required=True)
-    valueCanonical = fields.CharField(blank=False, required=True)
-    valueCode = fields.CharField(blank=False, required=True)
-    valueCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    valueCoding = fields.EmbeddedDocumentField("Coding", blank=False, required=True)
-    valueContactDetail = fields.EmbeddedDocumentField("ContactDetail", blank=False, required=True)
-    valueContactPoint = fields.EmbeddedDocumentField("ContactPoint", blank=False, required=True)
-    valueContributor = fields.EmbeddedDocumentField("Contributor", blank=False, required=True)
-    valueCount = fields.EmbeddedDocumentField("Count", blank=False, required=True)
-    valueDataRequirement = fields.EmbeddedDocumentField("DataRequirement", blank=False, required=True)
-    valueDate = fields.DateTimeField(blank=False, required=True)
-    valueDateTime = fields.DateTimeField(blank=False, required=True)
-    valueDecimal = fields.FloatField(blank=False, required=True)
-    valueDistance = fields.EmbeddedDocumentField("Distance", blank=False, required=True)
-    valueDosage = fields.EmbeddedDocumentField("Dosage", blank=False, required=True)
-    valueDuration = fields.EmbeddedDocumentField("Duration", blank=False, required=True)
-    valueExpression = fields.EmbeddedDocumentField("Expression", blank=False, required=True)
-    valueHumanName = fields.EmbeddedDocumentField("HumanName", blank=False, required=True)
-    valueId = fields.CharField(blank=False, required=True)
-    valueIdentifier = fields.EmbeddedDocumentField("Identifier", blank=False, required=True)
-    valueInstant = fields.DateTimeField(blank=False, required=True)
-    valueInteger = fields.IntegerField(blank=False, required=True)
-    valueMarkdown = fields.CharField(blank=False, required=True)
-    valueMoney = fields.EmbeddedDocumentField("Money", blank=False, required=True)
-    valueOid = fields.CharField(blank=False, required=True)
-    valueParameterDefinition = fields.EmbeddedDocumentField("ParameterDefinition", blank=False, required=True)
-    valuePeriod = fields.EmbeddedDocumentField("Period", blank=False, required=True)
-    valuePositiveInt = fields.IntegerField(blank=False, required=True)
-    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=False, required=True)
-    valueRange = fields.EmbeddedDocumentField("Range", blank=False, required=True)
-    valueRatio = fields.EmbeddedDocumentField("Ratio", blank=False, required=True)
-    # valueReference = fields.ReferenceField(, blank=False, required=True)
-    valueRelatedArtifact = fields.EmbeddedDocumentField("RelatedArtifact", blank=False, required=True)
-    valueSampledData = fields.EmbeddedDocumentField("SampledData", blank=False, required=True)
-    valueSignature = fields.EmbeddedDocumentField("Signature", blank=False, required=True)
-    valueString = fields.CharField(blank=False, required=True)
-    valueTime = fields.DateTimeField(blank=False, required=True)
-    valueTiming = fields.EmbeddedDocumentField("Timing", blank=False, required=True)
-    valueTriggerDefinition = fields.EmbeddedDocumentField("TriggerDefinition", blank=False, required=True)
-    valueUnsignedInt = fields.IntegerField(blank=False, required=True)
-    valueUri = fields.CharField(blank=False, required=True)
-    valueUrl = fields.CharField(blank=False, required=True)
-    valueUsageContext = fields.EmbeddedDocumentField("UsageContext", blank=False, required=True)
-    valueUuid = fields.CharField(blank=False, required=True)
+    valueAddress = fields.EmbeddedDocumentField("Address", blank=True, required=False)
+    valueAge = fields.EmbeddedDocumentField("Age", blank=True, required=False)
+    valueAnnotation = fields.EmbeddedDocumentField("Annotation", blank=True, required=False)
+    valueAttachment = fields.EmbeddedDocumentField("Attachment", blank=True, required=False)
+    valueBase64Binary = fields.CharField(blank=True, required=False)
+    valueBoolean = fields.BooleanField(blank=True, required=False)
+    valueCanonical = fields.CharField(blank=True, required=False)
+    valueCode = fields.CharField(blank=True, required=False)
+    valueCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    valueCoding = fields.EmbeddedDocumentField("Coding", blank=True, required=False)
+    valueContactDetail = fields.EmbeddedDocumentField("ContactDetail", blank=True, required=False)
+    valueContactPoint = fields.EmbeddedDocumentField("ContactPoint", blank=True, required=False)
+    valueContributor = fields.EmbeddedDocumentField("Contributor", blank=True, required=False)
+    valueCount = fields.EmbeddedDocumentField("Count", blank=True, required=False)
+    valueDataRequirement = fields.EmbeddedDocumentField("DataRequirement", blank=True, required=False)
+    valueDate = fields.DateTimeField(blank=True, required=False)
+    valueDateTime = fields.DateTimeField(blank=True, required=False)
+    valueDecimal = fields.FloatField(blank=True, required=False)
+    valueDistance = fields.EmbeddedDocumentField("Distance", blank=True, required=False)
+    valueDosage = fields.EmbeddedDocumentField("Dosage", blank=True, required=False)
+    valueDuration = fields.EmbeddedDocumentField("Duration", blank=True, required=False)
+    valueExpression = fields.EmbeddedDocumentField("Expression", blank=True, required=False)
+    valueHumanName = fields.EmbeddedDocumentField("HumanName", blank=True, required=False)
+    valueId = fields.CharField(blank=True, required=False)
+    valueIdentifier = fields.EmbeddedDocumentField("Identifier", blank=True, required=False)
+    valueInstant = fields.DateTimeField(blank=True, required=False)
+    valueInteger = fields.IntegerField(blank=True, required=False)
+    valueMarkdown = fields.CharField(blank=True, required=False)
+    valueMoney = fields.EmbeddedDocumentField("Money", blank=True, required=False)
+    valueOid = fields.CharField(blank=True, required=False)
+    valueParameterDefinition = fields.EmbeddedDocumentField("ParameterDefinition", blank=True, required=False)
+    valuePeriod = fields.EmbeddedDocumentField("Period", blank=True, required=False)
+    valuePositiveInt = fields.IntegerField(blank=True, required=False)
+    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=True, required=False)
+    valueRange = fields.EmbeddedDocumentField("Range", blank=True, required=False)
+    valueRatio = fields.EmbeddedDocumentField("Ratio", blank=True, required=False)
+    # valueReference = fields.ReferenceField(, blank=True, required=False)
+    valueRelatedArtifact = fields.EmbeddedDocumentField("RelatedArtifact", blank=True, required=False)
+    valueSampledData = fields.EmbeddedDocumentField("SampledData", blank=True, required=False)
+    valueSignature = fields.EmbeddedDocumentField("Signature", blank=True, required=False)
+    valueString = fields.CharField(blank=True, required=False)
+    valueTime = fields.DateTimeField(blank=True, required=False)
+    valueTiming = fields.EmbeddedDocumentField("Timing", blank=True, required=False)
+    valueTriggerDefinition = fields.EmbeddedDocumentField("TriggerDefinition", blank=True, required=False)
+    valueUnsignedInt = fields.IntegerField(blank=True, required=False)
+    valueUri = fields.CharField(blank=True, required=False)
+    valueUrl = fields.CharField(blank=True, required=False)
+    valueUsageContext = fields.EmbeddedDocumentField("UsageContext", blank=True, required=False)
+    valueUuid = fields.CharField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -17786,55 +17787,55 @@ class TaskOutput(FhirBaseModel, EmbeddedMongoModel):
     id = fields.CharField(blank=True, required=False)
     modifierExtension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     type = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    valueAddress = fields.EmbeddedDocumentField("Address", blank=False, required=True)
-    valueAge = fields.EmbeddedDocumentField("Age", blank=False, required=True)
-    valueAnnotation = fields.EmbeddedDocumentField("Annotation", blank=False, required=True)
-    valueAttachment = fields.EmbeddedDocumentField("Attachment", blank=False, required=True)
-    valueBase64Binary = fields.CharField(blank=False, required=True)
-    valueBoolean = fields.BooleanField(blank=False, required=True)
-    valueCanonical = fields.CharField(blank=False, required=True)
-    valueCode = fields.CharField(blank=False, required=True)
-    valueCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    valueCoding = fields.EmbeddedDocumentField("Coding", blank=False, required=True)
-    valueContactDetail = fields.EmbeddedDocumentField("ContactDetail", blank=False, required=True)
-    valueContactPoint = fields.EmbeddedDocumentField("ContactPoint", blank=False, required=True)
-    valueContributor = fields.EmbeddedDocumentField("Contributor", blank=False, required=True)
-    valueCount = fields.EmbeddedDocumentField("Count", blank=False, required=True)
-    valueDataRequirement = fields.EmbeddedDocumentField("DataRequirement", blank=False, required=True)
-    valueDate = fields.DateTimeField(blank=False, required=True)
-    valueDateTime = fields.DateTimeField(blank=False, required=True)
-    valueDecimal = fields.FloatField(blank=False, required=True)
-    valueDistance = fields.EmbeddedDocumentField("Distance", blank=False, required=True)
-    valueDosage = fields.EmbeddedDocumentField("Dosage", blank=False, required=True)
-    valueDuration = fields.EmbeddedDocumentField("Duration", blank=False, required=True)
-    valueExpression = fields.EmbeddedDocumentField("Expression", blank=False, required=True)
-    valueHumanName = fields.EmbeddedDocumentField("HumanName", blank=False, required=True)
-    valueId = fields.CharField(blank=False, required=True)
-    valueIdentifier = fields.EmbeddedDocumentField("Identifier", blank=False, required=True)
-    valueInstant = fields.DateTimeField(blank=False, required=True)
-    valueInteger = fields.IntegerField(blank=False, required=True)
-    valueMarkdown = fields.CharField(blank=False, required=True)
-    valueMoney = fields.EmbeddedDocumentField("Money", blank=False, required=True)
-    valueOid = fields.CharField(blank=False, required=True)
-    valueParameterDefinition = fields.EmbeddedDocumentField("ParameterDefinition", blank=False, required=True)
-    valuePeriod = fields.EmbeddedDocumentField("Period", blank=False, required=True)
-    valuePositiveInt = fields.IntegerField(blank=False, required=True)
-    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=False, required=True)
-    valueRange = fields.EmbeddedDocumentField("Range", blank=False, required=True)
-    valueRatio = fields.EmbeddedDocumentField("Ratio", blank=False, required=True)
-    # valueReference = fields.ReferenceField(, blank=False, required=True)
-    valueRelatedArtifact = fields.EmbeddedDocumentField("RelatedArtifact", blank=False, required=True)
-    valueSampledData = fields.EmbeddedDocumentField("SampledData", blank=False, required=True)
-    valueSignature = fields.EmbeddedDocumentField("Signature", blank=False, required=True)
-    valueString = fields.CharField(blank=False, required=True)
-    valueTime = fields.DateTimeField(blank=False, required=True)
-    valueTiming = fields.EmbeddedDocumentField("Timing", blank=False, required=True)
-    valueTriggerDefinition = fields.EmbeddedDocumentField("TriggerDefinition", blank=False, required=True)
-    valueUnsignedInt = fields.IntegerField(blank=False, required=True)
-    valueUri = fields.CharField(blank=False, required=True)
-    valueUrl = fields.CharField(blank=False, required=True)
-    valueUsageContext = fields.EmbeddedDocumentField("UsageContext", blank=False, required=True)
-    valueUuid = fields.CharField(blank=False, required=True)
+    valueAddress = fields.EmbeddedDocumentField("Address", blank=True, required=False)
+    valueAge = fields.EmbeddedDocumentField("Age", blank=True, required=False)
+    valueAnnotation = fields.EmbeddedDocumentField("Annotation", blank=True, required=False)
+    valueAttachment = fields.EmbeddedDocumentField("Attachment", blank=True, required=False)
+    valueBase64Binary = fields.CharField(blank=True, required=False)
+    valueBoolean = fields.BooleanField(blank=True, required=False)
+    valueCanonical = fields.CharField(blank=True, required=False)
+    valueCode = fields.CharField(blank=True, required=False)
+    valueCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    valueCoding = fields.EmbeddedDocumentField("Coding", blank=True, required=False)
+    valueContactDetail = fields.EmbeddedDocumentField("ContactDetail", blank=True, required=False)
+    valueContactPoint = fields.EmbeddedDocumentField("ContactPoint", blank=True, required=False)
+    valueContributor = fields.EmbeddedDocumentField("Contributor", blank=True, required=False)
+    valueCount = fields.EmbeddedDocumentField("Count", blank=True, required=False)
+    valueDataRequirement = fields.EmbeddedDocumentField("DataRequirement", blank=True, required=False)
+    valueDate = fields.DateTimeField(blank=True, required=False)
+    valueDateTime = fields.DateTimeField(blank=True, required=False)
+    valueDecimal = fields.FloatField(blank=True, required=False)
+    valueDistance = fields.EmbeddedDocumentField("Distance", blank=True, required=False)
+    valueDosage = fields.EmbeddedDocumentField("Dosage", blank=True, required=False)
+    valueDuration = fields.EmbeddedDocumentField("Duration", blank=True, required=False)
+    valueExpression = fields.EmbeddedDocumentField("Expression", blank=True, required=False)
+    valueHumanName = fields.EmbeddedDocumentField("HumanName", blank=True, required=False)
+    valueId = fields.CharField(blank=True, required=False)
+    valueIdentifier = fields.EmbeddedDocumentField("Identifier", blank=True, required=False)
+    valueInstant = fields.DateTimeField(blank=True, required=False)
+    valueInteger = fields.IntegerField(blank=True, required=False)
+    valueMarkdown = fields.CharField(blank=True, required=False)
+    valueMoney = fields.EmbeddedDocumentField("Money", blank=True, required=False)
+    valueOid = fields.CharField(blank=True, required=False)
+    valueParameterDefinition = fields.EmbeddedDocumentField("ParameterDefinition", blank=True, required=False)
+    valuePeriod = fields.EmbeddedDocumentField("Period", blank=True, required=False)
+    valuePositiveInt = fields.IntegerField(blank=True, required=False)
+    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=True, required=False)
+    valueRange = fields.EmbeddedDocumentField("Range", blank=True, required=False)
+    valueRatio = fields.EmbeddedDocumentField("Ratio", blank=True, required=False)
+    # valueReference = fields.ReferenceField(, blank=True, required=False)
+    valueRelatedArtifact = fields.EmbeddedDocumentField("RelatedArtifact", blank=True, required=False)
+    valueSampledData = fields.EmbeddedDocumentField("SampledData", blank=True, required=False)
+    valueSignature = fields.EmbeddedDocumentField("Signature", blank=True, required=False)
+    valueString = fields.CharField(blank=True, required=False)
+    valueTime = fields.DateTimeField(blank=True, required=False)
+    valueTiming = fields.EmbeddedDocumentField("Timing", blank=True, required=False)
+    valueTriggerDefinition = fields.EmbeddedDocumentField("TriggerDefinition", blank=True, required=False)
+    valueUnsignedInt = fields.IntegerField(blank=True, required=False)
+    valueUri = fields.CharField(blank=True, required=False)
+    valueUrl = fields.CharField(blank=True, required=False)
+    valueUsageContext = fields.EmbeddedDocumentField("UsageContext", blank=True, required=False)
+    valueUuid = fields.CharField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -17902,11 +17903,11 @@ class TaskRestriction(FhirBaseModel, EmbeddedMongoModel):
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         period = EmbeddedAttribute(type="Period", getter="period", setter="period", searcher=StringSearch("period"))
-        recipient = ObjectIdReferenceAttribute({'PractitionerRole', 'Group', 'RelatedPerson', 'Practitioner', 'Organization', 'Patient'}, ("recipient", str), "recipient", pk_setter="recipient")
+        recipient = ObjectIdReferenceAttribute(['Group', 'Organization', 'Patient', 'Practitioner', 'PractitionerRole', 'RelatedPerson'], ("recipient", str), "recipient", pk_setter="recipient")
         repetitions = Attribute(getter="repetitions", setter="repetitions", searcher=NumericSearch("repetitions"))
 
 class TerminologyCapabilities(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -18111,7 +18112,7 @@ class TerminologyCapabilitiesValidateCode(FhirBaseModel, EmbeddedMongoModel):
         translations = Attribute(getter="translations", setter="translations", searcher=StringSearch("translations"))
 
 class TestReport(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -18148,7 +18149,7 @@ class TestReport(FhirBaseModel, MongoModel):
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         teardown = EmbeddedAttribute(type="TestReportTeardown", getter="teardown", setter="teardown", searcher=StringSearch("teardown"))
         test = EmbeddedAttribute(type="TestReportTest", getter="test", setter="test", searcher=StringSearch("test"))
-        testScript = ObjectIdReferenceAttribute({'TestScript'}, ("testScript", str), "testScript", pk_setter="testScript")
+        testScript = ObjectIdReferenceAttribute(['TestScript'], ("testScript", str), "testScript", pk_setter="testScript")
         tester = Attribute(getter="tester", setter="tester", searcher=StringSearch("tester"))
 
 class TestReportParticipant(FhirBaseModel, EmbeddedMongoModel):
@@ -18271,7 +18272,7 @@ class TestReportTestAction(FhirBaseModel, EmbeddedMongoModel):
         operation = EmbeddedAttribute(type="TestReportSetupActionOperation", getter="operation", setter="operation", searcher=StringSearch("operation"))
 
 class TestScript(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -18322,7 +18323,7 @@ class TestScript(FhirBaseModel, MongoModel):
         metadata = EmbeddedAttribute(type="TestScriptMetadata", getter="metadata", setter="metadata", searcher=StringSearch("metadata"))
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         origin = EmbeddedAttribute(type="TestScriptOrigin", getter="origin", setter="origin", searcher=StringSearch("origin"))
-        profile = ObjectIdReferenceAttribute({'Resource'}, ("profile", str), "profile", pk_setter="profile")
+        profile = ObjectIdReferenceAttribute(['Resource'], ("profile", str), "profile", pk_setter="profile")
         publisher = Attribute(getter="publisher", setter="publisher", searcher=StringSearch("publisher"))
         purpose = Attribute(getter="purpose", setter="purpose", searcher=StringSearch("purpose"))
         setup = EmbeddedAttribute(type="TestScriptSetup", getter="setup", setter="setup", searcher=StringSearch("setup"))
@@ -18361,7 +18362,7 @@ class TestScriptFixture(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         autocreate = Attribute(getter="autocreate", setter="autocreate", searcher=StringSearch("autocreate"))
         autodelete = Attribute(getter="autodelete", setter="autodelete", searcher=StringSearch("autodelete"))
-        resource = ObjectIdReferenceAttribute({'Resource'}, ("resource", str), "resource", pk_setter="resource")
+        resource = ObjectIdReferenceAttribute(['Resource'], ("resource", str), "resource", pk_setter="resource")
 
 class TestScriptMetadata(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -18708,7 +18709,7 @@ class TriggerDefinition(FhirBaseModel, EmbeddedMongoModel):
         name = Attribute(getter="name", setter="name", searcher=StringSearch("name"))
         timingDate = DateAttribute("timingDate")
         timingDateTime = DateAttribute("timingDateTime")
-        timingReference = ObjectIdReferenceAttribute({'Schedule'}, ("timingReference", str), "timingReference", pk_setter="timingReference")
+        timingReference = ObjectIdReferenceAttribute(['Schedule'], ("timingReference", str), "timingReference", pk_setter="timingReference")
         timingTiming = EmbeddedAttribute(type="Timing", getter="timingTiming", setter="timingTiming", searcher=StringSearch("timingTiming"))
         type = Attribute(getter="type", setter="type", searcher=StringSearch("type"))
 
@@ -18716,10 +18717,10 @@ class UsageContext(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
     id = fields.CharField(blank=True, required=False)
     code = fields.EmbeddedDocumentField("Coding", blank=False, required=True)
-    valueCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=False, required=True)
-    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=False, required=True)
-    valueRange = fields.EmbeddedDocumentField("Range", blank=False, required=True)
-    valueReference = fields.ObjectIdField(blank=False, required=True)
+    valueCodeableConcept = fields.EmbeddedDocumentField("CodeableConcept", blank=True, required=False)
+    valueQuantity = fields.EmbeddedDocumentField("Quantity", blank=True, required=False)
+    valueRange = fields.EmbeddedDocumentField("Range", blank=True, required=False)
+    valueReference = fields.ObjectIdField(blank=True, required=False)
     class FhirMap:
         extension = EmbeddedAttribute(type="Extension", getter="extension", setter="extension", searcher=StringSearch("extension"))
         id = Attribute(getter="id", setter="id", searcher=StringSearch("id"))
@@ -18727,10 +18728,10 @@ class UsageContext(FhirBaseModel, EmbeddedMongoModel):
         valueCodeableConcept = EmbeddedAttribute(type="CodeableConcept", getter="valueCodeableConcept", setter="valueCodeableConcept", searcher=StringSearch("valueCodeableConcept"))
         valueQuantity = EmbeddedAttribute(type="Quantity", getter="valueQuantity", setter="valueQuantity", searcher=StringSearch("valueQuantity"))
         valueRange = EmbeddedAttribute(type="Range", getter="valueRange", setter="valueRange", searcher=StringSearch("valueRange"))
-        valueReference = ObjectIdReferenceAttribute({'PlanDefinition', 'ResearchStudy', 'Location', 'Group', 'HealthcareService', 'InsurancePlan', 'Organization'}, ("valueReference", str), "valueReference", pk_setter="valueReference")
+        valueReference = ObjectIdReferenceAttribute(['Group', 'HealthcareService', 'InsurancePlan', 'Location', 'Organization', 'PlanDefinition', 'ResearchStudy'], ("valueReference", str), "valueReference", pk_setter="valueReference")
 
 class ValueSet(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -18935,7 +18936,7 @@ class ValueSetExpansionParameter(FhirBaseModel, EmbeddedMongoModel):
         valueUri = Attribute(getter="valueUri", setter="valueUri", searcher=StringSearch("valueUri"))
 
 class VerificationResult(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -18973,7 +18974,7 @@ class VerificationResult(FhirBaseModel, MongoModel):
         primarySource = EmbeddedAttribute(type="VerificationResultPrimarySource", getter="primarySource", setter="primarySource", searcher=StringSearch("primarySource"))
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
         statusDate = DateAttribute("statusDate")
-        target = ObjectIdReferenceAttribute({'Resource'}, ("target", str), "target", pk_setter="target")
+        target = ObjectIdReferenceAttribute(['Resource'], ("target", str), "target", pk_setter="target")
         targetLocation = Attribute(getter="targetLocation", setter="targetLocation", searcher=StringSearch("targetLocation"))
         validationProcess = EmbeddedAttribute(type="CodeableConcept", getter="validationProcess", setter="validationProcess", searcher=StringSearch("validationProcess"))
         validationType = EmbeddedAttribute(type="CodeableConcept", getter="validationType", setter="validationType", searcher=StringSearch("validationType"))
@@ -18997,12 +18998,12 @@ class VerificationResultAttestation(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         communicationMethod = EmbeddedAttribute(type="CodeableConcept", getter="communicationMethod", setter="communicationMethod", searcher=StringSearch("communicationMethod"))
         date = DateAttribute("date")
-        onBehalfOf = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("onBehalfOf", str), "onBehalfOf", pk_setter="onBehalfOf")
+        onBehalfOf = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("onBehalfOf", str), "onBehalfOf", pk_setter="onBehalfOf")
         proxyIdentityCertificate = Attribute(getter="proxyIdentityCertificate", setter="proxyIdentityCertificate", searcher=StringSearch("proxyIdentityCertificate"))
         proxySignature = EmbeddedAttribute(type="Signature", getter="proxySignature", setter="proxySignature", searcher=StringSearch("proxySignature"))
         sourceIdentityCertificate = Attribute(getter="sourceIdentityCertificate", setter="sourceIdentityCertificate", searcher=StringSearch("sourceIdentityCertificate"))
         sourceSignature = EmbeddedAttribute(type="Signature", getter="sourceSignature", setter="sourceSignature", searcher=StringSearch("sourceSignature"))
-        who = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("who", str), "who", pk_setter="who")
+        who = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("who", str), "who", pk_setter="who")
 
 class VerificationResultPrimarySource(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -19025,7 +19026,7 @@ class VerificationResultPrimarySource(FhirBaseModel, EmbeddedMongoModel):
         type = EmbeddedAttribute(type="CodeableConcept", getter="type", setter="type", searcher=StringSearch("type"))
         validationDate = DateAttribute("validationDate")
         validationStatus = EmbeddedAttribute(type="CodeableConcept", getter="validationStatus", setter="validationStatus", searcher=StringSearch("validationStatus"))
-        who = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole', 'Organization'}, ("who", str), "who", pk_setter="who")
+        who = ObjectIdReferenceAttribute(['Organization', 'Practitioner', 'PractitionerRole'], ("who", str), "who", pk_setter="who")
 
 class VerificationResultValidator(FhirBaseModel, EmbeddedMongoModel):
     extension = fields.EmbeddedDocumentListField("Extension", blank=True, required=False)
@@ -19040,10 +19041,10 @@ class VerificationResultValidator(FhirBaseModel, EmbeddedMongoModel):
         modifierExtension = EmbeddedAttribute(type="Extension", getter="modifierExtension", setter="modifierExtension", searcher=StringSearch("modifierExtension"))
         attestationSignature = EmbeddedAttribute(type="Signature", getter="attestationSignature", setter="attestationSignature", searcher=StringSearch("attestationSignature"))
         identityCertificate = Attribute(getter="identityCertificate", setter="identityCertificate", searcher=StringSearch("identityCertificate"))
-        organization = ObjectIdReferenceAttribute({'Organization'}, ("organization", str), "organization", pk_setter="organization")
+        organization = ObjectIdReferenceAttribute(['Organization'], ("organization", str), "organization", pk_setter="organization")
 
 class VisionPrescription(FhirBaseModel, MongoModel):
-    
+
     implicitRules = fields.CharField(blank=True, required=False)
     language = fields.CharField(blank=True, required=False)
     meta = fields.EmbeddedDocumentField("Meta", blank=True, required=False)
@@ -19068,11 +19069,11 @@ class VisionPrescription(FhirBaseModel, MongoModel):
         text = EmbeddedAttribute(type="Narrative", getter="text", setter="text", searcher=StringSearch("text"))
         created = DateAttribute("created")
         dateWritten = DateAttribute("dateWritten")
-        encounter = ObjectIdReferenceAttribute({'Encounter'}, ("encounter", str), "encounter", pk_setter="encounter")
+        encounter = ObjectIdReferenceAttribute(['Encounter'], ("encounter", str), "encounter", pk_setter="encounter")
         identifier = EmbeddedAttribute(type="Identifier", getter="identifier", setter="identifier", searcher=StringSearch("identifier"))
         lensSpecification = EmbeddedAttribute(type="VisionPrescriptionLensSpecification", getter="lensSpecification", setter="lensSpecification", searcher=StringSearch("lensSpecification"))
-        patient = ObjectIdReferenceAttribute({'Patient'}, ("patient", str), "patient", pk_setter="patient")
-        prescriber = ObjectIdReferenceAttribute({'Practitioner', 'PractitionerRole'}, ("prescriber", str), "prescriber", pk_setter="prescriber")
+        patient = ObjectIdReferenceAttribute(['Patient'], ("patient", str), "patient", pk_setter="patient")
+        prescriber = ObjectIdReferenceAttribute(['Practitioner', 'PractitionerRole'], ("prescriber", str), "prescriber", pk_setter="prescriber")
         status = Attribute(getter="status", setter="status", searcher=StringSearch("status"))
 
 class VisionPrescriptionLensSpecification(FhirBaseModel, EmbeddedMongoModel):

@@ -46,19 +46,19 @@ def generate_string_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRRe
         model_prop = ""
     else:
         if islist:
-            model_prop = f"{name} = fields.ListField(fields.CharField(), blank={not mandatory}, required={mandatory})"
+            model_prop = f"{name} = fields.ListField(fields.CharField(), blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
         else:
-            model_prop = f"{name} = fields.CharField(blank={not mandatory}, required={mandatory})"
+            model_prop = f"{name} = fields.CharField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
         fhirMap_prop = f'{name} = Attribute(getter="{name}", setter="{name}", searcher=StringSearch("{name}"))'
     return model_prop, fhirMap_prop
 
 
 def generate_int_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRResource):
     if islist:
-        model_prop = f"{name} = fields.ListField(fields.IntegerField(), blank={not mandatory}, required={mandatory})"
+        model_prop = f"{name} = fields.ListField(fields.IntegerField(), blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
     else:
         model_prop = (
-            f"{name} = fields.IntegerField(blank={not mandatory}, required={mandatory})"
+            f"{name} = fields.IntegerField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
         )
     fhirMap_prop = f'{name} = Attribute(getter="{name}", setter="{name}", searcher=NumericSearch("{name}"))'
     return model_prop, fhirMap_prop
@@ -66,10 +66,10 @@ def generate_int_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRResou
 
 def generate_float_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRResource):
     if islist:
-        model_prop = f"{name} = fields.ListField(fields.FloatField(), blank={not mandatory}, required={mandatory})"
+        model_prop = f"{name} = fields.ListField(fields.FloatField(), blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
     else:
         model_prop = (
-            f"{name} = fields.FloatField(blank={not mandatory}, required={mandatory})"
+            f"{name} = fields.FloatField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
         )
     fhirMap_prop = f'{name} = Attribute(getter="{name}", setter="{name}", searcher=NumericSearch("{name}"))'
     return model_prop, fhirMap_prop
@@ -77,10 +77,10 @@ def generate_float_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRRes
 
 def generate_bool_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRResource):
     if islist:
-        model_prop = f"{name} = fields.ListField(fields.BooleanField(), blank={not mandatory}, required={mandatory})"
+        model_prop = f"{name} = fields.ListField(fields.BooleanField(), blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
     else:
         model_prop = (
-            f"{name} = fields.BooleanField(blank={not mandatory}, required={mandatory})"
+            f"{name} = fields.BooleanField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
         )
     fhirMap_prop = f'{name} = Attribute(getter="{name}", setter="{name}", searcher=StringSearch("{name}"))'
     return model_prop, fhirMap_prop
@@ -101,11 +101,12 @@ def generate_reference_prop(
             acceptable_types = reftypes[path_with_x]
         elif nested_path in reftypes:
             acceptable_types = reftypes[nested_path]
-        model_prop = f"{name} = fields.ObjectIdField(blank={not mandatory}, required={mandatory})"
+        acceptable_types = sorted(list(acceptable_types))
+        model_prop = f"{name} = fields.ObjectIdField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
         fhirMap_prop = f'{name} = ObjectIdReferenceAttribute({acceptable_types}, ("{name}", str), "{name}", pk_setter="{name}")'
     else:
         # print('Unknown ref: name', f'{FHIRResource.__name__}.{name}')
-        model_prop = f"# {name} = fields.ReferenceField(, blank={not mandatory}, required={mandatory})"
+        model_prop = f"# {name} = fields.ReferenceField(, blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
         fhirMap_prop = f'# {name} = ObjectIdReferenceAttribute(getter="{name}", setter="{name}", searcher=StringSearch("{name}"))'
     return model_prop, fhirMap_prop
 
@@ -118,14 +119,14 @@ def generate_element_prop(
     else:
         fieldtype = "EmbeddedDocumentField"
 
-    model_prop = f'{name} = fields.{fieldtype}("{typ.__name__}", blank={not mandatory}, required={mandatory})'
+    model_prop = f'{name} = fields.{fieldtype}("{typ.__name__}", blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})'
     fhirMap_prop = f'{name} = EmbeddedAttribute(type="{typ.__name__}", getter="{name}", setter="{name}", searcher=StringSearch("{name}"))'
     return model_prop, fhirMap_prop
 
 
 def generate_date_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRResource):
     model_prop = (
-        f"{name} = fields.DateTimeField(blank={not mandatory}, required={mandatory})"
+        f"{name} = fields.DateTimeField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
     )
     fhirMap_prop = f'{name} = DateAttribute("{name}")'
     return model_prop, fhirMap_prop
