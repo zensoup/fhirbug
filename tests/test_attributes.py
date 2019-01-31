@@ -278,9 +278,10 @@ class TestEmbeddedAttribute(unittest.TestCase):
         self.assertEqual(a.type, mockClass)
         import_models.assert_not_called()
 
-        b = EmbeddedAttribute(type="asstring")
+        b = EmbeddedAttribute(type="as_string")
+        b.type
         import_models.assert_called_once()
-        self.assertEqual(b.type, import_models().asstring)
+        self.assertEqual(b.type, import_models().as_string)
 
     @patch('fhirbug.models.attributes.Attribute.__init__', return_value=None)
     def test_calls_super(self, AttributeMock, import_models):
@@ -340,8 +341,8 @@ class TestEmbeddedAttribute(unittest.TestCase):
         inst.settable = {'new': 'value'}
 
         dict_to_resource.assert_called_with({'new': 'value'})
-        models.fakeClass.from_resource.assert_called_with(dict_to_resource())
-        super_setter.assert_called_with(inst, models.fakeClass.from_resource())
+        import_models().fakeClass.from_resource.assert_called_with(dict_to_resource())
+        super_setter.assert_called_with(inst, import_models().fakeClass.from_resource())
 
     @patch('fhirbug.models.attributes.Attribute.__set__', return_value=None)
     def test_set_one_mapping(self, super_setter, import_models):
@@ -349,8 +350,8 @@ class TestEmbeddedAttribute(unittest.TestCase):
         fakeVal = Mock()
         inst.settable = fakeVal
 
-        models.fakeClass.from_resource.assert_called_with(fakeVal)
-        super_setter.assert_called_with(inst, models.fakeClass.from_resource())
+        import_models().fakeClass.from_resource.assert_called_with(fakeVal)
+        super_setter.assert_called_with(inst, import_models().fakeClass.from_resource())
 
     @patch('fhirbug.models.attributes.EmbeddedAttribute.dict_to_resource')
     @patch('fhirbug.models.attributes.Attribute.__set__', return_value=None)
@@ -367,5 +368,5 @@ class TestEmbeddedAttribute(unittest.TestCase):
         map_list = list(map_func)
 
         dict_to_resource.assert_called_with({'new': 'value'})
-        models.fakeClass.from_resource.assert_has_calls([call(dict_to_resource()), call(fakeVal)])
-        self.assertEqual(map_list, [models.fakeClass.from_resource(), models.fakeClass.from_resource()])
+        import_models().fakeClass.from_resource.assert_has_calls([call(dict_to_resource()), call(fakeVal)])
+        self.assertEqual(map_list, [import_models().fakeClass.from_resource(), import_models().fakeClass.from_resource()])

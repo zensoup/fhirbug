@@ -500,13 +500,18 @@ class EmbeddedAttribute(Attribute):
                 "You hane defined an EmbeddedAttribute without specifying the type."
             )
 
-        # If a class name has been passed as a string, import the model
-        if builtins.type(type) is str:
-            models = import_models()
-            type = getattr(models, type)
-
-        self.type = type
+        self._type = type
         super(EmbeddedAttribute, self).__init__(*args, **kwargs)
+
+    @property
+    def type(self):
+        # If a class name has been passed as a string, import the model
+        _type = self._type
+        if type(_type) is str:
+            models = import_models()
+            _type = getattr(models, _type)
+        return _type
+
 
     def __get__(self, instance, owner):
         # Let the ORM handle getting the backbone element. The ORM should return
