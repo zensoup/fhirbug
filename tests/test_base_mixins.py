@@ -24,6 +24,15 @@ from fhirbug.models.mixins import (
 
 
 class TestAbstractBaseMixin(unittest.TestCase):
+    def test_get_resource_cls(self):
+        cls = models.BaseMixinModel._get_resource_cls()
+        self.assertEqual(cls, Patient)
+
+        del(models.BaseMixinModel.__Resource__)
+        with self.assertRaises(AttributeError):
+            cls = models.BaseMixinModel._get_resource_cls()
+
+
     def test_get_params_dict(self):
         """
         get_params_dict should retun a dict containing the FhirMap Attributes that match the Fhir resource

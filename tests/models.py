@@ -6,6 +6,7 @@ from fhirbug.models.attributes import (
     ReferenceAttribute,
     BooleanAttribute,
     NameAttribute,
+    EmbeddedAttribute,
 )
 from fhirbug.constants import AUDIT_SUCCESS, AUDIT_MINOR_FAILURE
 from unittest.mock import Mock, MagicMock
@@ -296,3 +297,13 @@ class NameAttibuteModel:
         family_setter="_family",
         pass_given_names=True,
     )
+
+relationMock = Mock()
+relationMock2 = Mock()
+fakeClass = Mock()
+class EmbeddedAttributeModel:
+    _model = SN(emptyRelation=None, relation=relationMock, a_list=[relationMock, relationMock2])
+    empty = EmbeddedAttribute('emptyRelation', type='fakeClass')
+    first = EmbeddedAttribute('relation', type='fakeClass')
+    many = EmbeddedAttribute('a_list', type='fakeClass')
+    settable = EmbeddedAttribute('relation', 'relation', type='fakeClass')

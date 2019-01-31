@@ -1,12 +1,12 @@
 import unittest
 from types import SimpleNamespace
-from unittest.mock import call
+from unittest.mock import call, patch, Mock
 from fhirbug.config import settings
 from fhirbug.exceptions import UnsupportedOperationError, MappingValidationError, MappingException
 
 settings._reset()
 settings.configure(
-    {"DB_BACKEND": "SQLAlchemy", "SQLALCHEMY_CONFIG": {"URI": "sqlite:///memory"}}
+    {"DB_BACKEND": "SQLAlchemy", "SQLALCHEMY_CONFIG": {"URI": "sqlite:///memory"}, 'MODELS_PATH': 'tests.models'}
 )
 from . import models
 
@@ -257,3 +257,115 @@ class TestNameAttribute(unittest.TestCase):
         self.assertEqual(inst._model._family, "Someone")
         inst.givenSetterMock.assert_called_with(inst, ["Some", "One"])
         self.assertEqual(inst._model._given1, "Sponge bob")
+
+
+@patch('fhirbug.models.attributes.import_models')
+class TestEmbeddedAttribute(unittest.TestCase):
+
+    def test_constructor(self, import_models):
+        ''' Embeddedattribute must throw an error when initialized without a ``type`` argument
+        '''
+        from fhirbug.models.attributes import EmbeddedAttribute
+        with self.assertRaises(MappingValidationError):
+            a = EmbeddedAttribute()
+
+    def test_accepts_class_or_string(self, import_models):
+        ''' It should accept a class or a string as ``type``. Id a string is passed it should be imported
+        '''
+        from fhirbug.models.attributes import EmbeddedAttribute
+        mockClass = Mock()
+        a = EmbeddedAttribute(type=mockClass)
+        self.assertEqual(a.type, mockClass)
+        import_models.assert_not_called()
+
+        b = EmbeddedAttribute(type="asstring")
+        import_models.assert_called_once()
+        self.assertEqual(b.type, import_models().asstring)
+
+    @patch('fhirbug.models.attributes.Attribute.__init__', return_value=None)
+    def test_calls_super(self, AttributeMock, import_models):
+        ''' It must call the init method of ``Attribute`` when a type is provided
+        '''
+        from fhirbug.models.attributes import EmbeddedAttribute
+        a = EmbeddedAttribute(type='hoh')
+        AttributeMock.assert_called()
+
+    def test_returns_none(self, import_models):
+        ''' It sould return None if the relation is empty
+        '''
+        inst = models.EmbeddedAttributeModel()
+        ret = inst.empty
+        self.assertEqual(ret, None)
+
+    def test_get_one(self, import_models):
+        ''' When one item is returned from the getter, call ``to_fhir()`` on it and return it
+        '''
+        relationMock = models.relationMock
+        relationMock.reset_mock()
+
+        inst = models.EmbeddedAttributeModel()
+        res = inst.first
+        relationMock.to_fhir.assert_called_once()
+        self.assertEqual(res, relationMock.to_fhir())
+
+    def test_get_list(self, import_models):
+        ''' When a list is returned from the getter, call ``to_fhir()`` on each item and return the new list
+        '''
+        relationMock = models.relationMock
+        relationMock.reset_mock()
+        relationMock2 = models.relationMock2
+        relationMock2.reset_mock()
+
+        inst = models.EmbeddedAttributeModel()
+        res = inst.many
+
+        relationMock.to_fhir.assert_called_once()
+        relationMock2.to_fhir.assert_called_once()
+        self.assertEqual(res, [relationMock.to_fhir(), relationMock2.to_fhir()])
+
+    def test_dict_to_resource(self, import_models):
+        ''' It should get the resource class from the type class an instantiate it from the dictionary
+        '''
+        from fhirbug.models.attributes import EmbeddedAttribute
+        a = EmbeddedAttribute(type='hoh')
+        ret = a.dict_to_resource({'one': 2})
+        import_models().hoh._get_resource_cls.assert_called_once()
+        import_models().hoh._get_resource_cls().assert_called_with({'one': 2})
+        self.assertEqual(ret, import_models().hoh._get_resource_cls()())
+
+    @patch('fhirbug.models.attributes.EmbeddedAttribute.dict_to_resource')
+    @patch('fhirbug.models.attributes.Attribute.__set__', return_value=None)
+    def test_set_one_dict(self, super_setter, dict_to_resource, import_models):
+        inst = models.EmbeddedAttributeModel()
+        inst.settable = {'new': 'value'}
+
+        dict_to_resource.assert_called_with({'new': 'value'})
+        models.fakeClass.from_resource.assert_called_with(dict_to_resource())
+        super_setter.assert_called_with(inst, models.fakeClass.from_resource())
+
+    @patch('fhirbug.models.attributes.Attribute.__set__', return_value=None)
+    def test_set_one_mapping(self, super_setter, import_models):
+        inst = models.EmbeddedAttributeModel()
+        fakeVal = Mock()
+        inst.settable = fakeVal
+
+        models.fakeClass.from_resource.assert_called_with(fakeVal)
+        super_setter.assert_called_with(inst, models.fakeClass.from_resource())
+
+    @patch('fhirbug.models.attributes.EmbeddedAttribute.dict_to_resource')
+    @patch('fhirbug.models.attributes.Attribute.__set__', return_value=None)
+    def test_set_from_list(self, super_setter, dict_to_resource, import_models):
+        ''' When it is passed a list, it should convert all dicts inside it to maps and set the new list
+        '''
+        inst = models.EmbeddedAttributeModel()
+        fakeVal = Mock()
+        inst.settable = [{'new': 'value'}, fakeVal]
+
+        args, _ = super_setter.call_args
+        instance, map_func = args
+        self.assertEqual(instance, inst)
+        map_list = list(map_func)
+
+        dict_to_resource.assert_called_with({'new': 'value'})
+        models.fakeClass.from_resource.assert_has_calls([call(dict_to_resource()), call(fakeVal)])
+        self.assertEqual(map_list, [models.fakeClass.from_resource(), models.fakeClass.from_resource()])
