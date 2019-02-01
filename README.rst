@@ -183,12 +183,12 @@ ___________________
 
 ::
 
-    [ ] Complete unit test coverage
-        [ ] pagination
-        [ ] request handlers
+    [ ] Text Attributes with auto-generation
+    [ ] Handle reserved names eg ``class_``, ``from_`` etc
+    [ ] Support for more MongoDB ORMS
+    [ ] Dockerize demo server
     [ ] Integration tests
     [ ] Complete documentation coverage
-    [ ] Add DELETE functionality
     [ ] Support all `search parameters`_
         [ ] _content
         [ ] _lastUpdated
@@ -203,7 +203,6 @@ ___________________
         [ ] _count
         [ ] `_at`_
         [ ] _since
-    [ ] logging
     [ ] `Documents`_
     [ ] More Searches
     [ ] More attributes

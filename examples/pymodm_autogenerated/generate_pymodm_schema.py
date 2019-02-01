@@ -7,9 +7,9 @@ try:
     from fhirbug.Fhir import resources
 except ModuleNotFoundError:
     # Allow execution from a git clone without having fhirball installed.
-    if Path('./fhirbug').is_dir(): # Executed from the example's directory`
+    if Path("./fhirbug").is_dir():  # Executed from the example's directory`
         sys.path.append("./")
-    elif Path('../../fhirbug').is_dir(): # Executed from the project's root directory`
+    elif Path("../../fhirbug").is_dir():  # Executed from the project's root directory`
         sys.path.append("../../")
     from fhirbug.Fhir import resources
 
@@ -40,48 +40,50 @@ def generate_resource_list():
 # The following generate code for properties of specific types
 ###
 def generate_string_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRResource):
+    mandatory = (mandatory if (not ofmany and name[-1] != '_') else False)
+
     # We let mongo geverate ids automatically
     if name == "id" and parent == "MongoModel":
         fhirMap_prop = f'{name} = Attribute(getter=("_{name}", str), searcher=StringSearch("{name}"))'
         model_prop = ""
     else:
         if islist:
-            model_prop = f"{name} = fields.ListField(fields.CharField(), blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
+            model_prop = f"{name} = fields.ListField(fields.CharField(), blank={not mandatory}, required={mandatory})"
         else:
-            model_prop = f"{name} = fields.CharField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
+            model_prop = f"{name} = fields.CharField(blank={not mandatory}, required={mandatory})"
         fhirMap_prop = f'{name} = Attribute(getter="{name}", setter="{name}", searcher=StringSearch("{name}"))'
     return model_prop, fhirMap_prop
 
 
 def generate_int_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRResource):
+    mandatory = (mandatory if (not ofmany and name[-1] != '_') else False)
+
     if islist:
-        model_prop = f"{name} = fields.ListField(fields.IntegerField(), blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
+        model_prop = f"{name} = fields.ListField(fields.IntegerField(), blank={not mandatory}, required={mandatory})"
     else:
-        model_prop = (
-            f"{name} = fields.IntegerField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
-        )
+        model_prop = f"{name} = fields.IntegerField(blank={not mandatory}, required={mandatory})"
     fhirMap_prop = f'{name} = Attribute(getter="{name}", setter="{name}", searcher=NumericSearch("{name}"))'
     return model_prop, fhirMap_prop
 
 
 def generate_float_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRResource):
+    mandatory = (mandatory if (not ofmany and name[-1] != '_') else False)
+
     if islist:
-        model_prop = f"{name} = fields.ListField(fields.FloatField(), blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
+        model_prop = f"{name} = fields.ListField(fields.FloatField(), blank={not mandatory}, required={mandatory})"
     else:
-        model_prop = (
-            f"{name} = fields.FloatField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
-        )
+        model_prop = f"{name} = fields.FloatField(blank={not mandatory}, required={mandatory})"
     fhirMap_prop = f'{name} = Attribute(getter="{name}", setter="{name}", searcher=NumericSearch("{name}"))'
     return model_prop, fhirMap_prop
 
 
 def generate_bool_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRResource):
+    mandatory = (mandatory if (not ofmany and name[-1] != '_') else False)
+
     if islist:
-        model_prop = f"{name} = fields.ListField(fields.BooleanField(), blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
+        model_prop = f"{name} = fields.ListField(fields.BooleanField(), blank={not mandatory}, required={mandatory})"
     else:
-        model_prop = (
-            f"{name} = fields.BooleanField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
-        )
+        model_prop = f"{name} = fields.BooleanField(blank={not mandatory}, required={mandatory})"
     fhirMap_prop = f'{name} = Attribute(getter="{name}", setter="{name}", searcher=StringSearch("{name}"))'
     return model_prop, fhirMap_prop
 
@@ -89,6 +91,8 @@ def generate_bool_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRReso
 def generate_reference_prop(
     _, name, typ, islist, ofmany, mandatory, parent, FHIRResource
 ):
+    mandatory = (mandatory if (not ofmany and name[-1] != '_') else False)
+
     path = f"{FHIRResource.__name__}{name}".lower()
     path_with_x = f"{FHIRResource.__name__}{name}".replace("Reference", "[x]").lower()
     nested_path = re.sub(
@@ -102,11 +106,11 @@ def generate_reference_prop(
         elif nested_path in reftypes:
             acceptable_types = reftypes[nested_path]
         acceptable_types = sorted(list(acceptable_types))
-        model_prop = f"{name} = fields.ObjectIdField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
+        model_prop = f"{name} = fields.ObjectIdField(blank={not mandatory}, required={mandatory})"
         fhirMap_prop = f'{name} = ObjectIdReferenceAttribute({acceptable_types}, ("{name}", str), "{name}", pk_setter="{name}")'
     else:
         # print('Unknown ref: name', f'{FHIRResource.__name__}.{name}')
-        model_prop = f"# {name} = fields.ReferenceField(, blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
+        model_prop = f"# {name} = fields.ReferenceField(, blank={not mandatory}, required={mandatory})"
         fhirMap_prop = f'# {name} = ObjectIdReferenceAttribute(getter="{name}", setter="{name}", searcher=StringSearch("{name}"))'
     return model_prop, fhirMap_prop
 
@@ -119,17 +123,42 @@ def generate_element_prop(
     else:
         fieldtype = "EmbeddedDocumentField"
 
-    model_prop = f'{name} = fields.{fieldtype}("{typ.__name__}", blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})'
+    mandatory = (mandatory if (not ofmany and name[-1] != '_') else False)
+
+    model_prop = f'{name} = fields.{fieldtype}("{typ.__name__}", blank={not mandatory}, required={mandatory})'
     fhirMap_prop = f'{name} = EmbeddedAttribute(type="{typ.__name__}", getter="{name}", setter="{name}", searcher=StringSearch("{name}"))'
     return model_prop, fhirMap_prop
 
 
 def generate_date_prop(_, name, typ, islist, ofmany, mandatory, parent, FHIRResource):
-    model_prop = (
-        f"{name} = fields.DateTimeField(blank={not (mandatory if not ofmany else False)}, required={(mandatory if not ofmany else False)})"
-    )
+    mandatory = (mandatory if (not ofmany and name[-1] != '_') else False)
+
+    model_prop = f"{name} = fields.DateTimeField(blank={not mandatory}, required={mandatory})"
     fhirMap_prop = f'{name} = DateAttribute("{name}")'
     return model_prop, fhirMap_prop
+
+
+def is_self_referencing(typ, name, resource_name):
+    ''' Returns True if the field references the same type as the parent resource or
+    creates a reference cycle by referencing a resource that contains a reference back to this one.
+    '''
+    Element = resources.Element
+    return (
+        (typ.__name__ == resource_name)
+        or (name == "identifier" and resource_name == "FHIRReference")
+        or (issubclass(typ, Element) and resource_name == "Extension")
+        or (
+            name == "packageItem"
+            and resource_name == "MedicinalProductPackagedPackageItem"
+        )
+        or (resource_name == 'QuestionnaireResponseItemAnswer' and name == 'item')
+        or (resource_name == 'GraphDefinitionLinkTarget' and name == 'link')
+        or (resource_name == 'MedicinalProductAuthorizationProcedure' and name == 'application')
+        or (resource_name == 'ContractTerm' and name == 'group')
+        or (resource_name == 'ExampleScenarioProcessStep' and name == 'process')
+        or (resource_name == 'ExampleScenarioProcessStepAlternative' and name == 'step')
+    )
+
 
 ###
 # This is the main code generator.
@@ -142,8 +171,8 @@ def generate_class_definition(resource_name, FHIRResource, not_found):
 
     # Until the bug with pymodm circular reference is fixed, Extensions are not supported.
     # see: https://jira.mongodb.org/projects/PYMODM/issues/PYMODM-93?filter=allopenissues
-    if resource_name == "Extension":
-        return ""
+    # if resource_name == "Extension":
+    #     return ""
 
     Element = resources.Element
     FHIRReference = resources.FHIRReference
@@ -165,12 +194,20 @@ def generate_class_definition(resource_name, FHIRResource, not_found):
         int: generate_int_prop,
         float: generate_float_prop,
         bool: generate_bool_prop,
-        FHIRReference: generate_reference_prop,
+        # FHIRReference: generate_reference_prop,
         Element: generate_element_prop,
         FHIRDate: generate_date_prop,
     }
 
     for _, name, typ, islist, ofmany, mandatory in properties:
+
+        # Until the bug with pymodm circular reference is fixed, FHIRReference fields can not contain `identifier`
+        # see: https://jira.mongodb.org/projects/PYMODM/issues/PYMODM-93?filter=allopenissues
+        if is_self_referencing(typ, name, resource_name):
+            print(
+                f"Skipping self-referencing attribute {name} in resource {resource_name}"
+            )
+            continue
 
         # Append an underscore to reserved names
         if name in ["class", "import", "except", "global", "for", "assert", "from"]:
@@ -214,16 +251,14 @@ imports = [
     "from fhirbug.db.backends.pymodm.searches import StringSearch, NumericSearch",
     "",
     "",
-    "class Extension(MongoModel):",
-    "    pass",
+    "class Extension(FhirBaseModel, MongoModel):",
+    "    class FhirMap:",
+    "        pass",
 ]
 
 if __name__ == "__main__":
     resource_list = generate_resource_list()
     not_found = set()
-    Element = resources.Element
-    BackboneElement = resources.BackboneElement
-    FHIRReference = resources.FHIRReference
 
     elements = []
 
@@ -238,6 +273,7 @@ if __name__ == "__main__":
         target = sys.argv[1]
     else:
         from pathlib import Path
+
         target = Path(__file__).parent / "mappings.py"
         # target = "generated_pymodm.py"
     with open(target, "w") as f:
