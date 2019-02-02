@@ -274,7 +274,7 @@ if __name__ == "__main__":
     else:
         from pathlib import Path
 
-        target = Path(__file__).parent / "mappings.py"
+        target = Path(__file__).parent.parent / "mappings.py"
         # target = "generated_pymodm.py"
     with open(target, "w") as f:
         f.write(generated)

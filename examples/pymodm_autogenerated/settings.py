@@ -2,7 +2,7 @@
 # Database
 #
 DB_BACKEND = "pymodm"
-PYMODM_CONFIG = {"URI": "mongodb://localhost:27017/fhirbug"}
+PYMODM_CONFIG = {"URI": "mongodb://localhost:27017/fhirbug2"}
 #
 # Search
 #

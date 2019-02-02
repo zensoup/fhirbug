@@ -1,7 +1,7 @@
 import sys
 from types import SimpleNamespace
 
-from tools.fhirloader import FHIRLoader
+from fhirloader import FHIRLoader
 
 FHIRLoader.needs = {"profiles-resources.json": "examples-json.zip"}
 
