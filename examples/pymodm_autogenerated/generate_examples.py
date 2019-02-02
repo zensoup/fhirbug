@@ -134,4 +134,24 @@ def generate_examples(verbose=True):
 
 
 if __name__ == "__main__":
-    generate_examples()
+    import sys
+    wait = sys.argv[-1] == '-w'
+    import pymongo
+    import pymodm
+    from fhirbug.config import settings, import_models
+    settings.configure('settings')
+    server, db_name = settings.PYMODM_CONFIG["URI"].rsplit("/", 1)
+    while True:
+        try:
+            client = pymongo.MongoClient(server)
+            client.server_info()
+        except pymongo.errors.ServerSelectionTimeoutError:
+            if not wait:
+                sys.exit(1)
+        else:
+            break
+    pymodm.connect(settings.PYMODM_CONFIG["URI"])
+
+    # Clear the database
+    client.drop_database(db_name)
+    generate_examples(False)

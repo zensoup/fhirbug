@@ -12,6 +12,10 @@ FHIRBUG
     :alt: Python Versions
     :target: https://github.com/zensoup/fhirbug
 
+.. image:: https://codecov.io/gh/zensoup/fhirbug/branch/master/graph/badge.svg
+    :alt: Code Coverage
+    :target: https://codecov.io/gh/zensoup/fhirbug
+
 Fhirbug intends to be a full-featured `FHIR`_ server for python >= **3.6**. It has been
 designed to be easy to set up and configure and be flexible when it comes to
 the rest of tools it is combined with, like web frameworks and database interfaces.
@@ -215,6 +219,14 @@ ___________________
     [ ] Auto-generate Structure Definition
     [ ] DateSearch should handle partial dates better (i.e. 1990 should mean > 1990-01-01 & < 1990-12-31)
 
+___________________
+Contributing
+___________________
+Contributions are very welcome! Feel free to open an issue or submit a pull
+request!
+If you would like to get involved but don't know where to start please contact
+me and I will be very happy to guide you through the project, provide tutoring,
+etc as long as time allows it.
 
 
 .. _fhir: https://www.hl7.org/fhir/

@@ -68,4 +68,4 @@ def convert_response_content(headers, url, content):
 
 
 if __name__ == "__main__":
-    app.run(debug=settings.DEBUG)
+    app.run(host='0.0.0.0', debug=settings.DEBUG)
