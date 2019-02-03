@@ -17,7 +17,7 @@ except ModuleNotFoundError:
 VERBOSE = True
 
 # Relative or absolute path to a directory that contains resource profile files
-profile_folder = "test_cache"
+profile_folder = Path(__file__).parent / "test_cache"
 
 
 def generate(files=profile_folder):
