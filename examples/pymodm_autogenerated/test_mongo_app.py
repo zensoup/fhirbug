@@ -1,5 +1,11 @@
+####
+# Some of these tests rely on the examples from hl7.org's specification.
+# If the examples change, some of the tests may fail
+####
+
 import os
 import unittest
+import isodate
 import pymodm
 import pymongo
 from fhirbug.config import settings, import_models
@@ -85,6 +91,43 @@ class TestBundles(unittest.TestCase):
 
         self.assertEqual(status, 200)
         self.assertEqual(res["id"], id)
+
+
+class TestSearches(unittest.TestCase):
+    def setUp(self):
+        from fhirbug.server.requesthandlers import GetRequestHandler
+
+        self.handler = GetRequestHandler()
+
+    def test_lt_datetime(self):
+        url = "Patient?birthDate=lt2000-02-02T12:34"
+        res, status = self.handler.handle(url)
+        self.assertEqual(status, 200)
+        self.assertEqual(res["total"], 13)
+
+    def test_lt_date(self):
+        url = "Patient?birthDate=gt1990-02-02"
+        res, status = self.handler.handle(url)
+        self.assertEqual(status, 200)
+        self.assertEqual(res["total"], 5)
+
+    def test_ne_date(self):
+        url = "Patient?birthDate=ne1982-01"
+        res, status = self.handler.handle(url)
+        self.assertEqual(status, 200)
+        self.assertEqual(res["total"], 21)
+
+    def test_combined(self):
+        url = "Patient?birthDate=gt1990-02-02&birthDate=lt2000-02-02T12:34"
+        res, status = self.handler.handle(url)
+        self.assertEqual(status, 200)
+        self.assertEqual(res["total"], 1)
+
+    def test_year_only(self):
+        url = "Patient?deceasedDateTime=2015-02"
+        res, status = self.handler.handle(url)
+        self.assertEqual(status, 200)
+        self.assertEqual(res["total"], 1)
 
 
 def teardown_module():

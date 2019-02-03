@@ -1,5 +1,6 @@
 import isodate
-from datetime import timedelta
+import calendar
+from datetime import timedelta, datetime
 from fhirbug.exceptions import QueryValidationError
 
 
@@ -59,34 +60,50 @@ def transform_date(value, trim=True):
     except:
         try:
             value = isodate.parse_date(value)
-            return value
+            # We must convert to datetime or pymongo can't handle it
+            return datetime.combine(value, datetime.min.time())
         except:
             raise QueryValidationError(f"{value} is not a valid ISO date")
 
+def get_equality_date_range(value, trim=True):
+    ''' If an incomplete date is provided convert the equality to a renge search.
+    For example if the query is ``date=1990`` we should convert it to 1990-01-01 <= date <= 1990-12-31
+    '''
+    length = len(value)
+    if trim:
+        length -= 2
+    value = transform_date(value, trim)
+    search = value
+    if length == 4:
+        search = {"$gte": value, "$lte": datetime(value.year, 12, 31, 23, 59, 59, 59)}
+    elif length == 7:
+        first, last = calendar.monthrange(value.year, value.month)
+        search = {"$gte": value, "$lte": value + timedelta(days=last-1, hours=23, minutes=59, seconds=59)}
+    elif length == 10:
+        search = {"$gte": value, "$lte": value + timedelta(days=1, hours=23, minutes=59, seconds=59)}
+    return search
 
 def DateSearch(column):
     def search_datetime(cls, field_name, value, sql_query, query):
         # value = query.search_params[field_name] if field_name in query.search_params else query.modifiers[field_name]
         # value = value.pop()
         if value.startswith("lt"):  # Less than
-            return sql_query.filter(**{"{}__lt".format(column): transform_date(value)})
+            return sql_query.raw({column: {"$lt": transform_date(value)}})
         if value.startswith("gt"):  # Greater than
-            return sql_query.filter(**{"{}__gt".format(column): transform_date(value)})
+            return sql_query.raw({column: {"$gt": transform_date(value)}})
         if value.startswith("le"):  # Less or equal
-            return sql_query.filter(**{"{}__lte".format(column): transform_date(value)})
+            return sql_query.raw({column: {"$lte": transform_date(value)}})
         if value.startswith("ge"):  # Greater or equal
-            return sql_query.filter(**{"{}__gte".format(column): transform_date(value)})
+            return sql_query.raw({column: {"$gte": transform_date(value)}})
         if value.startswith("eq"):  # Equals
-            return sql_query.filter(**{column: transform_date(value)})
+            return sql_query.raw({column: get_equality_date_range(value)})
         if value.startswith("ne"):  # Not Equal
-            return sql_query.filter(~Q(**{column: transform_date(value)}))
+            return sql_query.raw({column: {"$not": get_equality_date_range(value)}})
         if value.startswith("ap"):  # Approximately (+- 10%)
-            floor = transform(value) - timedelta(30)
-            ceil = transform(value) + timedelta(30)
-            return sql_query.filter(**{"{}__gte".format(column): floor}).filter(
-                **{"{}__gte".format(column): ceil}
-            )
-        return sql_query.filter(**{column: transform_date(value, trim=False)})
+            floor = transform_date(value) - timedelta(30)
+            ceil = transform_date(value) + timedelta(30)
+            return sql_query.raw({column: {"$gte": floor, "$lte": ceil}})
+        return sql_query.raw({column: get_equality_date_range(value, trim=False)})
 
     return search_datetime
 

@@ -527,3 +527,103 @@ class TestPyModmNumericSearchWithQuantity(unittest.TestCase):
         aq.assert_called_with("query", cv(), "http://unitsofmeasure.org|mg")
         NSMock.assert_called_with("value")
         NSMock().search.assert_called_with("a", "a", cv(), aq(), "query")
+
+
+class TestPyModmDate(unittest.TestCase):
+    def setUp(self):
+        self.DateSearch = searches_pymodm.DateSearch
+        column = Mock()
+        self.column = column
+        self.cls = SimpleNamespace(name=column)
+        self.sql_query = Mock()
+        self.search = self.DateSearch("date")
+
+    def test_transform_date(self):
+        """ For mongodb we must cast all dates to datetimes
+        """
+        self.assertEqual(
+            searches_pymodm.transform_date("xx2013-01-01"), datetime(2013, 1, 1, 0, 0)
+        )
+        self.assertEqual(
+            searches_pymodm.transform_date("xx2013-01-01T12:33"),
+            datetime(2013, 1, 1, 12, 33, 0),
+        )
+        self.assertEqual(
+            searches_pymodm.transform_date("2014-02-03", trim=False),
+            datetime(2014, 2, 3, 0, 0),
+        )
+        with self.assertRaises(QueryValidationError):
+            searches_pymodm.transform_date("invalid")
+
+    def test_get_equality_date_range(self):
+        pass
+
+    def test_date_search_lt(self):
+        self.search(self.cls, "", "lt2019-03-04", self.sql_query, "")
+        self.sql_query.raw.assert_called_with(
+            {"date": {"$lt": datetime(2019, 3, 4, 0, 0, 0)}}
+        )
+
+    def test_date_search_gt(self):
+        self.search(self.cls, "", "gt2019-03-04T12:34", self.sql_query, "")
+        self.sql_query.raw.assert_called_with(
+            {"date": {"$gt": datetime(2019, 3, 4, 12, 34, 0)}}
+        )
+
+    def test_date_search_le(self):
+        self.search(self.cls, "", "le1980-02-06", self.sql_query, "")
+        self.sql_query.raw.assert_called_with(
+            {"date": {"$lte": datetime(1980, 2, 6, 0, 0, 0)}}
+        )
+
+    def test_date_search_ge(self):
+        self.search(self.cls, "", "ge1980", self.sql_query, "")
+        self.sql_query.raw.assert_called_with(
+            {"date": {"$gte": datetime(1980, 1, 1, 0, 0, 0)}}
+        )
+
+    def test_date_search_eq(self):
+        self.search(self.cls, "", "eq1999-12", self.sql_query, "")
+        self.sql_query.raw.assert_called_with(
+            {
+                "date": {
+                    "$gte": datetime(1999, 12, 1, 0, 0),
+                    "$lte": datetime(1999, 12, 31, 23, 59, 59),
+                }
+            }
+        )
+
+    def test_date_search(self):
+        self.search(self.cls, "", "eq1975", self.sql_query, "")
+        self.sql_query.raw.assert_called_with(
+            {
+                "date": {
+                    "$gte": datetime(1975, 1, 1, 0, 0),
+                    "$lte": datetime(1975, 12, 31, 23, 59, 59, 59),
+                }
+            }
+        )
+
+    def test_date_search_ne(self):
+        self.search(self.cls, "", "ne1980-01-01", self.sql_query, "")
+        self.sql_query.raw.assert_called_with(
+            {
+                "date": {
+                    "$not": {
+                        "$gte": datetime(1980, 1, 1, 0, 0),
+                        "$lte": datetime(1980, 1, 2, 23, 59, 59),
+                    }
+                }
+            }
+        )
+
+    def test_date_search_ap(self):
+        self.search(self.cls, "", "ap1970-02-05", self.sql_query, "")
+        self.sql_query.raw.assert_called_with(
+            {
+                "date": {
+                    "$gte": datetime(1970, 1, 6, 0, 0),
+                    "$lte": datetime(1970, 3, 7, 0, 0),
+                }
+            }
+        )
