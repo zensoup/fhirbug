@@ -79,6 +79,7 @@ is that you do not call ``super()`` inside your custom log function.
 The signature of the ``log_request`` function is the following:
 
 .. automethod:: fhirbug.server.requesthandlers.AbstractRequestHandler.log_request(self, url, query, status, method, resource=None, OperationOutcome=None, request_body=None, time=datetime.now())
+    :noindex:
 
 Here's an example where we use python's built-in logging module:
 

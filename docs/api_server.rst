@@ -16,11 +16,3 @@ Request Handling
 .. automodule:: fhirbug.server.requesthandlers
     :members:
     :inherited-members:
-
-
-Auth
-----
-
-.. automodule:: fhirbug.server.auth
-    :members:
-    :inherited-members:

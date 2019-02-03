@@ -43,6 +43,8 @@ you are interested in making it better, you are very welcome to contribute!
    quickstart
    overview
    api_index
+   examples/index
+   
 
 Indices and tables
 ==================
