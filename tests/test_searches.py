@@ -195,18 +195,6 @@ class TestSQLAlchemyDate(unittest.TestCase):
         self.sql_query = Mock()
         self.search = self.DateSearch("name")
 
-    def test_transform_date(self):
-        self.assertEqual(searches_sqla.transform_date("xx2013-01-01"), date(2013, 1, 1))
-        self.assertEqual(
-            searches_sqla.transform_date("xx2013-01-01T12:33"),
-            datetime(2013, 1, 1, 12, 33, 0),
-        )
-        self.assertEqual(
-            searches_sqla.transform_date("2014-02-03", trim=False), date(2014, 2, 3)
-        )
-        with self.assertRaises(QueryValidationError):
-            searches_sqla.transform_date("invalid")
-
     def test_search_lt(self):
         self.search(self.cls, "", "lt2017-01-01", self.sql_query, "")
         self.column.__lt__.assert_called_with(date(2017, 1, 1))
@@ -214,12 +202,12 @@ class TestSQLAlchemyDate(unittest.TestCase):
 
     def test_search_gt(self):
         self.search(self.cls, "", "gt2018-01-01", self.sql_query, "")
-        self.column.__gt__.assert_called_with(date(2018, 1, 1))
+        self.column.__gt__.assert_called_with(datetime(2018, 1, 1, 23, 59, 59, 59))
         self.sql_query.filter.assert_called_with(self.column.__gt__())
 
     def test_search_le(self):
         self.search(self.cls, "", "le2018-02-02", self.sql_query, "")
-        self.column.__le__.assert_called_with(date(2018, 2, 2))
+        self.column.__le__.assert_called_with(datetime(2018, 2, 2, 23, 59, 59, 59))
         self.sql_query.filter.assert_called_with(self.column.__le__())
 
     def test_search_ge(self):
@@ -229,13 +217,18 @@ class TestSQLAlchemyDate(unittest.TestCase):
 
     def test_search_eq(self):
         self.search(self.cls, "", "eq1918-03-01", self.sql_query, "")
-        self.column.__eq__.assert_called_with(date(1918, 3, 1))
-        self.sql_query.filter.assert_called_with(self.column.__eq__())
+        self.column.__ge__.assert_called_with(date(1918, 3, 1))
+        self.column.__le__.assert_called_with(datetime(1918, 3, 1, 23, 59, 59, 59))
+        self.sql_query.filter.assert_called_with(
+            self.column.__ge__(), self.column.__le__()
+        )
 
-    def test_search_ne(self):
+    @patch("fhirbug.db.backends.SQLAlchemy.searches.not_")
+    @patch("fhirbug.db.backends.SQLAlchemy.searches.and_")
+    def test_search_ne(self, and_, not_):
         self.search(self.cls, "", "ne1928-03-02", self.sql_query, "")
-        self.column.__ne__.assert_called_with(date(1928, 3, 2))
-        self.sql_query.filter.assert_called_with(self.column.__ne__())
+        and_.assert_called_with(self.column.__ge__(), self.column.__le__())
+        not_.assert_called_with(and_())
 
     def test_search_ap(self):
         self.search(self.cls, "", "ap1928-03-05", self.sql_query, "")
@@ -247,8 +240,11 @@ class TestSQLAlchemyDate(unittest.TestCase):
 
     def test_searche(self):
         self.search(self.cls, "", "1928-03-02", self.sql_query, "")
-        self.column.__eq__.assert_called_with(date(1928, 3, 2))
-        self.sql_query.filter.assert_called_with(self.column.__eq__())
+        self.column.__ge__.assert_called_with(date(1928, 3, 2))
+        self.column.__le__.assert_called_with(datetime(1928, 3, 2, 23, 59, 59, 59))
+        self.sql_query.filter.assert_called_with(
+            self.column.__ge__(), self.column.__le__()
+        )
 
 
 ###
@@ -313,20 +309,6 @@ class TestDjangoORMDate(unittest.TestCase):
         self.sql_query = Mock()
         self.search = self.DateSearch("date")
 
-    def test_transform_date(self):
-        self.assertEqual(
-            searches_django.transform_date("xx2013-01-01"), date(2013, 1, 1)
-        )
-        self.assertEqual(
-            searches_django.transform_date("xx2013-01-01T12:33"),
-            datetime(2013, 1, 1, 12, 33, 0),
-        )
-        self.assertEqual(
-            searches_django.transform_date("2014-02-03", trim=False), date(2014, 2, 3)
-        )
-        with self.assertRaises(QueryValidationError):
-            searches_sqla.transform_date("invalid")
-
     def test_date_search_lt(self):
         self.search(self.cls, "", "lt2019-03-04", self.sql_query, "")
         self.sql_query.filter.assert_called_with(date__lt=date(2019, 3, 4))
@@ -334,12 +316,14 @@ class TestDjangoORMDate(unittest.TestCase):
     def test_date_search_gt(self):
         self.search(self.cls, "", "gt2019-03-04T12:34", self.sql_query, "")
         self.sql_query.filter.assert_called_with(
-            date__gt=datetime(2019, 3, 4, 12, 34, 0)
+            date__gt=datetime(2019, 3, 4, 12, 34, 59, 59)
         )
 
     def test_date_search_le(self):
         self.search(self.cls, "", "le1980-02-06", self.sql_query, "")
-        self.sql_query.filter.assert_called_with(date__lte=date(1980, 2, 6))
+        self.sql_query.filter.assert_called_with(
+            date__lte=datetime(1980, 2, 6, 23, 59, 59, 59)
+        )
 
     def test_date_search_ge(self):
         self.search(self.cls, "", "ge1980", self.sql_query, "")
@@ -347,7 +331,10 @@ class TestDjangoORMDate(unittest.TestCase):
 
     def test_date_search_eq(self):
         self.search(self.cls, "", "eq1999-12", self.sql_query, "")
-        self.sql_query.filter.assert_called_with(date=date(1999, 12, 1))
+        self.sql_query.filter.assert_called_with(
+            date__gte=date(1999, 12, 1),
+            date__lte=datetime(1999, 12, 31, 23, 59, 59, 59),
+        )
 
     @patch("fhirbug.db.backends.DjangoORM.searches.Q")
     def test_date_search_ne(self, QMock):
@@ -361,7 +348,7 @@ class TestDjangoORMDate(unittest.TestCase):
 
     def test_date_search(self):
         self.search(self.cls, "", "1970-02-05T14:45:32", self.sql_query, "")
-        self.sql_query.filter.assert_called_with(date=datetime(1970, 2, 5, 14, 45, 32))
+        self.sql_query.filter.assert_called_with(date__gte=datetime(1970, 2, 5, 14, 45, 32), date__lte=datetime(1970, 2, 5, 14, 45, 32, 59))
 
         QVE = QueryValidationError
         self.assertRaises(QVE, self.search, self.cls, "", "asde", self.sql_query, "")
@@ -538,26 +525,6 @@ class TestPyModmDate(unittest.TestCase):
         self.sql_query = Mock()
         self.search = self.DateSearch("date")
 
-    def test_transform_date(self):
-        """ For mongodb we must cast all dates to datetimes
-        """
-        self.assertEqual(
-            searches_pymodm.transform_date("xx2013-01-01"), datetime(2013, 1, 1, 0, 0)
-        )
-        self.assertEqual(
-            searches_pymodm.transform_date("xx2013-01-01T12:33"),
-            datetime(2013, 1, 1, 12, 33, 0),
-        )
-        self.assertEqual(
-            searches_pymodm.transform_date("2014-02-03", trim=False),
-            datetime(2014, 2, 3, 0, 0),
-        )
-        with self.assertRaises(QueryValidationError):
-            searches_pymodm.transform_date("invalid")
-
-    def test_get_equality_date_range(self):
-        pass
-
     def test_date_search_lt(self):
         self.search(self.cls, "", "lt2019-03-04", self.sql_query, "")
         self.sql_query.raw.assert_called_with(
@@ -567,13 +534,13 @@ class TestPyModmDate(unittest.TestCase):
     def test_date_search_gt(self):
         self.search(self.cls, "", "gt2019-03-04T12:34", self.sql_query, "")
         self.sql_query.raw.assert_called_with(
-            {"date": {"$gt": datetime(2019, 3, 4, 12, 34, 0)}}
+            {"date": {"$gt": datetime(2019, 3, 4, 12, 34, 59, 59)}}
         )
 
     def test_date_search_le(self):
         self.search(self.cls, "", "le1980-02-06", self.sql_query, "")
         self.sql_query.raw.assert_called_with(
-            {"date": {"$lte": datetime(1980, 2, 6, 0, 0, 0)}}
+            {"date": {"$lte": datetime(1980, 2, 6, 23, 59, 59, 59)}}
         )
 
     def test_date_search_ge(self):
@@ -588,7 +555,7 @@ class TestPyModmDate(unittest.TestCase):
             {
                 "date": {
                     "$gte": datetime(1999, 12, 1, 0, 0),
-                    "$lte": datetime(1999, 12, 31, 23, 59, 59),
+                    "$lte": datetime(1999, 12, 31, 23, 59, 59, 59),
                 }
             }
         )
@@ -611,7 +578,7 @@ class TestPyModmDate(unittest.TestCase):
                 "date": {
                     "$not": {
                         "$gte": datetime(1980, 1, 1, 0, 0),
-                        "$lte": datetime(1980, 1, 2, 23, 59, 59),
+                        "$lte": datetime(1980, 1, 1, 23, 59, 59, 59),
                     }
                 }
             }
@@ -627,3 +594,38 @@ class TestPyModmDate(unittest.TestCase):
                 }
             }
         )
+
+
+class TestUtils(unittest.TestCase):
+    def test_transform_date(self):
+        from fhirbug.utils import transform_date
+
+        self.assertEqual(transform_date("xx2013-01-01"), date(2013, 1, 1))
+        self.assertEqual(
+            transform_date("xx2013-01-01T12:33"), datetime(2013, 1, 1, 12, 33, 0)
+        )
+        self.assertEqual(transform_date("2014-02-03", trim=False), date(2014, 2, 3))
+        with self.assertRaises(QueryValidationError):
+            transform_date("invalid")
+
+    def test_transform_date_to_datetime(self):
+        """ For mongodb we must cast all dates to datetimes
+        """
+        from fhirbug.utils import transform_date
+
+        self.assertEqual(
+            transform_date("xx2013-01-01", to_datetime=True), datetime(2013, 1, 1, 0, 0)
+        )
+        self.assertEqual(
+            transform_date("xx2013-01-01T12:33", to_datetime=True),
+            datetime(2013, 1, 1, 12, 33, 0),
+        )
+        self.assertEqual(
+            transform_date("2014-02-03", trim=False, to_datetime=True),
+            datetime(2014, 2, 3, 0, 0),
+        )
+        with self.assertRaises(QueryValidationError):
+            searches_pymodm.transform_date("invalid")
+
+    def test_get_equality_date_range(self):
+        pass
