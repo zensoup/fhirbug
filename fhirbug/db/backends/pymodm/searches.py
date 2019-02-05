@@ -79,32 +79,26 @@ def DateSearch(column):
 
 def StringSearch(*column_names):
     """
-  Search for string types, supports :contains and :exact modifiers.
+    Search for string types, supports :contains and :exact modifiers.
 
-  If string search should be performed in multiple columns using OR
-  multiple columns can be passed.
-  """
+    If string search should be performed in multiple columns using OR
+    multiple columns can be passed.
+    """
     if len(column_names) == 0:
         raise TypeError("StringSearch takes at least one positional argument (0 given)")
 
     def search(cls, field_name, value, sql_query, query):
         if ":contains" in field_name:
             value = value.replace(":contains", "")
-            filter = Q(**{"{}__contains".format(column_names[0]): value})
-            for col in column_names[1:]:
-                filter |= Q(**{"{}__contains".format(col): value})
-            return sql_query.filter(filter)
-        if ":exact" in field_name:
+            regex = f'{value}'
+        elif ":exact" in field_name:
             value = value.replace(":exact", "")
-            filter = Q(**{"{}".format(column_names[0]): value})
-            for col in column_names[1:]:
-                filter |= Q(**{"{}".format(col): value})
-            return sql_query.filter(filter)
+            regex = f'^{value}$'
         # Default: startswith
-        filter = Q(**{"{}__startswith".format(column_names[0]): value})
-        for col in column_names[1:]:
-            filter |= Q(**{"{}__startswith".format(col): value})
-        return sql_query.filter(filter)
+        else:
+            regex = f'^{value}'
+        filter = {"$or": [{col: {"$regex": regex}} for col in column_names]}
+        return sql_query.raw(filter)
 
     return search
 
@@ -140,3 +134,11 @@ def SimpleSearch(column):
         return sql_query.filter(**{"{}".format(column): value})
 
     return search
+
+def EmbeddedSearch(column):
+    def search(cls, field_name, value, sql_query, query):
+        if ':' in field_name:
+            rel, field, *_ = field_name.split(':')
+        else:
+            field = 'id'
+        return sql_query.filter({column: {field: value}})
