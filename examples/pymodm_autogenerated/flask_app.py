@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 import dicttoxml
 import flask
-from flask import Flask, Response
+from flask import Flask, Response, render_template
 import pymodm
 
 try:
@@ -65,6 +65,14 @@ def convert_response_content(headers, url, content):
         return dicttoxml.dicttoxml(content), "text/xml"
     else:
         return json.dumps(content), "application/json"
+
+
+@app.route("/")
+def index():
+    '''
+    The index page
+    '''
+    return render_template('index.html')
 
 
 if __name__ == "__main__":

@@ -1,0 +1,114 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background: rgb(227, 227, 227);
+    font-family: 'News Cycle', sans-serif;
+}
+
+.hero {
+    /* width: 100%; */
+    background: red;
+    background: rgb(93, 185, 198);
+    padding: 1em;
+}
+
+.hero h1{
+    font-size: 38pt;
+    padding: 1em 0 0.2em;
+    color: rgba( 255, 255, 255, 0.9);
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+
+}
+.hero h2, .hero h3{
+    padding: 0 0.6em;
+    color: rgba(0, 0, 0, 0.64);
+    text-align: center;
+}
+.hero h3 pre{
+    display: inline-block;
+    /* color: rgba( 255, 255, 255, 0.9); */
+}
+.hero .badges{
+    /* padding-top: 2.2em; */
+    text-align: center;
+}
+
+.hero nav{
+    font-size: 14pt;
+    margin: 3.2em auto 2.2em;
+    text-align: center;
+    justify-content: space-around;
+}
+.hero nav a{
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.7);
+    transition: all 0.4s;
+}
+.hero nav a:hover{
+    color: rgba(0, 0, 0, 0.9);
+    color: rgba( 255, 255, 255, 0.8);
+}
+
+.hero .badges img{
+    transform: scale(0.8);
+}
+
+.document {
+    max-width: 1140px;
+    margin: auto;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.panel {
+    width: calc(50% - 20px);
+    background: white;
+    min-height: 200px;
+    margin: 10px;
+    box-shadow: 5px 5px 5px 5px rgba(157, 157, 157, 0.3);
+    transition: all 0.4s;
+}
+.panel.large {
+    width: calc(100% - 20px);
+}
+.panel-title {
+    background: rgb(55, 57, 70);
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+}
+.panel-title .maximize {
+    float: right;
+    cursor: pointer;
+}
+.panel-title .maximize:after {
+    content: '🗖';
+}
+.panel.large .panel-title .maximize:after {
+    content: '🗕';
+}
+.panel-content{
+    padding: 1em;
+    font-size: 1.2em;
+    color: rgba(0, 0, 0, 0.8);
+}
+.panel-content h3{
+    text-align: left;
+    color: rgb(215, 200, 121);
+}
+.panel-content .resource-list{
+    /* margin-left: 1em; */
+    list-style: none;
+}
+
+@media screen and (max-width: 1000px) {
+    .panel {
+        width: calc(100% - 20px);
+    }
+}
