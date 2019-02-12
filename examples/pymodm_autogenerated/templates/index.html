@@ -5,22 +5,55 @@
             href="https://fonts.googleapis.com/css?family=Cormorant+Garamond|News+Cycle"
             rel="stylesheet"
         />
-        <script
-            crossorigin
-            src="https://unpkg.com/react@16/umd/react.development.js"
-        ></script>
-        <script
-            crossorigin
-            src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
-        ></script>
+        <script src="/static/xml-formatter.js"></script>
+
+        <!--
+            React
+        -->
         <script
             crossorigin
             src="https://cdn.jsdelivr.net/npm/create-react-class@15.6.3/create-react-class.min.js"
         ></script>
+        <script
+            crossorigin
+            src="https://unpkg.com/react@16/umd/react.production.min.js"
+        ></script>
+        <script
+            crossorigin
+            src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"
+        ></script>
         <!--
-            <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
-            <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+            <script
+                crossorigin
+                src="https://unpkg.com/react@16/umd/react.development.js"
+            ></script>
+            <script
+                crossorigin
+                src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+            ></script>
         -->
+
+        <!--
+            Fathom - simple website analytics - https://github.com/usefathom/fathom
+        -->
+        <script>
+            (function(f, a, t, h, o, m) {
+                a[h] =
+                    a[h] ||
+                    function() {
+                        (a[h].q = a[h].q || []).push(arguments);
+                    };
+                (o = f.createElement("script")),
+                    (m = f.getElementsByTagName("script")[0]);
+                o.async = 1;
+                o.src = t;
+                o.id = "fathom-script";
+                m.parentNode.insertBefore(o, m);
+            })(document, window, "//fathom.zenmix.in/tracker.js", "fathom");
+            fathom("set", "siteId", "DKGTO");
+            fathom("trackPageview");
+        </script>
+        <!-- / Fathom -->
     </head>
 
     <body>
@@ -32,16 +65,17 @@
                 <pre>fhirbug.zenmix.in/r4/</pre>
             </h3>
             <nav>
-                • <a href="#about">about</a> • <a href="#info">info</a> •
+                • <a href="#about">about fhirbug</a> •
+                <a href="#info">server info</a> •
                 <a href="#examples">examples</a> •
                 <a href="#live">try live</a> •
                 <a href="https://github.com/zensoup/fhirbug"
                     ><img
                         src="/static/GitHub-Mark-32px.png"
                         style="vertical-align: middle; padding-right: 1px;"
-                        height="16"
+                        height="15"
                     />
-                    code
+                    source
                 </a>
                 •
             </nav>
@@ -112,13 +146,50 @@
                     surprised if something you saved disappears.
                 </div>
             </section>
+            <section class="panel" id="live">
+                <div class="panel-title">
+                    Try it Live <span class="maximize"></span>
+                </div>
+                <div class="panel-content" id="live-server"></div>
+            </section>
             <section class="panel" id="examples">
                 <div class="panel-title">Examples</div>
-                <div class="panel-content"></div>
-            </section>
-            <section class="panel" id="live">
-                <div class="panel-title">Try it Live <span class="maximize"></span></div>
-                <div class="panel-content" id="live-server"></div>
+                <div class="panel-content">
+                    <h3>Bundles and Pagination</h3>
+                    <p>Get 3 items per page, starting from the 10th:</p>
+                    <pre>/r4/Procedure?_count=3&search-offset=10</pre>
+                    <span
+                        class="try-btn"
+                        data-endpoint="Procedure?_count=3&search-offset=10"
+                        >try it</span
+                    >
+                    <h3>Date searches</h3>
+                    <p>Use a partial date to search through a time period:</p>
+                    <pre>/r4/Patient?birthDate=1960</pre>
+                    <span class="try-btn" data-endpoint="Patient?birthDate=1960"
+                        >try it</span
+                    >
+                    <p>
+                        Get all the observations that occured between 8 and 9 am
+                        on a specific date:
+                    </p>
+                    <pre>/r4/Observation?effectiveDateTime=gt2015-02-19T08</pre>
+                    ...
+                    <pre>&effectiveDateTime=lt2015-02-19T09</pre>
+                    <span
+                        class="try-btn"
+                        data-endpoint="Observation?effectiveDateTime=gt2015-02-19T08&effectiveDateTime=lt2015-02-19T09"
+                        >try it</span
+                    >
+                    <h3>More query modifiers</h3>
+                    <p>Receive only specific attributes</p>
+                    <pre>/r4/QuestionnaireResponse?_elements=source</pre>
+                    <span
+                        class="try-btn"
+                        data-endpoint="QuestionnaireResponse?_elements=source"
+                        >try it</span
+                    >
+                </div>
             </section>
         </main>
         <a href="https://github.com/zensoup/fhirbug"

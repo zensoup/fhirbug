@@ -23,11 +23,13 @@ from fhirbug.config import import_models, settings
 
 ctx = threading.local()
 
+
 def register_request_context(context):
     ctx.context = context
 
+
 def get_request_context():
-    return getattr(ctx, 'context', None)
+    return getattr(ctx, "context", None)
 
 
 class AbstractRequestHandler:
@@ -61,7 +63,7 @@ class AbstractRequestHandler:
         return models
 
     def get_resource(self, models):
-        resource_name = self.query.resource
+        resource_name = self.query.resource or ""
         try:
             # TODO: handle mapper names different then the resource
             # Maybe a dict in the settings?

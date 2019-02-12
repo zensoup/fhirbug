@@ -27,8 +27,8 @@ app = Flask(__name__)
 app.config.update(debug=settings.DEBUG)
 
 
-@app.route("/fhir", defaults={"path": ""})
-@app.route("/fhir/<path:path>", methods=["GET", "POST", "PUT"])
+@app.route("/r4/", defaults={"path": ""})
+@app.route("/r4/<path:path>", methods=["GET", "POST", "PUT"])
 def request(path):
     url = flask.request.full_path[1:].partition("/")[2]
     request_headers = flask.request.headers
