@@ -2,7 +2,7 @@ dicttoxml==1.7.4
 Flask==1.0.2
 isodate==0.6.0
 itsdangerous==1.1.0
-Jinja2==2.10
+Jinja2==2.11.3
 Pygments==2.3.0
 pymodm==0.4.1
 pymongo==3.7.2
